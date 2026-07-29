@@ -1,0 +1,84 @@
+<section class="page journal">
+  <div class="page-intro">
+    <p class="eyebrow">SEU MOMENTO</p>
+    <h1>Como foi seu dia?</h1>
+    <p>Nao existe resposta certa. Este espaco e so seu.</p>
+  </div>
+  <article class="journal-card">
+    <h2>Escolha o que mais combina com agora</h2>
+    <div class="feelings">
+      @for (item of feelings; track item.name) {
+        <button
+          type="button"
+          [class.selected]="feeling().name === item.name"
+          [class]="item.color"
+          (click)="feeling.set(item)"
+        >
+          <span class="material-symbols-rounded">{{ item.icon }}</span
+          ><small>{{ item.name }}</small>
+        </button>
+      }
+    </div>
+    <div class="intensity">
+      <label for="intensity"
+        >Intensidade <strong>{{ intensity() }}/5</strong></label
+      ><input
+        id="intensity"
+        type="range"
+        min="1"
+        max="5"
+        [value]="intensity()"
+        (input)="intensity.set(+$any($event.target).value)"
+      />
+    </div>
+    <label class="note-label" for="journal-note">Quer contar um pouco mais?</label
+    ><textarea
+      id="journal-note"
+      [formControl]="note"
+      placeholder="Escreva livremente sobre o seu dia..."
+    ></textarea
+    ><button class="primary" type="button" (click)="save()">
+      <span class="material-symbols-rounded">favorite</span>Guardar meu registro
+    </button>
+    @if (saved()) {
+      <p class="success">
+        <span class="material-symbols-rounded">check_circle</span>Registro guardado com carinho.
+      </p>
+    }
+  </article>
+  <section class="journal-tools">
+    <article class="ai-shortcut">
+      <span class="material-symbols-rounded">auto_awesome</span>
+      <div>
+        <p class="eyebrow">PRECISA DE COMPANHIA?</p>
+        <h2>Converse com a IA</h2>
+        <p>Coloque seus pensamentos em palavras, no seu tempo.</p>
+      </div>
+      <a routerLink="/ia" aria-label="Conversar com a IA"
+        ><span class="material-symbols-rounded">arrow_forward</span></a
+      >
+    </article>
+    <article class="calendar-card">
+      <div class="calendar-heading">
+        <div>
+          <p class="eyebrow">SEUS REGISTROS</p>
+          <h2>Julho de 2026</h2>
+        </div>
+        <span class="material-symbols-rounded">calendar_month</span>
+      </div>
+      <div class="weekdays">
+        <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span
+        ><span>Sex</span><span>Sab</span>
+      </div>
+      <div class="calendar-grid">
+        <span class="empty"></span><span class="empty"></span><span class="empty"></span>
+        @for (day of calendarDays; track day) {
+          <span [class.recorded]="recordedDays().includes(day)" [class.today]="day === 22">{{
+            day
+          }}</span>
+        }
+      </div>
+      <p class="calendar-note"><i></i>Dias em que voce reservou um momento para si.</p>
+    </article>
+  </section>
+</section>

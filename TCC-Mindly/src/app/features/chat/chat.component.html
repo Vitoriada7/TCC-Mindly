@@ -1,0 +1,24 @@
+<section class="chat-page">
+  <header>
+    <span class="bot material-symbols-rounded">auto_awesome</span>
+    <div>
+      <p class="eyebrow">COMPANHIA MIN DLY</p>
+      <h1>Conversa leve</h1>
+      <small><i></i> online para você</small>
+    </div>
+  </header>
+  <div class="messages" aria-live="polite">
+    @for (item of messages(); track $index) {
+      <p [class.mine]="item.mine">{{ item.content }}</p>
+    }
+  </div>
+  <form (submit)="send(); $event.preventDefault()">
+    <label for="message">Sua mensagem</label
+    ><input id="message" [formControl]="message" placeholder="Escreva como você está..." /><button
+      type="submit"
+      aria-label="Enviar mensagem"
+    >
+      <span class="material-symbols-rounded">send</span>
+    </button>
+  </form>
+</section>

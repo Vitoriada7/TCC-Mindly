@@ -1,0 +1,10 @@
+<main class="app-shell">
+  <app-sidebar [isOpen]="menuOpen()" (closed)="menuOpen.set(false)" />
+  <section class="workspace">
+    <router-outlet />
+    <app-mobile-nav />
+    <button class="notification-fab" type="button" aria-label="Ver notificações">
+      <span class="material-symbols-rounded">notifications</span><i></i>
+    </button>
+  </section>
+</main>

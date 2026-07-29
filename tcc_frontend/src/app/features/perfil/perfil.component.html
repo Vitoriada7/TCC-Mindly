@@ -1,0 +1,7 @@
+<section class="page">
+  @if (carregando()) { <div class="skeleton head"></div><div class="skeleton cards"></div> } @else if (usuario(); as usuario) {
+    <div class="profile-head"><span>{{ iniciais() }}</span><div><p class="eyebrow">SEU ESPAÇO</p><h1>{{ usuario.nome }}</h1><p>Seu espaço no Mindly, no seu ritmo.</p></div></div>
+    <div class="profile-grid"><article><h2>Seu perfil</h2><form [formGroup]="formulario" (ngSubmit)="salvar()" novalidate><label for="nome">Como podemos te chamar?</label><input id="nome" formControlName="nome" maxlength="100" />@if (formulario.controls.nome.invalid && formulario.controls.nome.touched) { <small class="field-error">Informe seu nome.</small> }<button class="primary" type="submit" [disabled]="salvando()">{{ salvando() ? 'Salvando...' : 'Salvar alterações' }}</button></form>@if (sucesso()) { <small class="success" role="status">Alterações salvas!</small> }</article><article><h2>Sua conta</h2><label for="email">E-mail</label><input id="email" [value]="usuario.email" readonly /><p class="help">O e-mail é usado para entrar na sua conta e não pode ser alterado nesta etapa.</p><button class="logout" type="button" (click)="sair()">Sair da conta <span class="material-symbols-rounded">logout</span></button></article></div>
+  } @else { <div class="feedback" role="alert">{{ erro() }} <button type="button" (click)="carregar()">Tentar novamente</button></div> }
+  @if (erro() && usuario()) { <div class="feedback" role="alert">{{ erro() }}</div> }
+</section>

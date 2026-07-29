@@ -1,0 +1,136 @@
+.page {
+  max-width: 850px;
+  padding: 42px 48px 100px;
+  margin: auto;
+}
+.eyebrow {
+  margin: 0 0 7px;
+  color: #8c72df;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+h1 {
+  margin: 0;
+  font-size: 30px;
+  letter-spacing: -1px;
+}
+.sub {
+  margin: 7px 0;
+  color: #7e7b8b;
+}
+.celebrate {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  margin: 26px 0 17px;
+  color: #725426;
+  background: linear-gradient(100deg, #fff4cf, #ffe7a8);
+  border-radius: 18px;
+}
+.celebrate span {
+  color: #ef9b37;
+  font-size: 30px;
+}
+.celebrate strong {
+  font-size: 14px;
+}
+.celebrate p {
+  margin: 3px 0 0;
+  font-size: 11px;
+}
+.habit-list {
+  display: grid;
+  gap: 11px;
+}
+.habit-list article {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 18px;
+  background: #fff;
+  border: 1px solid #eeeafa;
+  border-radius: 16px;
+}
+.icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  font-size: 20px;
+}
+.blue {
+  color: #539dce;
+  background: #e9f6ff;
+}
+.green {
+  color: #60aa70;
+  background: #eaf8ed;
+}
+.pink {
+  color: #d875a4;
+  background: #fff0f7;
+}
+.habit-list article > div:nth-child(2) {
+  flex: 1;
+}
+.habit-list strong {
+  font-size: 13px;
+}
+.habit-list p {
+  margin: 3px 0 0;
+  color: #9b98a4;
+  font-size: 10px;
+}
+.week {
+  display: flex;
+  gap: 5px;
+}
+.week button {
+  display: grid;
+  place-items: center;
+  gap: 4px;
+  width: 28px;
+  padding: 3px 0;
+  color: #a5a1ad;
+  background: #f7f5fa;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.week small {
+  font-size: 8px;
+}
+.week span {
+  display: grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  border: 1px solid #ddd7e7;
+  border-radius: 50%;
+  font-size: 12px;
+}
+.week button.done {
+  color: #fff;
+  background: #8065e9;
+}
+.week button.done span {
+  border-color: #fff;
+}
+@media (max-width: 700px) {
+  .page {
+    padding: 28px 17px 105px;
+  }
+  .habit-list article {
+    flex-wrap: wrap;
+  }
+  .week {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .week button {
+    width: 34px;
+  }
+}

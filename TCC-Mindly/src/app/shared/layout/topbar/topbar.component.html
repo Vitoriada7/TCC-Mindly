@@ -1,0 +1,13 @@
+<header class="topbar">
+  <button class="menu-toggle" type="button" aria-label="Abrir menu" (click)="menuClicked.emit()">
+    <span class="material-symbols-rounded">menu</span>
+  </button>
+  <div class="page-label">
+    <span>Seu espaço</span><strong>{{ title() }}</strong>
+  </div>
+  <div class="topbar-actions">
+    <button class="icon-button" type="button" aria-label="Ver notificações">
+      <span class="material-symbols-rounded">notifications</span><i></i></button
+    ><a class="avatar" routerLink="/perfil" aria-label="Abrir perfil">AC</a>
+  </div>
+</header>

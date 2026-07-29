@@ -1,0 +1,36 @@
+<section class="auth">
+  <div class="auth-card">
+    <a class="brand" routerLink="/"><span class="material-symbols-rounded">spa</span>mindly</a>
+    <p class="eyebrow">SEU CANTINHO DE BEM-ESTAR</p>
+    <h1>{{ isSignup() ? 'Crie sua conta' : 'Que bom te ver de novo' }}</h1>
+    <p>
+      {{ isSignup() ? 'Comece uma rotina mais leve hoje.' : 'Entre e continue cuidando de você.' }}
+    </p>
+    <form>
+      <label for="email">E-mail</label
+      ><input id="email" type="email" [formControl]="email" placeholder="voce@email.com" />
+      @if (isSignup()) {
+        <label for="name">Seu nome</label
+        ><input id="name" [formControl]="name" placeholder="Como podemos te chamar?" />
+      }
+      <label for="password">Senha</label
+      ><input id="password" type="password" [formControl]="password" placeholder="Sua senha" /><a
+        class="primary"
+        routerLink="/"
+        >{{ isSignup() ? 'Criar minha conta' : 'Entrar no Mindly' }}
+        <span class="material-symbols-rounded">arrow_forward</span></a
+      >
+    </form>
+    <small
+      >{{ isSignup() ? 'Já tem uma conta?' : 'Ainda não tem uma conta?' }}
+      <a [routerLink]="isSignup() ? '/login' : '/cadastro'">{{
+        isSignup() ? 'Entrar' : 'Criar conta'
+      }}</a></small
+    >
+  </div>
+  <aside>
+    <span class="material-symbols-rounded">favorite</span>
+    <h2>Um passo de cada vez.</h2>
+    <p>Organize sua rotina e escute suas emoções com gentileza.</p>
+  </aside>
+</section>

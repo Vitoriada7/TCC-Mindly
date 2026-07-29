@@ -1,0 +1,141 @@
+<div class="dashboard">
+  <section class="welcome-row">
+    <div>
+      <p class="eyebrow">{{ dataCabecalho }}</p>
+      <h1>{{ saudacao() }}@if (apelido()) {, {{ apelido() }}} <span>✦</span></h1>
+      <p class="welcome-copy">Que bom ter você por aqui. Vamos fazer deste dia um dia leve?</p>
+    </div>
+    <button class="primary-button" type="button" disabled title="O registro emocional será disponibilizado em breve">
+      <span class="material-symbols-rounded" aria-hidden="true">edit_note</span> Registrar meu dia
+    </button>
+  </section>
+
+  @if (erro(); as mensagemErro) {
+    <div class="feedback error" role="alert">
+      <span>Não foi possível atualizar todos os dados.</span>
+      <button type="button" (click)="carregar()">Tentar novamente</button>
+    </div>
+  }
+
+  <section class="overview-grid" aria-label="Resumo do dia">
+    <article class="card mood-card unavailable-card">
+      <div class="card-heading">
+        <div><p class="eyebrow">COMO VOCÊ ESTÁ?</p><h2>Seu humor hoje</h2></div>
+        <span class="soft-icon lavender material-symbols-rounded" aria-hidden="true">wb_sunny</span>
+      </div>
+      <div class="empty-card-content">
+        <span class="empty-icon material-symbols-rounded" aria-hidden="true">sentiment_neutral</span>
+        <div><strong>Sem registro hoje</strong><p>O acompanhamento emocional estará disponível em breve.</p></div>
+      </div>
+    </article>
+
+    <article class="card focus-card">
+      <div class="card-heading">
+        <div><p class="eyebrow">SEU FOCO HOJE</p><h2>Pequenos passos</h2></div>
+        <span class="soft-icon peach material-symbols-rounded" aria-hidden="true">auto_awesome</span>
+      </div>
+      @if (carregando()) {
+        <div class="skeleton-copy"></div>
+      } @else if (prioridadesHoje()) {
+        <p>Você tem <strong>{{ prioridadesHoje() }} {{ prioridadesHoje() === 1 ? 'prioridade' : 'prioridades' }}</strong> para hoje. Escolha uma e comece com calma.</p>
+      } @else {
+        <p>Não há tarefas pendentes com prazo para hoje. Aproveite seu ritmo.</p>
+      }
+      <a routerLink="/tarefas">Ver suas tarefas <span aria-hidden="true">→</span></a>
+    </article>
+
+    <article class="card streak-card">
+      <span class="fire material-symbols-rounded" aria-hidden="true">
+        local_fire_department
+      </span>
+    
+      <div>
+        <p class="eyebrow">SEQUÊNCIA ATUAL</p>
+    
+        @if (resumoHabitos(); as resumo) {
+          <strong>
+            {{ resumo.sequenciaAtual }}
+            {{ resumo.sequenciaAtual === 1 ? 'dia' : 'dias' }}
+          </strong>
+    
+          <p>
+            Continue registrando seus hábitos diariamente.
+          </p>
+        } @else {
+          <strong>0 dias</strong>
+    
+          <p>
+            Comece criando seu primeiro hábito.
+          </p>
+        }
+      </div>
+    </article>
+  </section>
+
+  <section class="content-grid">
+    <article class="card tasks-card" id="tarefas-hoje">
+      <header class="section-title">
+        <div><p class="eyebrow">ORGANIZAÇÃO</p><h2>Para hoje</h2></div>
+        <span class="section-note">{{ tarefasHoje().length }} {{ tarefasHoje().length === 1 ? 'tarefa' : 'tarefas' }}</span>
+      </header>
+      @if (carregando()) {
+        <div class="task-list"><div class="skeleton-task"></div><div class="skeleton-task"></div><div class="skeleton-task"></div></div>
+      } @else if (tarefasHoje().length) {
+        <div class="task-list">
+          @for (tarefa of tarefasHoje(); track tarefa.id) {
+            <button class="task-item" type="button" [class.done]="tarefa.status === 'CONCLUIDA'" [class.overdue]="tarefa.vencida" [disabled]="concluindoIds().has(tarefa.id)" (click)="concluir(tarefa)">
+              <span class="check"><span class="material-symbols-rounded">{{ tarefa.status === 'CONCLUIDA' ? 'check' : '' }}</span></span>
+              <span class="task-info"><strong>{{ tarefa.titulo }}</strong><small>{{ prazoDa(tarefa) }}@if (categoriaDa(tarefa); as categoria) { · {{ categoria }} }</small></span>
+              <span class="tag" [class.overdue]="tarefa.vencida" [class.high]="!tarefa.vencida && tarefa.prioridade === 'ALTA'">{{ tarefa.vencida ? 'Vencida' : prioridadeRotulo(tarefa.prioridade) }}</span>
+            </button>
+          }
+        </div>
+      } @else {
+        <div class="empty-tasks"><span class="material-symbols-rounded" aria-hidden="true">check_circle</span><div><strong>Nenhuma tarefa para hoje</strong><p>Quando precisar, adicione uma tarefa com prazo para hoje.</p></div></div>
+      }
+      <button class="add-task" type="button" (click)="abrirFormulario()"><span class="material-symbols-rounded" aria-hidden="true">add</span> Adicionar uma tarefa</button>
+    </article>
+
+    <article class="card progress-card unavailable-card">
+      <header class="section-title"><div><p class="eyebrow">BEM-ESTAR</p><h2>Seu ritmo</h2></div></header>
+      <div class="tabs" aria-label="Período do progresso"><button class="active" type="button" disabled>Semana</button><button type="button" disabled>Mês</button></div>
+      <div class="empty-chart"><span class="material-symbols-rounded" aria-hidden="true">show_chart</span><p>Seu progresso emocional aparecerá aqui quando os registros estiverem disponíveis.</p></div>
+    </article>
+  </section>
+
+  <section class="bottom-grid">
+    <article class="card habits-card">
+      <header class="section-title"><div><p class="eyebrow">CONSTÂNCIA</p><h2>Seus hábitos</h2></div><a routerLink="/habitos">Ver todos</a></header>
+      @if (carregando()) {
+        <div class="skeleton-copy"></div>
+      } @else if (resumoHabitos(); as resumo) {
+        @if (resumo.totalHabitosAtivos) {
+          <div class="habits-summary"><span class="material-symbols-rounded" aria-hidden="true">local_fire_department</span><div><strong>{{ resumo.sequenciaAtual }} {{ resumo.sequenciaAtual === 1 ? 'dia de sequência' : 'dias de sequência' }}</strong><p>{{ resumo.habitosConcluidosHoje }} de {{ resumo.totalHabitosAtivos }} {{ resumo.totalHabitosAtivos === 1 ? 'hábito concluído hoje' : 'hábitos concluídos hoje' }}</p></div></div>
+        } @else {
+          <div class="empty-habits"><span class="material-symbols-rounded" aria-hidden="true">calendar_month</span><div><strong>Comece com um hábito</strong><p>Pequenas repetições constroem grandes mudanças.</p><a routerLink="/habitos">Criar hábito</a></div></div>
+        }
+      }
+    </article>
+    <article class="quote-card"><span aria-hidden="true">“</span><p>Você não precisa fazer tudo de uma vez. Só precisa começar.</p><small>— um lembrete para hoje</small></article>
+  </section>
+</div>
+
+@if (modalAberto()) {
+  <div class="modal-backdrop" (click)="fecharFormulario()">
+    <section class="task-modal" role="dialog" aria-modal="true" aria-labelledby="nova-tarefa-titulo" (click)="$event.stopPropagation()">
+      <header><div><p class="eyebrow">ORGANIZAÇÃO</p><h2 id="nova-tarefa-titulo">Nova tarefa</h2></div><button class="close" type="button" (click)="fecharFormulario()" aria-label="Fechar">×</button></header>
+      @if (categorias().length) {
+        <form [formGroup]="formulario" (ngSubmit)="criarTarefa()" novalidate>
+          <label for="titulo">Título</label><input id="titulo" formControlName="titulo" maxlength="150" placeholder="O que você precisa fazer?" />
+          <label for="categoria">Categoria</label><select id="categoria" formControlName="categoriaId">@for (categoria of categorias(); track categoria.id) { <option [ngValue]="categoria.id">{{ categoria.nome }}</option> }</select>
+          <div class="form-row"><div><label for="prioridade">Prioridade</label><select id="prioridade" formControlName="prioridade"><option value="BAIXA">Baixa</option><option value="MEDIA">Média</option><option value="ALTA">Alta</option></select></div><div><label for="prazo">Prazo</label><input id="prazo" type="datetime-local" formControlName="dataLimite" /></div></div>
+          <label for="descricao">Descrição <span>opcional</span></label><textarea id="descricao" formControlName="descricao" rows="3"></textarea>
+          @if (erroFormulario(); as erroFormulario) { <p class="form-error" role="alert">{{ erroFormulario }}</p> }
+          <footer><button class="secondary" type="button" (click)="fecharFormulario()" [disabled]="criando()">Cancelar</button><button class="primary-button" type="submit" [disabled]="criando()">{{ criando() ? 'Salvando...' : 'Salvar tarefa' }}</button></footer>
+        </form>
+      } @else {
+        <div class="no-categories"><strong>Você ainda não possui categorias.</strong><p>Uma categoria é necessária para criar tarefas. Esse gerenciamento será disponibilizado na tela de tarefas.</p><button class="secondary" type="button" (click)="fecharFormulario()">Fechar</button></div>
+      }
+    </section>
+  </div>
+}

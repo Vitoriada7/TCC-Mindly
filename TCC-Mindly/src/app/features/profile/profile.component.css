@@ -1,0 +1,151 @@
+.page {
+  max-width: 850px;
+  padding: 42px 48px 100px;
+  margin: auto;
+}
+.profile-head {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.profile-head > span {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  color: #fff;
+  background: linear-gradient(135deg, #8065e9, #f291bf);
+  border-radius: 25px;
+  font-size: 21px;
+  font-weight: 800;
+}
+.eyebrow {
+  margin: 0 0 7px;
+  color: #8c72df;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+h1 {
+  margin: 0;
+  font-size: 29px;
+  letter-spacing: -1px;
+}
+.profile-head p:last-child {
+  margin: 5px 0;
+  color: #86828f;
+  font-size: 12px;
+}
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 17px;
+  margin-top: 28px;
+}
+.profile-grid article {
+  padding: 22px;
+  background: #fff;
+  border: 1px solid #eeeafa;
+  border-radius: 18px;
+}
+.profile-grid h2 {
+  margin: 0 0 19px;
+  font-size: 16px;
+}
+.profile-grid label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.profile-grid input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e5dff0;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 13px;
+}
+.primary {
+  display: block;
+  padding: 11px 14px;
+  margin-top: 13px;
+  color: #fff;
+  background: #8065e9;
+  border: 0;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.success {
+  display: block;
+  margin-top: 9px;
+  color: #59a96c;
+}
+.setting {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.setting > div {
+  flex: 1;
+}
+.setting strong {
+  font-size: 12px;
+}
+.setting p {
+  margin: 3px 0;
+  color: #908c99;
+  font-size: 10px;
+  line-height: 1.4;
+}
+.switch {
+  width: 38px;
+  height: 22px;
+  padding: 3px;
+  background: #d9d4e2;
+  border: 0;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.switch i {
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+.switch.on {
+  background: #8065e9;
+}
+.switch.on i {
+  transform: translateX(16px);
+}
+.profile-grid a {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 24px;
+  color: #d56b79;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.profile-grid a span {
+  font-size: 16px;
+}
+@media (max-width: 700px) {
+  .page {
+    padding: 28px 17px 105px;
+  }
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+  .profile-head > span {
+    width: 60px;
+    height: 60px;
+  }
+}

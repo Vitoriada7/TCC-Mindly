@@ -1,0 +1,26 @@
+spring:
+    application:
+        name: tcc_backend
+
+    datasource:
+        url: jdbc:postgresql://localhost:5432/mindly
+        username: postgres
+        password: 180507
+
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+        properties:
+            hibernate:
+                format_sql: true
+
+server:
+    error:
+        include-message: always
+
+jwt:
+    public:
+        key: classpath:authz.pub
+    private:
+        key: classpath:authz.pem

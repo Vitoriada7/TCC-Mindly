@@ -1,0 +1,57 @@
+<section class="page">
+  <div class="headline">
+    <div>
+      <p class="eyebrow">SEU CAMINHO</p>
+      <h1>Progresso</h1>
+      <p>Olhe para trás com carinho e reconheça sua evolução.</p>
+    </div>
+    <div class="tabs">
+      @for (item of ['Semana', 'Mês']; track item) {
+        <button type="button" [class.active]="period() === item" (click)="period.set(item)">
+          {{ item }}
+        </button>
+      }
+    </div>
+  </div>
+  <div class="stats">
+    <article>
+      <span class="material-symbols-rounded pink">favorite</span><strong>4,2</strong
+      ><small>humor médio</small>
+    </article>
+    <article>
+      <span class="material-symbols-rounded yellow">calendar_month</span><strong>12</strong
+      ><small>registros no mês</small>
+    </article>
+    <article>
+      <span class="material-symbols-rounded green">trending_up</span><strong>+18%</strong
+      ><small>dias mais leves</small>
+    </article>
+  </div>
+  <article class="chart-card">
+    <h2>Evolução emocional</h2>
+    <svg viewBox="0 0 600 190" role="img" aria-label="Gráfico de evolução emocional">
+      <path
+        d="M10 150 C70 130,80 110,130 125 S195 145,245 92 S320 130,375 88 S465 115,510 57 S555 45,590 30 V180 H10Z"
+        fill="#e9e2ff"
+      />
+      <path
+        d="M10 150 C70 130,80 110,130 125 S195 145,245 92 S320 130,375 88 S465 115,510 57 S555 45,590 30"
+        fill="none"
+        stroke="#8065e9"
+        stroke-width="5"
+        stroke-linecap="round"
+      />
+    </svg>
+  </article>
+  <article class="moods">
+    <h2>Seus registros recentes</h2>
+    @for (mood of moods; track mood.day) {
+      <div>
+        <span>{{ mood.day }}</span
+        ><i [class]="mood.color"
+          ><span class="material-symbols-rounded">{{ mood.icon }}</span></i
+        ><small>Você se sentiu bem</small>
+      </div>
+    }
+  </article>
+</section>

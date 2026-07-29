@@ -1,0 +1,38 @@
+<section class="page">
+  <p class="eyebrow">CONSTÂNCIA GENTIL</p>
+  <h1>Seus hábitos</h1>
+  <p class="sub">Cada dia é uma nova chance. Celebre o que já conseguiu.</p>
+  <article class="celebrate">
+    <span class="material-symbols-rounded">local_fire_department</span>
+    <div>
+      <strong>7 dias de sequência!</strong>
+      <p>Você está construindo algo bonito.</p>
+    </div>
+  </article>
+  <div class="habit-list">
+    @for (habit of habits(); track habit.name) {
+      <article>
+        <span class="icon material-symbols-rounded" [class]="habit.color">{{ habit.icon }}</span>
+        <div>
+          <strong>{{ habit.name }}</strong>
+          <p>{{ countCompleted(habit) }} dias nesta semana</p>
+        </div>
+        <div class="week">
+          @for (day of days; track $index) {
+            <button
+              type="button"
+              [class.done]="habit.completed[$index]"
+              [attr.aria-label]="'Marcar ' + day"
+              (click)="toggle(habit.name, $index)"
+            >
+              <small>{{ day }}</small
+              ><span class="material-symbols-rounded">{{
+                habit.completed[$index] ? 'check' : ''
+              }}</span>
+            </button>
+          }
+        </div>
+      </article>
+    }
+  </div>
+</section>

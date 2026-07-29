@@ -1,0 +1,59 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  color: #2f2f3a;
+}
+.app-shell {
+  display: flex;
+  min-height: 100dvh;
+  background: #f8f9fc;
+}
+.workspace {
+  width: calc(100% - 252px);
+  min-height: 100dvh;
+  margin-left: 252px;
+}
+.notification-fab {
+  position: fixed;
+  z-index: 15;
+  right: 28px;
+  bottom: 28px;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  color: #7357da;
+  background: #fff;
+  border: 1px solid #ebe5ff;
+  border-radius: 50%;
+  box-shadow: 0 8px 22px rgba(91, 70, 168, 0.18);
+  cursor: pointer;
+}
+.notification-fab i {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 8px;
+  height: 8px;
+  background: #ff8fae;
+  border: 2px solid #fff;
+  border-radius: 50%;
+}
+@media (max-width: 950px) {
+  .workspace {
+    width: calc(100% - 218px);
+    margin-left: 218px;
+  }
+}
+@media (max-width: 700px) {
+  .workspace {
+    width: 100%;
+    margin-left: 0;
+  }
+  .notification-fab {
+    right: 20px;
+    bottom: 92px;
+    width: 43px;
+    height: 43px;
+  }
+}

@@ -1,0 +1,37 @@
+<section class="page">
+  <div class="intro">
+    <div><p class="eyebrow">CONSTÂNCIA GENTIL</p><h1>Seus hábitos</h1><p>Cada dia é uma nova chance. Celebre o que já conseguiu.</p></div>
+    <button class="primary" type="button" (click)="abrirCriacao()"><span class="material-symbols-rounded">add</span>Novo hábito</button>
+  </div>
+
+  @if (erro(); as mensagem) { <div class="feedback" role="alert">{{ mensagem }} <button type="button" (click)="carregar()">Tentar novamente</button></div> }
+
+  @if (!carregando() && habitos().length) {
+    <article class="celebrate"><span class="material-symbols-rounded">local_fire_department</span><div><strong>{{ sequenciaAtual() }} {{ sequenciaAtual() === 1 ? 'dia de sequência!' : 'dias de sequência!' }}</strong><p>{{ totalConcluidosSemana() }} {{ totalConcluidosSemana() === 1 ? 'marcação nesta semana.' : 'marcações nesta semana.' }}</p></div></article>
+  }
+
+  @if (carregando()) {
+    <div class="habit-list"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+  } @else if (habitos().length) {
+    <div class="habit-list">
+      @for (habito of habitos(); track habito.id) {
+        <article>
+          <span class="icon material-symbols-rounded" [class]="habito.cor">{{ habito.icone }}</span>
+          <div class="habit-copy"><strong>{{ habito.nome }}</strong><p>{{ quantidadeSemana(habito) }} {{ quantidadeSemana(habito) === 1 ? 'dia nesta semana' : 'dias nesta semana' }}</p></div>
+          <div class="week">
+            @for (dia of dias; track dia.data) {
+              <button type="button" [class.done]="estaConcluido(habito, dia.data)" [class.today]="dia.data === hojeIso" [disabled]="processando()" [attr.aria-label]="(estaConcluido(habito, dia.data) ? 'Desmarcar ' : 'Marcar ') + habito.nome + ' em ' + dia.data" (click)="alternarRegistro(habito, dia.data)"><small>{{ dia.rotulo }}</small><span class="material-symbols-rounded">{{ estaConcluido(habito, dia.data) ? 'check' : '' }}</span></button>
+            }
+          </div>
+          <div class="actions"><button type="button" (click)="abrirEdicao(habito)" aria-label="Editar hábito"><span class="material-symbols-rounded">edit</span></button><button type="button" (click)="excluir(habito)" aria-label="Excluir hábito"><span class="material-symbols-rounded">delete</span></button></div>
+        </article>
+      }
+    </div>
+  } @else {
+    <div class="empty"><span class="material-symbols-rounded">calendar_month</span><div><strong>Crie seu primeiro hábito</strong><p>Pequenas repetições podem transformar a sua rotina.</p><button class="link-button" type="button" (click)="abrirCriacao()">Adicionar hábito</button></div></div>
+  }
+</section>
+
+@if (modalAberto()) {
+  <div class="backdrop" (click)="fecharModal()"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-habito" (click)="$event.stopPropagation()"><header><div><p class="eyebrow">CONSTÂNCIA</p><h2 id="titulo-modal-habito">{{ habitoEmEdicao() ? 'Editar hábito' : 'Novo hábito' }}</h2></div><button class="close" type="button" (click)="fecharModal()" aria-label="Fechar">×</button></header><form [formGroup]="formulario" (ngSubmit)="salvar()"><label for="nome-habito">Nome</label><input id="nome-habito" formControlName="nome" maxlength="100" placeholder="Ex.: Beber água" /><div class="form-row"><div><label for="icone-habito">Ícone</label><select id="icone-habito" formControlName="icone"><option value="water_drop">Água</option><option value="self_improvement">Bem-estar</option><option value="directions_walk">Caminhada</option><option value="auto_stories">Leitura</option><option value="bedtime">Sono</option><option value="favorite">Saúde</option></select></div><div><label for="cor-habito">Cor</label><select id="cor-habito" formControlName="cor"><option value="blue">Azul</option><option value="green">Verde</option><option value="pink">Rosa</option><option value="purple">Roxo</option><option value="orange">Laranja</option></select></div></div>@if (erroFormulario(); as erroForm) { <p class="form-error" role="alert">{{ erroForm }}</p> }<footer><button class="secondary" type="button" (click)="fecharModal()">Cancelar</button><button class="primary" type="submit" [disabled]="processando()">{{ processando() ? 'Salvando...' : 'Salvar hábito' }}</button></footer></form></section></div>
+}

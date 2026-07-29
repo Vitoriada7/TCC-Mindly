@@ -1,0 +1,45 @@
+<section class="page">
+  <div class="profile-head">
+    <span>AC</span>
+    <div>
+      <p class="eyebrow">SEU ESPAÇO</p>
+      <h1>{{ name.value }}</h1>
+      <p>Estudante · cuidando de si todos os dias</p>
+    </div>
+  </div>
+  <div class="profile-grid">
+    <article>
+      <h2>Seu perfil</h2>
+      <label for="name">Como podemos te chamar?</label
+      ><input id="name" [formControl]="name" /><button
+        class="primary"
+        type="button"
+        (click)="save()"
+      >
+        Salvar alterações
+      </button>
+      @if (saved()) {
+        <small class="success">Alterações salvas!</small>
+      }
+    </article>
+    <article>
+      <h2>Configurações</h2>
+      <div class="setting">
+        <div>
+          <strong>Lembretes gentis</strong>
+          <p>Receba um lembrete diário para registrar seu humor.</p>
+        </div>
+        <button
+          class="switch"
+          type="button"
+          [class.on]="notifications()"
+          [attr.aria-pressed]="notifications()"
+          (click)="notifications.set(!notifications())"
+        >
+          <i></i>
+        </button>
+      </div>
+      <a routerLink="/login">Sair da conta <span class="material-symbols-rounded">logout</span></a>
+    </article>
+  </div>
+</section>

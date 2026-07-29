@@ -1,0 +1,166 @@
+<div class="dashboard">
+  <section class="welcome-row">
+    <div>
+      <p class="eyebrow">TERÇA-FEIRA, 21 DE JULHO</p>
+      <h1>Bom dia, Ana <span>✦</span></h1>
+      <p class="welcome-copy">Que bom ter você por aqui. Vamos fazer deste dia um dia leve?</p>
+    </div>
+    <a class="primary-button" routerLink="/diario"
+      ><span class="material-symbols-rounded">edit_note</span>Registrar meu dia</a
+    >
+  </section>
+  <section class="overview-grid" aria-label="Resumo do dia">
+    <article class="card mood-card">
+      <div class="card-heading">
+        <div>
+          <p class="eyebrow">COMO VOCÊ ESTÁ?</p>
+          <h2>Seu humor hoje</h2>
+        </div>
+        <span class="soft-icon lavender material-symbols-rounded">wb_sunny</span>
+      </div>
+      <div class="mood-answer">
+        <span class="material-symbols-rounded">{{ selectedMood().icon }}</span>
+        <div>
+          <strong>{{ selectedMood().label }}</strong>
+          <p>Como você se sente neste momento?</p>
+        </div>
+      </div>
+      <div class="mood-picker" role="group" aria-label="Selecione seu humor">
+        @for (mood of moods; track mood.label) {
+          <button
+            type="button"
+            [class.selected]="selectedMood().label === mood.label"
+            [attr.aria-label]="mood.label"
+            (click)="selectedMood.set(mood)"
+          >
+            <span class="material-symbols-rounded">{{ mood.icon }}</span>
+          </button>
+        }
+      </div>
+    </article>
+    <article class="card focus-card">
+      <div class="card-heading">
+        <div>
+          <p class="eyebrow">SEU FOCO HOJE</p>
+          <h2>Pequenos passos</h2>
+        </div>
+        <span class="soft-icon peach material-symbols-rounded">auto_awesome</span>
+      </div>
+      <p>Você tem <strong>3 prioridades</strong> para hoje. Escolha uma e comece com calma.</p>
+      <a routerLink="/tarefas"
+        >Ver minhas tarefas <span class="material-symbols-rounded">arrow_forward</span></a
+      >
+    </article>
+    <article class="card streak-card">
+      <span class="material-symbols-rounded fire">local_fire_department</span>
+      <div>
+        <p class="eyebrow">SEQUÊNCIA ATUAL</p>
+        <strong>7 dias</strong>
+        <p>registrando seus sentimentos</p>
+      </div>
+    </article>
+  </section>
+  <section class="content-grid">
+    <article class="card tasks-card">
+      <header class="section-title">
+        <div>
+          <p class="eyebrow">ORGANIZAÇÃO</p>
+          <h2>Para hoje</h2>
+        </div>
+        <a routerLink="/tarefas">Ver todas</a>
+      </header>
+      <div class="task-list">
+        @for (task of tasks(); track task.title) {
+          <button
+            class="task-item"
+            type="button"
+            [class.done]="task.done"
+            (click)="toggleTask(task.title)"
+          >
+            <span class="check"
+              ><span class="material-symbols-rounded">{{ task.done ? 'check' : '' }}</span></span
+            ><span class="task-info"
+              ><strong>{{ task.title }}</strong
+              ><small>{{ task.detail }}</small></span
+            ><span class="tag" [class.high]="task.priority === 'Alta'">{{ task.priority }}</span>
+          </button>
+        }
+      </div>
+      <button class="add-task" type="button" (click)="addTask()">
+        <span class="material-symbols-rounded">add</span>Adicionar uma tarefa
+      </button>
+    </article>
+    <article class="card progress-card">
+      <header class="section-title">
+        <div>
+          <p class="eyebrow">BEM-ESTAR</p>
+          <h2>Seu ritmo</h2>
+        </div>
+      </header>
+      <div class="tabs">
+        <button class="active" type="button">Semana</button><button type="button">Mês</button>
+      </div>
+      <svg viewBox="0 0 430 145" role="img" aria-label="Evolução positiva de segunda a domingo">
+        <defs>
+          <linearGradient id="fill" x1="0" x2="0" y1="0" y2="1">
+            <stop stop-color="#a98bff" stop-opacity=".32" />
+            <stop offset="1" stop-color="#a98bff" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M0 118 C30 96,45 105,69 83 S106 101,137 78 S178 46,207 61 S244 92,274 68 S315 35,343 47 S392 28,430 16 V145 H0Z"
+          fill="url(#fill)"
+        />
+        <path
+          d="M0 118 C30 96,45 105,69 83 S106 101,137 78 S178 46,207 61 S244 92,274 68 S315 35,343 47 S392 28,430 16"
+          fill="none"
+          stroke="#8065e9"
+          stroke-linecap="round"
+          stroke-width="4"
+        />
+      </svg>
+      <div class="chart-labels">
+        <span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span
+        ><span>Sáb</span><span>Dom</span>
+      </div>
+      <p class="progress-note">
+        <span class="material-symbols-rounded">trending_up</span>Você parece estar se sentindo
+        <strong>mais leve</strong> esta semana.
+      </p>
+    </article>
+  </section>
+  <section class="bottom-grid">
+    <article class="card habits-card">
+      <header class="section-title">
+        <div>
+          <p class="eyebrow">CONSTÂNCIA</p>
+          <h2>Seus hábitos</h2>
+        </div>
+        <a routerLink="/habitos">Ver hábitos</a>
+      </header>
+      <div class="habit">
+        <span class="habit-icon material-symbols-rounded blue">water_drop</span>
+        <div>
+          <strong>Beber água</strong>
+          <p>6 de 8 copos</p>
+        </div>
+        <b>75%</b>
+      </div>
+      <div class="habit">
+        <span class="habit-icon material-symbols-rounded green">self_improvement</span>
+        <div>
+          <strong>Pausa consciente</strong>
+          <p>5 min de respiração</p>
+        </div>
+        <button type="button" (click)="habitDone.set(!habitDone())">
+          <span class="material-symbols-rounded">{{ habitDone() ? 'check' : 'add' }}</span>
+        </button>
+      </div>
+    </article>
+    <article class="quote-card">
+      <span>“</span>
+      <p>Você não precisa fazer tudo de uma vez. Só precisa começar.</p>
+      <small>— um lembrete para hoje</small>
+    </article>
+  </section>
+</div>

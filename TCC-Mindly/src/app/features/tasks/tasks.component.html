@@ -1,0 +1,26 @@
+<section class="page">
+  <div class="intro">
+    <div>
+      <p class="eyebrow">ORGANIZAÇÃO SEM PRESSA</p>
+      <h1>Minhas tarefas</h1>
+      <p>Seu plano de hoje cabe em pequenos passos.</p>
+    </div>
+    <b>{{ completedCount() }}/{{ tasks().length }} concluídas</b>
+  </div>
+  <form class="new-task" (submit)="add(); $event.preventDefault()">
+    <input
+      [formControl]="title"
+      placeholder="O que você precisa fazer?"
+      aria-label="Nova tarefa"
+    /><button type="submit"><span class="material-symbols-rounded">add</span>Adicionar</button>
+  </form>
+  <div class="tasks">
+    @for (task of tasks(); track task.title) {
+      <button type="button" [class.done]="task.done" (click)="toggle(task.title)">
+        <span class="check material-symbols-rounded">{{ task.done ? 'check' : '' }}</span
+        ><strong>{{ task.title }}</strong
+        ><small [class]="task.priority">{{ task.priority }}</small>
+      </button>
+    }
+  </div>
+</section>

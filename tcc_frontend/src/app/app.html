@@ -1,0 +1,9 @@
+@if (rotaPublica()) {
+  <router-outlet />
+} @else {
+  <main class="app-shell">
+    <app-sidebar />
+    <section class="workspace"><router-outlet /></section>
+  </main>
+  <app-mobile-nav />
+}

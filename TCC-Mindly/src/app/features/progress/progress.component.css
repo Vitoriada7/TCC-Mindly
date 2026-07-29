@@ -1,0 +1,161 @@
+.page {
+  max-width: 850px;
+  padding: 42px 48px 100px;
+  margin: auto;
+}
+.headline {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+}
+.eyebrow {
+  margin: 0 0 7px;
+  color: #8c72df;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+h1 {
+  margin: 0;
+  font-size: 30px;
+  letter-spacing: -1px;
+}
+.headline p:last-child {
+  margin: 7px 0;
+  color: #7e7b8b;
+}
+.tabs {
+  padding: 3px;
+  background: #edeaf4;
+  border-radius: 9px;
+}
+.tabs button {
+  padding: 7px 10px;
+  color: #8e8997;
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.tabs button.active {
+  color: #6b51d4;
+  background: #fff;
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 13px;
+  margin: 27px 0 16px;
+}
+.stats article {
+  padding: 17px;
+  background: #fff;
+  border: 1px solid #eeeafa;
+  border-radius: 16px;
+}
+.stats span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+}
+.stats strong,
+.stats small {
+  display: block;
+}
+.stats strong {
+  margin-top: 11px;
+  font-size: 22px;
+}
+.stats small {
+  margin-top: 2px;
+  color: #938f9d;
+  font-size: 10px;
+}
+.pink {
+  color: #d971a1;
+  background: #fff0f6;
+}
+.yellow {
+  color: #dfaa32;
+  background: #fff6d8;
+}
+.green {
+  color: #5dac73;
+  background: #e9f9ec;
+}
+.chart-card,
+.moods {
+  padding: 22px;
+  background: #fff;
+  border: 1px solid #eeeafa;
+  border-radius: 17px;
+}
+.chart-card h2,
+.moods h2 {
+  margin: 0;
+  font-size: 15px;
+}
+.chart-card svg {
+  width: 100%;
+  margin-top: 14px;
+}
+.moods {
+  margin-top: 16px;
+}
+.moods > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0edf4;
+}
+.moods > div:last-child {
+  border: 0;
+}
+.moods > div > span {
+  width: 30px;
+  color: #938f9e;
+  font-size: 11px;
+  font-weight: 700;
+}
+.moods i {
+  display: grid;
+  place-items: center;
+  width: 31px;
+  height: 31px;
+  border-radius: 10px;
+  font-style: normal;
+}
+.moods i span {
+  font-size: 20px;
+}
+.moods small {
+  color: #767380;
+  font-size: 11px;
+}
+@media (max-width: 700px) {
+  .page {
+    padding: 28px 17px 105px;
+  }
+  .headline {
+    align-items: start;
+    gap: 13px;
+  }
+  .stats {
+    gap: 8px;
+  }
+  .stats article {
+    padding: 12px;
+  }
+  .stats strong {
+    font-size: 18px;
+  }
+  .stats small {
+    font-size: 8px;
+  }
+}

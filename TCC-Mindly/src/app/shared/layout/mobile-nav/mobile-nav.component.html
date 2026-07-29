@@ -1,0 +1,11 @@
+<nav class="mobile-nav" aria-label="Navegação rápida">
+  @for (item of items; track item.route) {
+    <a
+      [routerLink]="item.route"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+      ><span class="material-symbols-rounded">{{ item.icon }}</span
+      ><small>{{ item.label }}</small></a
+    >
+  }
+</nav>

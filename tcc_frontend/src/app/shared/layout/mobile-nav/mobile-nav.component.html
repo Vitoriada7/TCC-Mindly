@@ -1,0 +1,9 @@
+<nav class="mobile-nav" aria-label="Navegação principal">
+  @for (item of itens; track item.label) {
+    @if (item.emBreve) {
+      <button type="button" class="coming-soon" disabled title="Disponível em breve"><span class="material-symbols-rounded">{{ item.icone }}</span><small>{{ item.label }}</small></button>
+    } @else {
+      <a [routerLink]="item.rota" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.rota === '/' }"><span class="material-symbols-rounded">{{ item.icone }}</span><small>{{ item.label }}</small></a>
+    }
+  }
+</nav>

@@ -1,0 +1,19 @@
+<aside class="sidebar">
+  <a class="brand" routerLink="/" aria-label="Mindly, ir para o início">
+    <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>mindly</span>
+  </a>
+  <nav aria-label="Navegação principal">
+    @for (item of itens; track item.rotulo) {
+      @if (item.emBreve) {
+        <button class="nav-link coming-soon" type="button" disabled><span class="material-symbols-rounded">{{ item.icone }}</span>{{ item.rotulo }}</button>
+      } @else {
+        <a class="nav-link" [routerLink]="item.rota" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.rota === '/' }"><span class="material-symbols-rounded">{{ item.icone }}</span>{{ item.rotulo }}</a>
+      }
+    }
+  </nav>
+  <div class="sidebar-bottom">
+    <section class="support-card"><span class="material-symbols-rounded">favorite</span><strong>Você não está só.</strong><p>Cuide de você hoje, no seu ritmo.</p></section>
+    <a class="profile-button" routerLink="/perfil"><span class="avatar material-symbols-rounded">person</span><span><strong>Sua conta</strong><small>Ver perfil</small></span><span class="material-symbols-rounded more">more_horiz</span></a>
+    <button class="logout-button" type="button" (click)="sair()"><span class="material-symbols-rounded">logout</span>Sair da conta</button>
+  </div>
+</aside>

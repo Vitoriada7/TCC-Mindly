@@ -1,0 +1,29 @@
+<aside class="sidebar" [class.is-open]="isOpen()">
+  <a class="brand" routerLink="/" (click)="closed.emit()" aria-label="Mindly, ir para o início">
+    <span class="brand-mark"><span></span><span></span><span></span></span><span>mindly</span>
+  </a>
+  <nav aria-label="Navegação principal">
+    @for (item of navigation; track item.route) {
+      <a
+        class="nav-link"
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+        (click)="closed.emit()"
+        ><span class="material-symbols-rounded">{{ item.icon }}</span
+        >{{ item.label }}</a
+      >
+    }
+  </nav>
+  <div class="sidebar-bottom">
+    <section class="support-card">
+      <span class="material-symbols-rounded">favorite</span><strong>Você não está só.</strong>
+      <p>Cuide de você hoje, no seu ritmo.</p>
+      <button type="button">Ver recursos</button>
+    </section>
+    <a class="profile-button" routerLink="/perfil" (click)="closed.emit()"
+      ><span class="avatar">AC</span><span><strong>Ana Clara</strong><small>Ver perfil</small></span
+      ><span class="material-symbols-rounded more">more_horiz</span></a
+    >
+  </div>
+</aside>

@@ -1,0 +1,5 @@
+.app-shell { display: flex; width: 100%; min-height: 100dvh; background: #f8f9fc; }
+.workspace { width: calc(100% - 252px); min-height: 100dvh; margin-left: 252px; }
+
+@media (max-width: 950px) { .workspace { width: calc(100% - 218px); margin-left: 218px; } }
+@media (max-width: 700px) { .workspace { width: 100%; margin-left: 0; } }
