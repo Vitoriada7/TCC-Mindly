@@ -45,6 +45,18 @@ export const routes: Routes = [
       import('./features/emocional/emocional.routes').then((m) => m.rotasEmocional),
   },
   {
+    path: 'conquistas',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./features/conquistas/conquistas.routes').then((m) => m.rotasConquistas),
+  },
+  {
+    path: 'apoio',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./features/apoio/apoio.routes').then((m) => m.rotasApoio),
+  },
+  {
     path: 'perfil',
     canActivate: [authGuard],
     loadChildren: () => import('./features/perfil/perfil.routes').then((m) => m.rotasPerfil),

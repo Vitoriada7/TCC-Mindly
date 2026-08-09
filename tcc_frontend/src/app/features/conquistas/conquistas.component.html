@@ -1,0 +1,22 @@
+<div class="page">
+  <div class="intro">
+    <div>
+      <p class="eyebrow">CONQUISTAS</p>
+      <h1>Veja seus pequenos avanços.</h1>
+      <p>Conquistas mostram como seus esforços respiram junto com o seu ritmo. Celebre cada etapa com tranquilidade.</p>
+    </div>
+  </div>
+
+  <section class="cards-grid" aria-label="Lista de conquistas">
+    @for (conquista of ordenarConquistas(); track conquista.titulo) {
+      <article class="achievement-card" [class.concluida]="conquista.status === 'CONCLUIDA'" [class.desbloqueada]="conquista.status === 'DESBLOQUEADA'">
+        <span class="material-symbols-rounded" aria-hidden="true">{{ conquista.icone }}</span>
+        <div class="achievement-copy">
+          <h2>{{ conquista.titulo }}</h2>
+          <p>{{ conquista.descricao }}</p>
+        </div>
+        <span class="status-label">{{ conquista.status === 'CONCLUIDA' ? 'Concluída' : conquista.status === 'DESBLOQUEADA' ? 'Em andamento' : 'Bloqueada' }}</span>
+      </article>
+    }
+  </section>
+</div>

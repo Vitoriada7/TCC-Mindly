@@ -25,6 +25,31 @@ export class TarefasComponent {
   protected readonly concluindoIds = signal<ReadonlySet<number>>(new Set());
   protected readonly processando = signal(false);
   protected readonly modalTarefaAberto = signal(false);
+  protected readonly diaSelecionado = signal(new Date());
+  protected readonly tarefasFiltradas = computed(() => {
+    const selecionado = this.diaSelecionado();
+    return this.tarefas().filter((tarefa) => {
+      if (!tarefa.dataLimite) return true;
+      const limite = new Date(tarefa.dataLimite);
+      return limite.toDateString() === selecionado.toDateString();
+    });
+  });
+  protected readonly diasCalendario = computed(() => {
+    const selecionado = new Date(this.diaSelecionado());
+    const inicio = new Date(selecionado);
+    inicio.setDate(selecionado.getDate() - 3);
+    return Array.from({ length: 7 }, (_, index) => {
+      const data = new Date(inicio);
+      data.setDate(inicio.getDate() + index);
+      return {
+        iso: data.toISOString(),
+        weekday: new Intl.DateTimeFormat('pt-BR', { weekday: 'short' }).format(data),
+        day: data.getDate(),
+        month: new Intl.DateTimeFormat('pt-BR', { month: 'short' }).format(data).replace('.', ''),
+        date: data,
+      };
+    });
+  });
   protected readonly modalCategoriasAberto = signal(false);
   protected readonly tarefaEmEdicao = signal<Tarefa | null>(null);
   protected readonly erroFormulario = signal<string | null>(null);
@@ -91,6 +116,12 @@ export class TarefasComponent {
   }
 
   protected editarCategoria(categoria: Categoria): void { this.categoriaEditadaId.set(categoria.id); this.formularioCategoria.setValue({ nome: categoria.nome }); }
+
+  protected selecionarDia(data: Date): void { this.diaSelecionado.set(new Date(data)); }
+
+  protected diaAtivo(data: Date): boolean {
+    return data.toDateString() === this.diaSelecionado().toDateString();
+  }
   protected salvarCategoria(): void {
     if (this.formularioCategoria.invalid) { this.formularioCategoria.markAllAsTouched(); return; }
     const id = this.categoriaEditadaId(); const nome = this.formularioCategoria.getRawValue().nome.trim();

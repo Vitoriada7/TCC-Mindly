@@ -1,0 +1,36 @@
+<div class="page">
+  @if (toastVisivel()) {
+    <div class="toast-overlay" role="status" aria-live="polite">
+      <div class="toast-card"><strong>Registro concluído</strong><p>{{ toastMensagem() }}</p><button class="toast-close" type="button" aria-label="Fechar notificação" (click)="fecharToast()"><span class="material-symbols-rounded" aria-hidden="true">close</span></button></div>
+    </div>
+  }
+
+  <header class="page-header">
+    <p class="eyebrow">SEU MOMENTO</p>
+    <h1>Como foi seu dia?</h1>
+    <p>Não existe resposta certa. Este espaço é só seu.</p>
+  </header>
+
+  <section class="check-in-card" aria-labelledby="check-in-title">
+    <div class="section-heading"><div><p class="eyebrow">CHECK-IN EMOCIONAL</p><h2 id="check-in-title">Escolha o que mais combina com agora</h2></div><span class="material-symbols-rounded" aria-hidden="true">favorite</span></div>
+    <div class="mood-grid">
+      @for (humor of humores; track humor.value) {
+        <button type="button" class="mood-button" [class.active]="humorSelecionado() === humor.value" (click)="selecionarHumor(humor.value)" [attr.aria-pressed]="humorSelecionado() === humor.value">
+          <span class="material-symbols-rounded" aria-hidden="true">{{ humor.icon }}</span><strong>{{ humor.label }}</strong>
+        </button>
+      }
+    </div>
+    <p class="result">{{ resumo() }}</p>
+    <a class="primary" routerLink="registro"><span class="material-symbols-rounded" aria-hidden="true">edit_note</span> Registrar meu dia</a>
+  </section>
+
+  <section class="calendar-card" aria-labelledby="registros-title">
+    <div class="section-heading"><div><p class="eyebrow">SEUS REGISTROS</p><h2 id="registros-title">{{ mesAtual() }}</h2></div><span class="material-symbols-rounded calendar-icon" aria-hidden="true">calendar_month</span></div>
+    <div class="calendar-grid" aria-label="Calendário de registros">
+      @for (dia of diasSemana; track dia) { <span class="weekday">{{ dia }}</span> }
+      @for (shift of primeirosDias(); track $index) { <span class="day empty"></span> }
+      @for (dia of diasDoMes(); track dia) { <span class="day" [class.registered]="diasRegistrados().has(dia)">{{ dia }}</span> }
+    </div>
+    <p class="calendar-footer"><span class="dot"></span>Dias em que você reservou um momento para si.</p>
+  </section>
+</div>

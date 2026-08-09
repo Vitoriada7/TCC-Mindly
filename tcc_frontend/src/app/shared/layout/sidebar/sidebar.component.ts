@@ -18,7 +18,8 @@ export class SidebarComponent {
   protected readonly itens: ItemNavegacao[] = [
     { rotulo: 'Início', icone: 'home', rota: '/' },
     { rotulo: 'Emoções', icone: 'edit_note', rota: '/emocional' },
-    { rotulo: 'Conversar com a IA', icone: 'chat_bubble', emBreve: true },
+    { rotulo: 'Conquistas', icone: 'emoji_events', rota: '/conquistas' },
+    { rotulo: 'Centros de apoio', icone: 'support_agent', rota: '/apoio' },
     { rotulo: 'Minhas tarefas', icone: 'check_circle', rota: '/tarefas' },
     { rotulo: 'Hábitos', icone: 'calendar_month', rota: '/habitos' },
     { rotulo: 'Progresso', icone: 'bar_chart', emBreve: true },

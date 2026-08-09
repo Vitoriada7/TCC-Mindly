@@ -1,0 +1,18 @@
+<div class="page">
+  <div class="progress-track" aria-label="Progresso do registro"><div class="progress-fill" [style.width.%]="progressPercent()"></div></div>
+  <header class="flow-header"><a routerLink=".." class="back-link" aria-label="Voltar para o diário emocional"><span class="material-symbols-rounded" aria-hidden="true">arrow_back</span></a><div><p class="eyebrow">REGISTRO DIÁRIO</p><h1>{{ tituloAtual }}</h1></div></header>
+  <section class="step-card">
+    @if (passo() === 1) {
+      <p class="hint">Escolha as emoções que melhor descrevem como você está se sentindo agora.</p>
+      <div class="emotion-row">@for (sentimento of sentimentos; track sentimento.value) { <button type="button" class="emotion-button" [class.active]="sentimentoSelecionado() === sentimento.value" (click)="selecionarSentimento(sentimento.value)" [attr.aria-pressed]="sentimentoSelecionado() === sentimento.value"><span class="material-symbols-rounded" aria-hidden="true">{{ sentimento.icon }}</span><strong>{{ sentimento.label }}</strong></button> }</div>
+      <p class="other-label">Outras opções</p><div class="sentiments-row">@for (sentimento of sentimentosEspecificos; track sentimento) { <button type="button" class="sentiment-chip" [class.active]="sentimentoDetalhadoSelecionado() === sentimento" (click)="selecionarDetalhe(sentimento)">{{ sentimento }}</button> }</div>
+    } @else if (passo() === 2) {
+      <p class="hint">Escreva sobre seus sentimentos hoje. Não existe certo ou errado aqui.</p><textarea rows="10" placeholder="Como foi seu dia? O que passou pela sua cabeça?" [value]="pensamento()" (input)="atualizarPensamento($event)"></textarea><aside class="tip"><span class="material-symbols-rounded" aria-hidden="true">lightbulb</span><p><strong>Dica:</strong> escreva livremente, este espaço é seu.</p></aside>
+    } @else if (passo() === 3) {
+      <p class="hint">Explore seus sentimentos no seu ritmo. Responda apenas ao que fizer sentido para você.</p>@for (item of perguntas; track item.titulo; let index = $index) { <article class="reflection-card"><span class="material-symbols-rounded" aria-hidden="true">auto_awesome</span><div><h2>{{ item.titulo }}</h2><p>{{ item.texto }}</p></div><textarea rows="3" placeholder="Escreva se quiser..." [value]="exploracoes()[index]" (input)="atualizarExploracao(index, $event)"></textarea></article> }
+    } @else {
+      <p class="hint">Finalize seu registro com uma breve reflexão sobre o que deseja levar adiante.</p><textarea rows="10" placeholder="Diga o que vier na sua mente :)" [value]="reflexao()" (input)="atualizarReflexao($event)"></textarea>
+    }
+  </section>
+  <footer class="actions-row">@if (passo() > 1) { <button class="secondary" type="button" (click)="voltar()">Voltar</button> }<button class="primary" type="button" (click)="avancar()" [disabled]="!podeAvancar()">{{ passo() === 1 ? 'Estou me sentindo assim' : passo() < 4 ? 'Continuar' : 'Finalizar' }}<span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span></button></footer>
+</div>

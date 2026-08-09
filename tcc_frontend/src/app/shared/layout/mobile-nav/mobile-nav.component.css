@@ -1,27 +1,6 @@
-.mobile-nav { display: none; }
-
-@media (max-width: 700px) {
-  .mobile-nav {
-    position: fixed;
-    z-index: 20;
-    right: 13px;
-    bottom: 14px;
-    left: 13px;
-    display: flex;
-    justify-content: space-around;
-    padding: 9px 6px;
-    border: 1px solid #eee9ff;
-    border-radius: 999px;
-    background: rgb(255 255 255 / 94%);
-    box-shadow: 0 14px 38px rgb(86 65 160 / 24%);
-    backdrop-filter: blur(12px);
-  }
-
-  .mobile-nav a,.mobile-nav button { display: grid; place-items: center; gap: 2px; min-width: 48px; padding: 5px 3px; border: 0; border-radius: 999px; color: #8e8a9c; background: none; font: inherit; text-decoration: none; cursor: pointer; }
-  .mobile-nav .material-symbols-rounded { font-size: 21px; }
-  .mobile-nav small { font-size: 9px; font-weight: 700; }
-  .mobile-nav a.active { color: #fff; background: linear-gradient(135deg, #8065e9, #a788ff); box-shadow: 0 4px 10px #8065e955; }
-  .mobile-nav a:nth-child(2).active { background: linear-gradient(135deg, #64a7d7, #8bc5eb); box-shadow: 0 4px 10px #64a7d755; }
-  .mobile-nav a:nth-child(5).active { background: linear-gradient(135deg, #e3a643, #f2c56c); box-shadow: 0 4px 10px #e3a64355; }
-  .mobile-nav .coming-soon { cursor: not-allowed; opacity: .55; }
+.mobile-nav,.mobile-drawer,.drawer-backdrop { display:none; }
+@media (max-width:700px) {
+  .mobile-nav { position:fixed; z-index:30; right:13px; bottom:14px; left:13px; display:flex; justify-content:space-around; padding:8px; border:1px solid #eee9ff; border-radius:999px; background:rgb(255 255 255 / 94%); box-shadow:0 14px 38px rgb(86 65 160 / 24%); backdrop-filter:blur(12px); }
+  .mobile-nav a,.more-button { display:grid; place-items:center; width:46px; height:42px; padding:0; border:0; border-radius:999px; color:#8e8a9c; background:transparent; text-decoration:none; cursor:pointer; }.mobile-nav .material-symbols-rounded { font-size:22px; }.mobile-nav a.active,.more-button.active { color:#fff; background:#8065e9; box-shadow:0 5px 12px rgba(128,101,233,.28); }
+  .drawer-backdrop { position:fixed; z-index:39; inset:0; display:block; background:rgba(37,29,65,.28); backdrop-filter:blur(2px); }.mobile-drawer { position:fixed; z-index:40; top:0; right:0; bottom:0; display:flex; flex-direction:column; width:min(86vw,360px); padding:25px 20px 28px; background:#fff; box-shadow:-18px 0 42px rgba(48,35,94,.2); animation:drawer-in .24s ease-out; }.drawer-header { display:flex; align-items:center; gap:12px; padding:10px 0 22px; border-bottom:1px solid #f0edf7; }.avatar { display:grid; flex:0 0 auto; place-items:center; width:48px; height:48px; border-radius:17px; color:#fff; background:linear-gradient(135deg,#8065e9,#a98bff); font-size:15px; font-weight:800; }.drawer-header strong,.drawer-header small { display:block; }.drawer-header strong { color:#36313f; font-size:14px; }.drawer-header small { max-width:168px; margin-top:3px; overflow:hidden; color:#8c8796; font-size:11px; text-overflow:ellipsis; white-space:nowrap; }.close-drawer { display:grid; place-items:center; width:36px; height:36px; margin-left:auto; border:0; border-radius:12px; color:#6d5ab3; background:#f2efff; cursor:pointer; }.profile-link { display:flex; align-items:center; gap:10px; padding:14px; margin:20px 0 24px; border-radius:16px; color:#6046bc; background:#f5f2ff; font-size:12px; font-weight:800; text-decoration:none; }.profile-link .arrow { margin-left:auto; font-size:17px; }.drawer-label { margin:0 0 10px; color:#9892a4; font-size:10px; font-weight:800; letter-spacing:.13em; }.drawer-links { display:grid; gap:5px; }.drawer-links a { display:flex; align-items:center; gap:12px; padding:13px 10px; border-radius:12px; color:#514b5c; font-size:13px; font-weight:700; text-decoration:none; }.drawer-links a:hover { color:#7054d3; background:#f7f5ff; }.drawer-links .material-symbols-rounded { color:#8065e9; font-size:20px; }.drawer-footer { display:grid; gap:14px; margin-top:auto; }.drawer-footer p { margin:0; color:#9792a0; font-size:11px; }.drawer-footer button { display:flex; align-items:center; gap:9px; width:100%; padding:13px 10px; border:0; border-radius:13px; color:#b14e64; background:#fff2f4; font:inherit; font-size:12px; font-weight:800; cursor:pointer; }@keyframes drawer-in { from { transform:translateX(100%); } to { transform:translateX(0); } }
 }
