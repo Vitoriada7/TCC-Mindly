@@ -1,6 +1,6 @@
 :host { display:block; min-height:100dvh; background:#f8f9fc; color:#2f2f3a; }
 .page { max-width:820px; margin:0 auto; padding:42px 40px 112px; display:grid; gap:18px; }
-.page-header { padding:30px; border-radius:30px; background:linear-gradient(135deg,#f4d5f7 0%,#c9b0ff 45%,#8f6bff 100%); box-shadow:0 24px 50px rgba(127,90,183,.14); }
+.page-header { padding:30px; margin-bottom:6px; border-radius:30px; background:linear-gradient(135deg,#f4d5f7 0%,#c9b0ff 45%,#8f6bff 100%); box-shadow:0 24px 50px rgba(127,90,183,.14); }
 .eyebrow { margin:0 0 7px; color:#7652de; font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
 .page-header h1,.section-heading h2 { margin:0; letter-spacing:-1px; }.page-header h1 { font-size:32px; }.page-header > p:last-child { margin:8px 0 0; color:#5f5a76; }
 .check-in-card,.calendar-card { padding:26px; border:1px solid #eeeafa; border-radius:26px; background:#fff; box-shadow:0 18px 42px rgba(54,45,94,.06); }

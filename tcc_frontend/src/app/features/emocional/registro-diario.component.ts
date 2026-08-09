@@ -3,6 +3,10 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 type Sentimento = { label: string; value: string; icon: string; description: string };
 type Pergunta = { titulo: string; texto: string };
+type EstadoAudio = 'idle' | 'recording' | 'transcribing' | 'complete' | 'error';
+type SpeechRecognitionResultEventLike = Event & { results: { length: number; [index: number]: { [index: number]: { transcript: string } } }; resultIndex: number };
+type SpeechRecognitionLike = { lang: string; interimResults: boolean; continuous: boolean; start(): void; stop(): void; onresult: ((event: SpeechRecognitionResultEventLike) => void) | null; onend: (() => void) | null; onerror: (() => void) | null };
+type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
 
 @Component({
   selector: 'app-registro-diario',
@@ -20,6 +24,12 @@ export class RegistroDiarioComponent {
   protected readonly pensamento = signal('');
   protected readonly exploracoes = signal(['', '', '']);
   protected readonly reflexao = signal('');
+  protected readonly estadoAudio = signal<EstadoAudio>('idle');
+  protected readonly transcricao = signal('');
+  protected readonly mensagemAudio = signal('');
+  private mediaRecorder: MediaRecorder | null = null;
+  private reconhecimento: SpeechRecognitionLike | null = null;
+  private trechosTranscritos = '';
 
   protected readonly sentimentos: Sentimento[] = [
     { label: 'Radiante', value: 'radiante', icon: 'sentiment_very_satisfied', description: 'Me sinto leve e feliz.' },
@@ -73,6 +83,70 @@ export class RegistroDiarioComponent {
   protected atualizarPensamento(event: Event): void {
     const target = event.target as HTMLTextAreaElement;
     this.pensamento.set(target.value);
+  }
+
+  protected async alternarGravacao(): Promise<void> {
+    if (this.estadoAudio() === 'recording') {
+      this.pararGravacao();
+      return;
+    }
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+      this.estadoAudio.set('error');
+      this.mensagemAudio.set('A gravação de áudio não é compatível com este navegador.');
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.mediaRecorder = new MediaRecorder(stream);
+      this.mediaRecorder.onstop = () => stream.getTracks().forEach((track) => track.stop());
+      this.mediaRecorder.start();
+      this.trechosTranscritos = '';
+      this.transcricao.set('');
+      this.mensagemAudio.set('Gravando seu relato… toque novamente para finalizar.');
+      this.estadoAudio.set('recording');
+      this.iniciarTranscricao();
+    } catch {
+      this.estadoAudio.set('error');
+      this.mensagemAudio.set('Não foi possível acessar o microfone. Verifique a permissão e tente novamente.');
+    }
+  }
+
+  private iniciarTranscricao(): void {
+    const reconhecimentoGlobal = window as Window & { SpeechRecognition?: SpeechRecognitionConstructor; webkitSpeechRecognition?: SpeechRecognitionConstructor };
+    const ConstrutorReconhecimento = reconhecimentoGlobal.SpeechRecognition ?? reconhecimentoGlobal.webkitSpeechRecognition;
+    if (!ConstrutorReconhecimento) return;
+
+    this.reconhecimento = new ConstrutorReconhecimento();
+    this.reconhecimento.lang = 'pt-BR';
+    this.reconhecimento.interimResults = true;
+    this.reconhecimento.continuous = true;
+    this.reconhecimento.onresult = (event) => {
+      let texto = '';
+      for (let index = event.resultIndex; index < event.results.length; index += 1) texto += event.results[index][0].transcript;
+      this.transcricao.set(`${this.trechosTranscritos} ${texto}`.trim());
+    };
+    this.reconhecimento.onerror = () => this.mensagemAudio.set('O áudio foi gravado, mas a transcrição não está disponível neste navegador.');
+    this.reconhecimento.onend = () => {
+      if (this.estadoAudio() === 'transcribing') this.finalizarTranscricao();
+    };
+    this.reconhecimento.start();
+  }
+
+  private pararGravacao(): void {
+    this.mediaRecorder?.stop();
+    this.reconhecimento?.stop();
+    this.estadoAudio.set('transcribing');
+    this.mensagemAudio.set('Transcrevendo seu relato…');
+    if (!this.reconhecimento) window.setTimeout(() => this.finalizarTranscricao(), 900);
+  }
+
+  private finalizarTranscricao(): void {
+    const texto = this.transcricao().trim();
+    this.estadoAudio.set('complete');
+    this.mensagemAudio.set(texto ? 'Transcrição pronta. Você pode continuar editando o seu relato.' : 'Áudio gravado. A transcrição não foi identificada neste navegador.');
+    if (texto && !this.pensamento().includes(texto)) this.pensamento.update((atual) => `${atual}${atual ? '\n\n' : ''}${texto}`);
   }
 
   protected atualizarExploracao(index: number, event: Event): void {
