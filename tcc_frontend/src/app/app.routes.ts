@@ -57,6 +57,12 @@ export const routes: Routes = [
       import('./features/apoio/apoio.routes').then((m) => m.rotasApoio),
   },
   {
+    path: 'recursos',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./features/recursos/recursos.routes').then((m) => m.rotasRecursos),
+  },
+  {
     path: 'perfil',
     canActivate: [authGuard],
     loadChildren: () => import('./features/perfil/perfil.routes').then((m) => m.rotasPerfil),

@@ -15,6 +15,7 @@ export class MobileNavComponent {
   ];
   protected readonly atalhos: ItemNavegacao[] = [
     { label: 'Conquistas', icone: 'emoji_events', rota: '/conquistas' }, { label: 'Centros de apoio', icone: 'support_agent', rota: '/apoio' }, { label: 'Meu perfil', icone: 'person', rota: '/perfil' },
+    { label: 'Recursos', icone: 'spa', rota: '/recursos' },
   ];
   protected readonly showMore = signal(false);
   protected readonly usuario = this.usuarioService.usuario;
