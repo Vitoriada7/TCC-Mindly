@@ -1,0 +1,22 @@
+<main class="page">
+  <header class="page-header"><p class="eyebrow">RECURSOS PARA O SEU RITMO</p><h1>Práticas para cuidar de você.</h1><p>Escolha uma técnica breve. Você não precisa fazer tudo: um pequeno momento já pode mudar o ritmo do seu dia.</p></header>
+
+  <section class="intro-card" aria-label="Como usar os recursos"><span class="material-symbols-rounded" aria-hidden="true">spa</span><div><strong>Faça no seu tempo e transforme em hábito.</strong><p>Os botões de “adicionar” preenchem automaticamente um novo hábito com a prática escolhida.</p></div></section>
+
+  <section class="resources-list" aria-label="Técnicas de mindfulness">
+    @for (categoria of categorias; track categoria) {
+      <section class="category-section" [attr.aria-label]="categoria">
+        <div class="category-heading"><h2>{{ categoria }}</h2><span>Deslize para explorar</span></div>
+        <div class="horizontal-scroll">
+          @for (recurso of recursosPorCategoria(categoria); track recurso.titulo) {
+            <article class="resource-banner" [class]="recurso.cor">
+              <div class="banner-icon"><span class="material-symbols-rounded" aria-hidden="true">{{ recurso.icone }}</span></div>
+              <div class="banner-content"><h3>{{ recurso.titulo }}</h3><p class="description">{{ recurso.descricao }}</p><ol><li>{{ recurso.passos[0] }}</li><li>{{ recurso.passos[1] }}</li><li>{{ recurso.passos[2] }}</li></ol><span class="duration"><span class="material-symbols-rounded" aria-hidden="true">schedule</span>{{ recurso.duracao }}</span></div>
+              <a class="create-habit" routerLink="/habitos" [queryParams]="{ novo: 'true', nome: recurso.habito, icone: recurso.icone, cor: recurso.corHabito }" [attr.aria-label]="'Criar o hábito ' + recurso.habito" title="Criar como hábito"><span class="material-symbols-rounded" aria-hidden="true">add</span></a>
+            </article>
+          }
+        </div>
+      </section>
+    }
+  </section>
+</main>

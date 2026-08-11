@@ -14,3 +14,6 @@
 .section-title a, .empty-habits a { color: #7559de; font-size: 11px; font-weight: 700; text-decoration: none; }.habits-summary { display: flex; align-items: center; gap: 12px; min-height: 79px; }.habits-summary > span { color: #f1a34e; font-size: 31px; }.habits-summary strong, .empty-habits strong { display: block; font-size: 13px; }.habits-summary p, .empty-habits p { margin: 4px 0; color: #898796; font-size: 12px; line-height: 1.5; }
 
 .task-item.overdue { background: #fffafb; }.tag.overdue { color: #c45c69; background: #fff0f2; }
+
+.welcome-row { padding:26px; border-radius:28px; background:linear-gradient(135deg,#f4d5f7 0%,#c9b0ff 45%,#8f6bff 100%); box-shadow:0 24px 50px rgba(127,90,183,.14); }.welcome-row .eyebrow { color:#6f4bd7; }.welcome-row .welcome-copy { color:#5f5a76; }
+.header-register { color:#6548bc; background:rgba(255,255,255,.84); box-shadow:0 8px 18px rgba(91,63,170,.12); }.header-register:hover { background:#fff; }

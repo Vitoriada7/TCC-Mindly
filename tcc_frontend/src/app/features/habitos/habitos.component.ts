@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
 import { Habito } from './models/habito.models';
 import { HabitoApiService } from './services/habito-api.service';
@@ -16,6 +17,7 @@ type DiaSemana = { data: string; rotulo: string; dia: number };
 export class HabitosComponent {
   private readonly habitoApi = inject(HabitoApiService);
   private readonly formBuilder = inject(FormBuilder).nonNullable;
+  private readonly route = inject(ActivatedRoute);
   private readonly hoje = new Date();
 
   protected readonly carregando = signal(true);
@@ -37,7 +39,16 @@ export class HabitosComponent {
     cor: ['green', [Validators.required, Validators.maxLength(30)]],
   });
 
-  constructor() { this.carregar(); }
+  constructor() {
+    this.carregar();
+    this.route.queryParamMap.subscribe((params) => {
+      if (params.get('novo') !== 'true') return;
+      this.habitoEmEdicao.set(null);
+      this.erroFormulario.set(null);
+      this.formulario.reset({ nome: params.get('nome') ?? '', icone: params.get('icone') ?? 'self_improvement', cor: params.get('cor') ?? 'green' });
+      this.modalAberto.set(true);
+    });
+  }
 
   protected abrirCriacao(): void {
     this.habitoEmEdicao.set(null);

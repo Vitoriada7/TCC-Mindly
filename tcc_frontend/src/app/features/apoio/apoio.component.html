@@ -1,0 +1,56 @@
+<div class="page">
+  <div class="intro">
+    <div>
+      <p class="eyebrow">CENTROS DE APOIO</p>
+      <h1>Você pode buscar apoio quando precisar.</h1>
+      <p>Encontre contatos e serviços especializados para cuidar da sua saúde emocional com segurança.</p>
+    </div>
+  </div>
+
+  <section class="grid-layout">
+    <article class="card map-card">
+      <header class="card-heading">
+        <div><p class="eyebrow">ENCONTRAR</p><h2>Centro de apoio mais próximo</h2></div>
+      </header>
+      <div class="map-placeholder" aria-label="Mapa de localização">
+        <span class="material-symbols-rounded" aria-hidden="true">map</span>
+        <p>Mapa de centros de apoio disponível em breve.</p>
+      </div>
+      <div class="center-summary">
+        <h3>{{ centros[0].nome }}</h3>
+        <p>{{ centros[0].endereco }}</p>
+        <span>{{ centros[0].distancia }}</span>
+      </div>
+      <a class="link-button" [href]="'tel:' + centros[0].telefone">Ligar agora</a>
+    </article>
+
+    <article class="card contact-card">
+      <header class="card-heading">
+        <div><p class="eyebrow">CONTATOS</p><h2>Linhas de apoio</h2></div>
+      </header>
+      <div class="support-list">
+        @for (centro of centros; track centro.nome) {
+          <div class="support-item">
+            <div>
+              <h3>{{ centro.nome }}</h3>
+              <p>{{ centro.tipo }} · {{ centro.endereco }}</p>
+            </div>
+            <a class="call-button" [href]="'tel:' + centro.telefone">Ligar</a>
+          </div>
+        }
+      </div>
+    </article>
+  </section>
+
+  <section class="info-card">
+    <div class="card-heading"><div><p class="eyebrow">NÚMEROS DE EMERGÊNCIA</p><h2>Contatos pessoais</h2></div></div>
+    <div class="contact-grid">
+      @for (contato of contatosImportantes; track contato.telefone) {
+        <article class="contact-card-item">
+          <div><strong>{{ contato.nome }}</strong><p>{{ contato.telefone }}</p></div>
+          <a [href]="'tel:' + contato.telefone">Ligar</a>
+        </article>
+      }
+    </div>
+  </section>
+</div>

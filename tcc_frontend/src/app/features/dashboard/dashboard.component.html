@@ -5,9 +5,9 @@
       <h1>{{ saudacao() }}@if (apelido()) {, {{ apelido() }}} <span>✦</span></h1>
       <p class="welcome-copy">Que bom ter você por aqui. Vamos fazer deste dia um dia leve?</p>
     </div>
-    <button class="primary-button" type="button" disabled title="O registro emocional será disponibilizado em breve">
+    <a class="primary-button header-register" routerLink="/emocional/registro">
       <span class="material-symbols-rounded" aria-hidden="true">edit_note</span> Registrar meu dia
-    </button>
+    </a>
   </section>
 
   @if (erro(); as mensagemErro) {

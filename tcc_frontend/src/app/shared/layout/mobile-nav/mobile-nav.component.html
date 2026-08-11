@@ -1,9 +1,26 @@
 <nav class="mobile-nav" aria-label="Navegação principal">
   @for (item of itens; track item.label) {
-    @if (item.emBreve) {
-      <button type="button" class="coming-soon" disabled title="Disponível em breve"><span class="material-symbols-rounded">{{ item.icone }}</span><small>{{ item.label }}</small></button>
+    @if (item.label === 'Mais') {
+      <button type="button" class="more-button" [class.active]="showMore()" (click)="toggleMore()" aria-label="Abrir mais opções" [attr.aria-expanded]="showMore()"><span class="material-symbols-rounded" aria-hidden="true">{{ item.icone }}</span></button>
     } @else {
-      <a [routerLink]="item.rota" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.rota === '/' }"><span class="material-symbols-rounded">{{ item.icone }}</span><small>{{ item.label }}</small></a>
+      <a [routerLink]="item.rota" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.rota === '/' }" [attr.aria-label]="item.label"><span class="material-symbols-rounded" aria-hidden="true">{{ item.icone }}</span></a>
     }
   }
 </nav>
+
+@if (showMore()) {
+  <div class="drawer-backdrop" (click)="closeMore()"></div>
+  <aside class="mobile-drawer" aria-label="Menu e perfil" (click)="$event.stopPropagation()">
+    <header class="drawer-header">
+      <div class="avatar">{{ iniciais() }}</div>
+      <div><strong>{{ nomeUsuario() }}</strong><small>{{ emailUsuario() }}</small></div>
+      <button type="button" class="close-drawer" (click)="closeMore()" aria-label="Fechar menu"><span class="material-symbols-rounded" aria-hidden="true">close</span></button>
+    </header>
+    <a class="profile-link" routerLink="/perfil" (click)="closeMore()"><span class="material-symbols-rounded" aria-hidden="true">person</span> Ver meu perfil <span class="material-symbols-rounded arrow" aria-hidden="true">arrow_forward</span></a>
+    <p class="drawer-label">NAVEGAR</p>
+    <nav class="drawer-links" aria-label="Atalhos disponíveis">
+      @for (atalho of atalhos; track atalho.label) { <a [routerLink]="atalho.rota" (click)="closeMore()"><span class="material-symbols-rounded" aria-hidden="true">{{ atalho.icone }}</span>{{ atalho.label }}</a> }
+    </nav>
+    <div class="drawer-footer"><p>Seu espaço, no seu ritmo.</p><button type="button" (click)="sair()"><span class="material-symbols-rounded" aria-hidden="true">logout</span>Sair da conta</button></div>
+  </aside>
+}

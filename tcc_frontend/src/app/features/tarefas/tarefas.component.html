@@ -1,5 +1,37 @@
 <section class="page">
-  <div class="intro"><div><p class="eyebrow">ORGANIZAÇÃO SEM PRESSA</p><h1>Minhas tarefas</h1><p>Seu plano de hoje cabe em pequenos passos.</p></div><div class="intro-actions"><button class="icon-action" type="button" (click)="abrirCategorias()"><span class="material-symbols-rounded">label</span> Categorias</button><button class="primary" type="button" (click)="abrirCriacao()"><span class="material-symbols-rounded">add</span> Nova tarefa</button></div></div>
+  <div class="intro">
+    <div class="intro-copy">
+      <p class="eyebrow">ORGANIZAÇÃO SEM PRESSA</p>
+      <h1>Minhas tarefas</h1>
+      <p>Seu plano de hoje cabe em pequenos passos.</p>
+      <div class="calendar-control">
+        <button type="button" class="all-tasks" [class.active]="diaSelecionado() === null" (click)="selecionarDia(null)">
+          <span class="material-symbols-rounded" aria-hidden="true">select_all</span>
+          <small>Todas</small>
+        </button>
+        <div
+          #calendario
+          class="calendar-strip"
+          [class.dragging]="arrastandoCalendario()"
+          aria-label="Filtrar tarefas pelo dia do prazo"
+          (pointerdown)="iniciarArrasteCalendario($event, calendario)"
+          (pointermove)="arrastarCalendario($event, calendario)"
+          (pointerup)="finalizarArrasteCalendario()"
+          (pointercancel)="finalizarArrasteCalendario()"
+          (pointerleave)="finalizarArrasteCalendario()"
+        >
+          @for (dia of diasCalendario(); track dia.iso) {
+            <button type="button" class="calendar-day" [class.active]="diaAtivo(dia.date)" (pointerup)="selecionarDiaPorToque($event, dia.date)" (click)="selecionarDia(dia.date)">
+              <span class="weekday">{{ dia.weekday }}</span>
+              <strong>{{ dia.day }}</strong>
+              <small>{{ dia.month }}</small>
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="intro-actions"><button class="icon-action" type="button" (click)="abrirCategorias()"><span class="material-symbols-rounded">label</span> Categorias</button><button class="primary" type="button" (click)="abrirCriacao()"><span class="material-symbols-rounded">add</span> Nova tarefa</button></div>
   @if (!carregando()) { <b class="counter">{{ concluidas() }}/{{ tarefas().length }} concluídas</b> }
 
   <div class="filters" aria-label="Filtros de tarefas">
@@ -41,8 +73,14 @@
     </select>
   
   </div>
+  <div class="list-context">
+    <strong>{{ contextoDaLista() }}</strong>
+    @if (diaSelecionado()) {
+      <button type="button" (click)="selecionarDia(null)">Limpar filtro de prazo</button>
+    }
+  </div>
   @if (erro(); as mensagem) { <div class="feedback" role="alert">{{ mensagem }}</div> }
-  @if (carregando()) { <div class="tasks"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div> } @else if (tarefas().length) { <div class="tasks">@for (tarefa of tarefas(); track tarefa.id) { <article [class.done]="tarefa.status === 'CONCLUIDA'" [class.overdue]="tarefa.vencida"><button class="complete" type="button" [disabled]="concluindoIds().has(tarefa.id)" (click)="concluir(tarefa)" [attr.aria-label]="'Concluir ' + tarefa.titulo"><span class="check material-symbols-rounded">{{ tarefa.status === 'CONCLUIDA' ? 'check' : '' }}</span></button><div class="task-copy"><strong>{{ tarefa.titulo }}</strong><small>{{ categoriaDa(tarefa) || 'Categoria removida' }} · {{ dataDa(tarefa) }}</small></div>@if (tarefa.vencida) { <small class="priority overdue-badge">Vencida</small> }<small class="priority" [class.high]="tarefa.prioridade === 'ALTA'" [class.low]="tarefa.prioridade === 'BAIXA'">{{ prioridadeRotulo(tarefa.prioridade) }}</small><div class="row-actions"><button type="button" (click)="abrirEdicao(tarefa)" aria-label="Editar tarefa"><span class="material-symbols-rounded">edit</span></button><button type="button" (click)="excluirTarefa(tarefa)" aria-label="Excluir tarefa"><span class="material-symbols-rounded">delete</span></button></div></article> }</div> } @else { <div class="empty"><span class="material-symbols-rounded">task_alt</span><div><strong>Nenhuma tarefa encontrada</strong><p>Ajuste os filtros ou crie uma nova tarefa.</p></div></div> }
+  @if (carregando()) { <div class="tasks"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div> } @else if (tarefasFiltradas().length) { <div class="tasks">@for (tarefa of tarefasFiltradas(); track tarefa.id) { <article [class.done]="tarefa.status === 'CONCLUIDA'" [class.overdue]="tarefa.vencida"><button class="complete" type="button" [disabled]="concluindoIds().has(tarefa.id)" (click)="concluir(tarefa)" [attr.aria-label]="'Concluir ' + tarefa.titulo"><span class="check material-symbols-rounded">{{ tarefa.status === 'CONCLUIDA' ? 'check' : '' }}</span></button><div class="task-copy"><strong>{{ tarefa.titulo }}</strong>@if (tarefa.descricao) { <p>{{ tarefa.descricao }}</p> }<small>{{ categoriaDa(tarefa) || 'Categoria removida' }} · {{ dataDa(tarefa) }}</small></div>@if (tarefa.vencida) { <small class="priority overdue-badge">Vencida</small> }<small class="priority" [class.high]="tarefa.prioridade === 'ALTA'" [class.low]="tarefa.prioridade === 'BAIXA'">{{ prioridadeRotulo(tarefa.prioridade) }}</small><div class="row-actions"><button type="button" (click)="abrirEdicao(tarefa)" aria-label="Editar tarefa"><span class="material-symbols-rounded">edit</span></button><button type="button" (click)="excluirTarefa(tarefa)" aria-label="Excluir tarefa"><span class="material-symbols-rounded">delete</span></button></div></article> }</div> } @else { <div class="empty"><span class="material-symbols-rounded">task_alt</span><div><strong>Nenhuma tarefa encontrada</strong><p>Ajuste os filtros ou crie uma nova tarefa.</p></div></div> }
 </section>
 
 @if (modalTarefaAberto()) { <div class="backdrop" (click)="fecharModalTarefa()"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-tarefa" (click)="$event.stopPropagation()"><header><div><p class="eyebrow">ORGANIZAÇÃO</p><h2 id="titulo-modal-tarefa">{{ tarefaEmEdicao() ? 'Editar tarefa' : 'Nova tarefa' }}</h2></div><button class="close" type="button" (click)="fecharModalTarefa()">×</button></header>@if (categorias().length) { <form [formGroup]="formularioTarefa" (ngSubmit)="salvarTarefa()"><label for="titulo">Título</label><input id="titulo" formControlName="titulo" maxlength="150" placeholder="O que você precisa fazer?" /><label for="categoria">Categoria</label><select id="categoria" formControlName="categoriaId">@for (categoria of categorias(); track categoria.id) { <option [ngValue]="categoria.id">{{ categoria.nome }}</option> }</select><div class="form-row"><div><label for="prioridade">Prioridade</label><select id="prioridade" formControlName="prioridade"><option value="BAIXA">Baixa</option><option value="MEDIA">Média</option><option value="ALTA">Alta</option></select></div><div><label for="prazo">Prazo</label><input id="prazo" type="datetime-local" formControlName="dataLimite" /></div></div><label for="descricao">Descrição <span>opcional</span></label><textarea id="descricao" formControlName="descricao" rows="3"></textarea>@if (erroFormulario(); as erroForm) { <p class="form-error" role="alert">{{ erroForm }}</p> }<footer><button class="secondary" type="button" (click)="fecharModalTarefa()">Cancelar</button><button class="primary" type="submit" [disabled]="processando()">{{ processando() ? 'Salvando...' : 'Salvar tarefa' }}</button></footer></form> } @else { <div class="no-categories"><span class="material-symbols-rounded">label_off</span><strong>Crie uma categoria antes de criar tarefas.</strong><p>As categorias organizam suas tarefas e são pessoais para sua conta.</p><button class="secondary" type="button" (click)="fecharModalTarefa(); abrirCategorias()">Gerenciar categorias</button></div> }</section></div> }
