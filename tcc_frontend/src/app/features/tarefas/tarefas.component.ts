@@ -25,19 +25,35 @@ export class TarefasComponent {
   protected readonly concluindoIds = signal<ReadonlySet<number>>(new Set());
   protected readonly processando = signal(false);
   protected readonly modalTarefaAberto = signal(false);
-  protected readonly diaSelecionado = signal(new Date());
+  protected readonly diaSelecionado = signal<Date | null>(null);
+  protected readonly arrastandoCalendario = signal(false);
+  private inicioArrasteCalendario = 0;
+  private scrollInicialCalendario = 0;
   protected readonly tarefasFiltradas = computed(() => {
     const selecionado = this.diaSelecionado();
+    if (!selecionado) return this.tarefas();
+
     return this.tarefas().filter((tarefa) => {
-      if (!tarefa.dataLimite) return true;
+      if (!tarefa.dataLimite) return false;
       const limite = new Date(tarefa.dataLimite);
       return limite.toDateString() === selecionado.toDateString();
     });
   });
+  protected readonly contextoDaLista = computed(() => {
+    const selecionado = this.diaSelecionado();
+    if (!selecionado) return 'Todas as tarefas';
+
+    const data = new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: 'long',
+    }).format(selecionado);
+
+    return `Tarefas com prazo em ${data}`;
+  });
   protected readonly diasCalendario = computed(() => {
-    const selecionado = new Date(this.diaSelecionado());
-    const inicio = new Date(selecionado);
-    inicio.setDate(selecionado.getDate() - 3);
+    const dataCentral = this.diaSelecionado() ?? new Date();
+    const inicio = new Date(dataCentral);
+    inicio.setDate(dataCentral.getDate() - 3);
     return Array.from({ length: 7 }, (_, index) => {
       const data = new Date(inicio);
       data.setDate(inicio.getDate() + index);
@@ -95,7 +111,16 @@ export class TarefasComponent {
     this.processando.set(true); this.erroFormulario.set(null);
     const requisicao = tarefa ? this.tarefaApi.atualizar(tarefa.id, request) : this.tarefaApi.criar(request);
     requisicao.pipe(finalize(() => this.processando.set(false))).subscribe({
-      next: () => { this.modalTarefaAberto.set(false); this.carregarTarefas(); },
+      next: (tarefaSalva) => {
+        this.tarefas.update((tarefas) => {
+          const tarefaJaExiste = tarefas.some((item) => item.id === tarefaSalva.id);
+
+          return tarefaJaExiste
+            ? tarefas.map((item) => (item.id === tarefaSalva.id ? tarefaSalva : item))
+            : [tarefaSalva, ...tarefas];
+        });
+        this.modalTarefaAberto.set(false);
+      },
       error: () => this.erroFormulario.set('Não foi possível salvar a tarefa. Verifique os dados e tente novamente.'),
     });
   }
@@ -117,10 +142,39 @@ export class TarefasComponent {
 
   protected editarCategoria(categoria: Categoria): void { this.categoriaEditadaId.set(categoria.id); this.formularioCategoria.setValue({ nome: categoria.nome }); }
 
-  protected selecionarDia(data: Date): void { this.diaSelecionado.set(new Date(data)); }
+  protected selecionarDia(data: Date | null): void {
+    this.diaSelecionado.set(data ? new Date(data) : null);
+  }
+
+  protected selecionarDiaPorToque(evento: PointerEvent, data: Date): void {
+    if (evento.pointerType === 'touch' || evento.pointerType === 'pen') {
+      this.selecionarDia(data);
+    }
+  }
+
+  protected iniciarArrasteCalendario(evento: PointerEvent, calendario: HTMLElement): void {
+    if (evento.pointerType !== 'mouse' || evento.button !== 0) return;
+
+    this.arrastandoCalendario.set(true);
+    this.inicioArrasteCalendario = evento.clientX;
+    this.scrollInicialCalendario = calendario.scrollLeft;
+  }
+
+  protected arrastarCalendario(evento: PointerEvent, calendario: HTMLElement): void {
+    if (evento.pointerType !== 'mouse' || !this.arrastandoCalendario()) return;
+
+    const deslocamento = evento.clientX - this.inicioArrasteCalendario;
+    calendario.scrollLeft = this.scrollInicialCalendario - deslocamento;
+  }
+
+  protected finalizarArrasteCalendario(): void {
+    if (!this.arrastandoCalendario()) return;
+
+    this.arrastandoCalendario.set(false);
+  }
 
   protected diaAtivo(data: Date): boolean {
-    return data.toDateString() === this.diaSelecionado().toDateString();
+    return data.toDateString() === this.diaSelecionado()?.toDateString();
   }
   protected salvarCategoria(): void {
     if (this.formularioCategoria.invalid) { this.formularioCategoria.markAllAsTouched(); return; }
