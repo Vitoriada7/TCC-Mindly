@@ -43,7 +43,7 @@ public class UsuarioService {
 
     public UsuarioResponse atualizarPerfil(UsuarioUpdateRequest request) {
         Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
-        usuario.setNome(request.getNome().trim());
+        usuario.setApelido(request.getApelido().trim());
         return UsuarioMapper.toResponse(usuarioRepository.save(usuario));
     }
 

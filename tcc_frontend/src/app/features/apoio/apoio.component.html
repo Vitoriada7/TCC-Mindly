@@ -1,56 +1,117 @@
 <div class="page">
   <div class="intro">
     <div>
-      <p class="eyebrow">CENTROS DE APOIO</p>
+      <p class="eyebrow">REDE DE APOIO</p>
       <h1>Você pode buscar apoio quando precisar.</h1>
-      <p>Encontre contatos e serviços especializados para cuidar da sua saúde emocional com segurança.</p>
+      <p>Encontre serviços de saúde mental e pessoas de confiança para cuidar de você com segurança.</p>
     </div>
   </div>
 
   <section class="grid-layout">
     <article class="card map-card">
       <header class="card-heading">
-        <div><p class="eyebrow">ENCONTRAR</p><h2>Centro de apoio mais próximo</h2></div>
+        <div><p class="eyebrow">ENCONTRAR</p><h2>Serviços próximos</h2></div>
+        <button class="location-button" type="button" (click)="usarMinhaLocalizacao()" [disabled]="buscandoLocalizacao()">
+          <span class="material-symbols-rounded" aria-hidden="true">my_location</span>
+          {{ buscandoLocalizacao() ? 'Localizando...' : 'Usar minha localização' }}
+        </button>
       </header>
-      <div class="map-placeholder" aria-label="Mapa de localização">
-        <span class="material-symbols-rounded" aria-hidden="true">map</span>
-        <p>Mapa de centros de apoio disponível em breve.</p>
-      </div>
-      <div class="center-summary">
-        <h3>{{ centros[0].nome }}</h3>
-        <p>{{ centros[0].endereco }}</p>
-        <span>{{ centros[0].distancia }}</span>
-      </div>
-      <a class="link-button" [href]="'tel:' + centros[0].telefone">Ligar agora</a>
+      <div #mapa class="map-placeholder" aria-label="Mapa com a localização aproximada do usuário"></div>
+      <p class="location-message" aria-live="polite">{{ mensagemLocalizacao() }}</p>
     </article>
 
     <article class="card contact-card">
       <header class="card-heading">
-        <div><p class="eyebrow">CONTATOS</p><h2>Linhas de apoio</h2></div>
+        <div><p class="eyebrow">SERVIÇOS</p><h2>Saúde mental no RS</h2></div>
       </header>
       <div class="support-list">
-        @for (centro of centros; track centro.nome) {
-          <div class="support-item">
-            <div>
-              <h3>{{ centro.nome }}</h3>
-              <p>{{ centro.tipo }} · {{ centro.endereco }}</p>
-            </div>
-            <a class="call-button" [href]="'tel:' + centro.telefone">Ligar</a>
-          </div>
-        }
+        <p class="empty-message">A busca de CAPS, clínicas e outros serviços próximos será disponibilizada futuramente.</p>
       </div>
     </article>
   </section>
 
+  <section class="info-card cvv-card">
+    <div>
+      <p class="eyebrow">APOIO EMOCIONAL</p>
+      <h2>CVV — Centro de Valorização da Vida</h2>
+      <p>Conversa gratuita, sigilosa e disponível 24 horas em todo o Brasil.</p>
+    </div>
+    <a class="link-button" href="tel:188">Ligar para 188</a>
+  </section>
+
   <section class="info-card">
-    <div class="card-heading"><div><p class="eyebrow">NÚMEROS DE EMERGÊNCIA</p><h2>Contatos pessoais</h2></div></div>
+    <div class="card-heading">
+      <div><p class="eyebrow">PESSOAS DE CONFIANÇA</p><h2>Contatos de emergência</h2></div>
+      @if (!formularioVisivel()) {
+        <button class="secondary-button" type="button" (click)="abrirFormulario()">
+          <span class="material-symbols-rounded" aria-hidden="true">person_add</span>
+          Adicionar contato
+        </button>
+      }
+    </div>
+
+    @if (formularioVisivel()) {
+      <form class="contact-form" [formGroup]="formularioContato" (ngSubmit)="salvarContato()">
+        <label>
+          Nome
+          <input type="text" formControlName="nome" autocomplete="name" />
+        </label>
+        <label>
+          Telefone
+          <input type="tel" formControlName="telefone" autocomplete="tel" placeholder="(51) 99999-9999" />
+        </label>
+        <label>
+          Relação <span>(opcional)</span>
+          <input type="text" formControlName="relacionamento" placeholder="Familiar, amigo, psicóloga..." />
+        </label>
+        <label class="checkbox-field">
+          <input type="checkbox" formControlName="principal" />
+          Contato principal
+        </label>
+        @if (erroContato()) {
+          <p class="form-error" role="alert">{{ erroContato() }}</p>
+        }
+        <div class="form-actions">
+          <button class="secondary-button" type="button" (click)="cancelarFormulario()">Cancelar</button>
+          <button class="link-button" type="submit" [disabled]="salvandoContato()">
+            {{ salvandoContato() ? 'Salvando...' : 'Salvar contato' }}
+          </button>
+        </div>
+      </form>
+    }
+
     <div class="contact-grid">
-      @for (contato of contatosImportantes; track contato.telefone) {
+      @if (carregandoContatos()) {
+        <p class="empty-message" aria-live="polite">Carregando contatos...</p>
+      } @else if (!contatos().length) {
+        <p class="empty-message">Você ainda não adicionou uma pessoa de confiança.</p>
+      }
+      @for (contato of contatos(); track contato.id) {
         <article class="contact-card-item">
-          <div><strong>{{ contato.nome }}</strong><p>{{ contato.telefone }}</p></div>
-          <a [href]="'tel:' + contato.telefone">Ligar</a>
+          <div>
+            <strong>{{ contato.nome }}</strong>
+            @if (contato.principal) { <span class="primary-badge">Principal</span> }
+            <p>{{ contato.relacionamento || 'Contato pessoal' }} · {{ contato.telefone }}</p>
+          </div>
+          <div class="contact-actions">
+            <button type="button" (click)="editarContato(contato)" aria-label="Editar contato">
+              <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+            </button>
+            <button type="button" (click)="excluirContato(contato)" aria-label="Excluir contato">
+              <span class="material-symbols-rounded" aria-hidden="true">delete</span>
+            </button>
+            <a [href]="'tel:' + telefoneParaLink(contato.telefone)">Ligar</a>
+          </div>
         </article>
       }
     </div>
+    @if (!formularioVisivel() && erroContato()) {
+      <p class="form-error" role="alert">{{ erroContato() }}</p>
+    }
   </section>
+
+  <p class="emergency-note">
+    Em situação de urgência ou risco imediato, ligue para o SAMU pelo número
+    <a href="tel:192">192</a>.
+  </p>
 </div>

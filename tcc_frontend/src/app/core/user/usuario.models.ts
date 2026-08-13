@@ -8,5 +8,5 @@ export interface UsuarioAutenticado {
 }
 
 export interface AtualizarPerfilRequest {
-  nome: string;
+  apelido: string;
 }
