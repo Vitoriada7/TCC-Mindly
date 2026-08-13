@@ -9,9 +9,18 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UsuarioUpdateRequest {
+public class ContatoEmergenciaRequest {
 
     @NotBlank
-    @Size(max = 30)
-    private String apelido;
+    @Size(max = 100)
+    private String nome;
+
+    @NotBlank
+    @Size(min = 8, max = 20)
+    private String telefone;
+
+    @Size(max = 50)
+    private String relacionamento;
+
+    private boolean principal;
 }

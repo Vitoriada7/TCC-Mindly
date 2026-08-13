@@ -25,14 +25,14 @@ export class PerfilComponent {
   protected readonly sucesso = signal(false);
   protected readonly usuario = signal<UsuarioAutenticado | null>(null);
   protected readonly iniciais = computed(() => this.usuario()?.nome.trim().split(/\s+/).slice(0, 2).map((nome) => nome[0]).join('').toUpperCase() || '');
-  protected readonly formulario = this.formBuilder.group({ nome: ['', [Validators.required, Validators.maxLength(100)]] });
+  protected readonly formulario = this.formBuilder.group({ apelido: ['', [Validators.required, Validators.maxLength(30)]] });
 
   constructor() { this.carregar(); }
 
   protected carregar(): void {
     this.carregando.set(true); this.erro.set(null);
     this.usuarioService.obterPerfil().pipe(finalize(() => this.carregando.set(false))).subscribe({
-      next: (usuario) => { this.usuario.set(usuario); this.formulario.setValue({ nome: usuario.nome }); },
+      next: (usuario) => { this.usuario.set(usuario); this.formulario.setValue({ apelido: usuario.apelido }); },
       error: () => this.erro.set('Não foi possível carregar seus dados. Tente novamente.'),
     });
   }
@@ -40,8 +40,8 @@ export class PerfilComponent {
   protected salvar(): void {
     if (this.formulario.invalid) { this.formulario.markAllAsTouched(); return; }
     this.salvando.set(true); this.erro.set(null); this.sucesso.set(false);
-    this.usuarioService.atualizarPerfil({ nome: this.formulario.getRawValue().nome.trim() }).pipe(finalize(() => this.salvando.set(false))).subscribe({
-      next: (usuario) => { this.usuario.set(usuario); this.formulario.setValue({ nome: usuario.nome }); this.sucesso.set(true); },
+    this.usuarioService.atualizarPerfil({ apelido: this.formulario.getRawValue().apelido.trim() }).pipe(finalize(() => this.salvando.set(false))).subscribe({
+      next: (usuario) => { this.usuario.set(usuario); this.formulario.setValue({ apelido: usuario.apelido }); this.sucesso.set(true); },
       error: () => this.erro.set('Não foi possível salvar suas alterações. Tente novamente.'),
     });
   }
