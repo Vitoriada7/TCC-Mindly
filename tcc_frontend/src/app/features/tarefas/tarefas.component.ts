@@ -3,22 +3,27 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { forkJoin, finalize } from 'rxjs';
 import { Categoria, Prioridade, StatusTarefa, Tarefa } from './models/tarefa.models';
 import { TarefaApiService } from './services/tarefa-api.service';
+import { ResumoGamificacao } from '../gamificacao/models/gamificacao.models';
+import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.service';
+import { TrilhaGamificacaoComponent } from '../../shared/components/trilha-gamificacao/trilha-gamificacao.component';
 
 @Component({
   selector: 'app-tarefas',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TrilhaGamificacaoComponent],
   templateUrl: './tarefas.component.html',
   styleUrl: './tarefas.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TarefasComponent {
   private readonly tarefaApi = inject(TarefaApiService);
+  private readonly gamificacaoApi = inject(GamificacaoApiService);
   private readonly formBuilder = inject(FormBuilder).nonNullable;
 
   protected readonly carregando = signal(true);
   protected readonly erro = signal<string | null>(null);
   protected readonly tarefas = signal<Tarefa[]>([]);
   protected readonly categorias = signal<Categoria[]>([]);
+  protected readonly resumoGamificacao = signal<ResumoGamificacao | null>(null);
   protected readonly statusSelecionado = signal<StatusTarefa | 'VENCIDA' | undefined>(undefined);
   protected readonly prioridadeSelecionada = signal<Prioridade | undefined>(undefined);
   protected readonly categoriaSelecionada = signal<number | undefined>(undefined);
@@ -129,7 +134,7 @@ export class TarefasComponent {
     if (tarefa.status === 'CONCLUIDA' || this.concluindoIds().has(tarefa.id)) return;
     this.concluindoIds.update((ids) => new Set(ids).add(tarefa.id));
     this.tarefaApi.concluir(tarefa.id).pipe(finalize(() => this.concluindoIds.update((ids) => { const proximo = new Set(ids); proximo.delete(tarefa.id); return proximo; }))).subscribe({
-      next: () => this.carregarTarefas(),
+      next: () => { this.carregarTarefas(); this.carregarGamificacao(); },
       error: () => this.erro.set('Não foi possível concluir esta tarefa. Tente novamente.'),
     });
   }
@@ -201,9 +206,12 @@ export class TarefasComponent {
   protected dataDa(tarefa: Tarefa): string { return tarefa.dataLimite ? new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(tarefa.dataLimite)) : 'Sem prazo'; }
 
   private carregarCategoriasETarefas(): void {
-    forkJoin({ categorias: this.tarefaApi.listarCategorias(), tarefas: this.tarefaApi.listar() }).pipe(finalize(() => this.carregando.set(false))).subscribe({
-      next: ({ categorias, tarefas }) => { this.categorias.set(categorias); this.tarefas.set(tarefas); }, error: () => this.erro.set('Não foi possível carregar suas tarefas.'),
+    forkJoin({ categorias: this.tarefaApi.listarCategorias(), tarefas: this.tarefaApi.listar(), gamificacao: this.gamificacaoApi.resumo() }).pipe(finalize(() => this.carregando.set(false))).subscribe({
+      next: ({ categorias, tarefas, gamificacao }) => { this.categorias.set(categorias); this.tarefas.set(tarefas); this.resumoGamificacao.set(gamificacao); }, error: () => this.erro.set('Não foi possível carregar suas tarefas.'),
     });
+  }
+  private carregarGamificacao(): void {
+    this.gamificacaoApi.resumo().subscribe({ next: (resumo) => this.resumoGamificacao.set(resumo), error: () => undefined });
   }
   private carregarTarefas(): void {
 

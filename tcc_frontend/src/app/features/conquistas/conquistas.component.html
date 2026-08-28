@@ -7,16 +7,27 @@
     </div>
   </div>
 
-  <section class="cards-grid" aria-label="Lista de conquistas">
-    @for (conquista of ordenarConquistas(); track conquista.titulo) {
-      <article class="achievement-card" [class.concluida]="conquista.status === 'CONCLUIDA'" [class.desbloqueada]="conquista.status === 'DESBLOQUEADA'">
-        <span class="material-symbols-rounded" aria-hidden="true">{{ conquista.icone }}</span>
-        <div class="achievement-copy">
-          <h2>{{ conquista.titulo }}</h2>
-          <p>{{ conquista.descricao }}</p>
-        </div>
-        <span class="status-label">{{ conquista.status === 'CONCLUIDA' ? 'Concluída' : conquista.status === 'DESBLOQUEADA' ? 'Em andamento' : 'Bloqueada' }}</span>
-      </article>
+  <section class="achievements" aria-label="Lista de conquistas">
+    @if (carregando()) {
+      <p>Carregando suas conquistas...</p>
+    } @else if (erro(); as mensagemErro) {
+      <div class="load-error" role="alert"><span>{{ mensagemErro }}</span><button type="button" (click)="carregar()">Tentar novamente</button></div>
+    } @else {
+      @for (categoria of categorias(); track categoria.trilha) {
+        <section class="category" [class.selected]="categoria.trilha === trilhaSelecionada()" [attr.aria-labelledby]="'categoria-' + categoria.trilha">
+          <header class="category-title"><span class="material-symbols-rounded" aria-hidden="true">{{ categoria.icone }}</span><h2 [id]="'categoria-' + categoria.trilha">{{ categoria.titulo }}</h2></header>
+          <div class="cards-grid">
+            @for (conquista of categoria.conquistas; track conquista.codigo) {
+              <article class="achievement-card" [class.concluida]="conquista.status === 'CONCLUIDA'" [class.desbloqueada]="conquista.status === 'EM_PROGRESSO'">
+                <span class="achievement-icon material-symbols-rounded" aria-hidden="true">{{ categoria.icone }}</span>
+                <div class="achievement-copy"><h3>{{ conquista.titulo }}</h3><p>{{ conquista.descricao }}</p></div>
+                @if (conquista.status !== 'CONCLUIDA') { <small>{{ conquista.progresso }} de {{ conquista.meta }}</small> }
+                <span class="status-label">{{ conquista.status === 'CONCLUIDA' ? 'Concluída' : conquista.status === 'EM_PROGRESSO' ? 'Em andamento' : 'Bloqueada' }}</span>
+              </article>
+            }
+          </div>
+        </section>
+      }
     }
   </section>
 </div>

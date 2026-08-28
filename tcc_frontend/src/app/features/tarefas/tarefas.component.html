@@ -4,6 +4,9 @@
       <p class="eyebrow">ORGANIZAÇÃO SEM PRESSA</p>
       <h1>Minhas tarefas</h1>
       <p>Seu plano de hoje cabe em pequenos passos.</p>
+      @if (resumoGamificacao(); as gamificacao) {
+        <app-trilha-gamificacao class="track-summary" trilha="TAREFAS" icone="task_alt" titulo="Ritmo semanal" [valor]="gamificacao.tarefas.concluidasSemana + ' de ' + gamificacao.tarefas.metaSemanal + ' tarefas'" [descricao]="gamificacao.tarefas.sequenciaSemanal + (gamificacao.tarefas.sequenciaSemanal === 1 ? ' semana mantendo a meta' : ' semanas mantendo a meta')" [progresso]="gamificacao.tarefas.concluidasSemana" [meta]="gamificacao.tarefas.metaSemanal" [compacto]="true" />
+      }
       <div class="calendar-control">
         <button type="button" class="all-tasks" [class.active]="diaSelecionado() === null" (click)="selecionarDia(null)">
           <span class="material-symbols-rounded" aria-hidden="true">select_all</span>

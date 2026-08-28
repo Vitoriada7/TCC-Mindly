@@ -6,8 +6,8 @@
 
   @if (erro(); as mensagem) { <div class="feedback" role="alert">{{ mensagem }} <button type="button" (click)="carregar()">Tentar novamente</button></div> }
 
-  @if (!carregando() && habitos().length) {
-    <article class="celebrate"><span class="material-symbols-rounded">local_fire_department</span><div><strong>{{ sequenciaAtual() }} {{ sequenciaAtual() === 1 ? 'dia de sequência!' : 'dias de sequência!' }}</strong><p>{{ totalConcluidosSemana() }} {{ totalConcluidosSemana() === 1 ? 'marcação nesta semana.' : 'marcações nesta semana.' }}</p></div></article>
+  @if (resumoGamificacao(); as gamificacao) {
+    <app-trilha-gamificacao class="track-summary" trilha="HABITOS" icone="local_fire_department" titulo="Sequência de hábitos" [valor]="gamificacao.habitos.sequenciaAtual + (gamificacao.habitos.sequenciaAtual === 1 ? ' dia' : ' dias')" [descricao]="gamificacao.habitos.concluidosHoje + ' de ' + gamificacao.habitos.metaHoje + ' hábitos concluídos hoje'" [progresso]="gamificacao.habitos.concluidosHoje" [meta]="gamificacao.habitos.metaHoje" />
   }
 
   @if (carregando()) {

@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
+import { EmocionalApiService } from './emocional-api.service';
 
 type Sentimento = { label: string; value: string; icon: string; description: string };
 type Pergunta = { titulo: string; texto: string };
@@ -19,6 +21,7 @@ export class RegistroDiarioComponent {
   protected readonly passo = signal(1);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly emocionalApi = inject(EmocionalApiService);
   protected readonly sentimentoSelecionado = signal<string | null>(null);
   protected readonly sentimentoDetalhadoSelecionado = signal<string | null>(null);
   protected readonly pensamento = signal('');
@@ -27,6 +30,8 @@ export class RegistroDiarioComponent {
   protected readonly estadoAudio = signal<EstadoAudio>('idle');
   protected readonly transcricao = signal('');
   protected readonly mensagemAudio = signal('');
+  protected readonly salvando = signal(false);
+  protected readonly erroSalvamento = signal<string | null>(null);
   private mediaRecorder: MediaRecorder | null = null;
   private reconhecimento: SpeechRecognitionLike | null = null;
   private trechosTranscritos = '';
@@ -166,15 +171,26 @@ export class RegistroDiarioComponent {
   }
 
   protected avancar(): void {
-    if (!this.podeAvancar()) return;
+    if (!this.podeAvancar() || this.salvando()) return;
     if (this.passo() < 4) {
       this.passo.update((valor) => valor + 1);
       return;
     }
 
-    this.router.navigate(['../'], {
-      relativeTo: this.route,
-      state: { registroConcluido: true },
+    this.salvando.set(true);
+    this.erroSalvamento.set(null);
+    this.emocionalApi.registrar({
+      sentimento: this.sentimentoSelecionado()!,
+      sentimentoDetalhado: this.sentimentoDetalhadoSelecionado(),
+      pensamento: this.pensamento().trim() || null,
+      exploracoes: this.exploracoes().map((valor) => valor.trim()),
+      reflexao: this.reflexao().trim() || null,
+    }).pipe(finalize(() => this.salvando.set(false))).subscribe({
+      next: () => this.router.navigate(['../'], {
+        relativeTo: this.route,
+        state: { registroConcluido: true },
+      }),
+      error: () => this.erroSalvamento.set('Não foi possível salvar seu registro. Tente novamente.'),
     });
   }
 

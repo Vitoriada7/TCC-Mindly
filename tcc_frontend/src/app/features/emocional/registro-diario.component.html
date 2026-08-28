@@ -21,5 +21,6 @@
       <p class="hint">Finalize seu registro com uma breve reflexão sobre o que deseja levar adiante.</p><textarea rows="10" placeholder="Diga o que vier na sua mente :)" [value]="reflexao()" (input)="atualizarReflexao($event)"></textarea>
     }
   </section>
-  <footer class="actions-row">@if (passo() > 1) { <button class="secondary" type="button" (click)="voltar()">Voltar</button> }<button class="primary" type="button" (click)="avancar()" [disabled]="!podeAvancar()">{{ passo() === 1 ? 'Estou me sentindo assim' : passo() < 4 ? 'Continuar' : 'Finalizar' }}<span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span></button></footer>
+  @if (erroSalvamento(); as erro) { <p class="form-error" role="alert">{{ erro }}</p> }
+  <footer class="actions-row">@if (passo() > 1) { <button class="secondary" type="button" (click)="voltar()" [disabled]="salvando()">Voltar</button> }<button class="primary" type="button" (click)="avancar()" [disabled]="!podeAvancar() || salvando()">{{ salvando() ? 'Salvando...' : passo() === 1 ? 'Estou me sentindo assim' : passo() < 4 ? 'Continuar' : 'Finalizar' }}<span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span></button></footer>
 </div>
