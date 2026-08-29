@@ -1,18 +1,17 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
 import { Habito } from './models/habito.models';
 import { HabitoApiService } from './services/habito-api.service';
 import { ResumoGamificacao } from '../gamificacao/models/gamificacao.models';
 import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.service';
-import { TrilhaGamificacaoComponent } from '../../shared/components/trilha-gamificacao/trilha-gamificacao.component';
 
 type DiaSemana = { data: string; rotulo: string; dia: number };
 
 @Component({
   selector: 'app-habitos',
-  imports: [ReactiveFormsModule, TrilhaGamificacaoComponent],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './habitos.component.html',
   styleUrl: './habitos.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

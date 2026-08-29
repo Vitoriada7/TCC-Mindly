@@ -4,13 +4,12 @@ import { EmocionalApiService } from './emocional-api.service';
 import { forkJoin } from 'rxjs';
 import { ResumoGamificacao } from '../gamificacao/models/gamificacao.models';
 import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.service';
-import { TrilhaGamificacaoComponent } from '../../shared/components/trilha-gamificacao/trilha-gamificacao.component';
 
 type Humor = { label: string; value: string; icon: string; description: string };
 
 @Component({
   selector: 'app-emocional',
-  imports: [RouterLink, TrilhaGamificacaoComponent],
+  imports: [RouterLink],
   templateUrl: './emocional.component.html',
   styleUrl: './emocional.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

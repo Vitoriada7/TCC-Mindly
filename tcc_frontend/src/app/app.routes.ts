@@ -10,6 +10,14 @@ import { guestGuard } from './core/guards/guest.guard';
  */
 export const routes: Routes = [
   {
+    path: 'boas-vindas',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./features/boas-vindas/boas-vindas.component').then(
+        (m) => m.BoasVindasComponent,
+      ),
+  },
+  {
     path: 'login',
     canActivate: [guestGuard],
     loadChildren: () => import('./features/auth/auth.routes').then((m) => m.rotasAuth),

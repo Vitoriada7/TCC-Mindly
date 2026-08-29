@@ -1,14 +1,13 @@
 <section class="page">
   <div class="intro">
     <div><p class="eyebrow">CONSTÂNCIA GENTIL</p><h1>Seus hábitos</h1><p>Cada dia é uma nova chance. Celebre o que já conseguiu.</p></div>
-    <button class="primary" type="button" (click)="abrirCriacao()"><span class="material-symbols-rounded">add</span>Novo hábito</button>
+    <div class="header-actions">
+      <button class="primary" type="button" (click)="abrirCriacao()"><span class="material-symbols-rounded">add</span>Novo hábito</button>
+      <a class="achievement-link" routerLink="/conquistas" aria-label="Ver minhas conquistas"><span class="material-symbols-rounded" aria-hidden="true">emoji_events</span></a>
+    </div>
   </div>
 
   @if (erro(); as mensagem) { <div class="feedback" role="alert">{{ mensagem }} <button type="button" (click)="carregar()">Tentar novamente</button></div> }
-
-  @if (resumoGamificacao(); as gamificacao) {
-    <app-trilha-gamificacao class="track-summary" trilha="HABITOS" icone="local_fire_department" titulo="Sequência de hábitos" [valor]="gamificacao.habitos.sequenciaAtual + (gamificacao.habitos.sequenciaAtual === 1 ? ' dia' : ' dias')" [descricao]="gamificacao.habitos.concluidosHoje + ' de ' + gamificacao.habitos.metaHoje + ' hábitos concluídos hoje'" [progresso]="gamificacao.habitos.concluidosHoje" [meta]="gamificacao.habitos.metaHoje" />
-  }
 
   @if (carregando()) {
     <div class="habit-list"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>

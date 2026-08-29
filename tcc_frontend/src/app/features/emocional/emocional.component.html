@@ -6,12 +6,12 @@
   }
 
   <header class="page-header">
+    <a class="achievement-link" routerLink="/conquistas" aria-label="Ver minhas conquistas">
+      <span class="material-symbols-rounded" aria-hidden="true">emoji_events</span>
+    </a>
     <p class="eyebrow">SEU MOMENTO</p>
     <h1>Como foi seu dia?</h1>
     <p>Não existe resposta certa. Este espaço é só seu.</p>
-    @if (resumoGamificacao(); as gamificacao) {
-      <app-trilha-gamificacao class="track-summary" trilha="EMOCIONAL" icone="favorite" titulo="Jornada de autocuidado" [valor]="gamificacao.emocional.sequenciaAtual + (gamificacao.emocional.sequenciaAtual === 1 ? ' dia' : ' dias')" [descricao]="gamificacao.emocional.registrouHoje ? 'Seu registro de hoje foi realizado' : 'Reserve um momento para você hoje'" [progresso]="gamificacao.emocional.registrouHoje ? 1 : 0" [meta]="1" [compacto]="true" />
-    }
   </header>
 
   <section class="check-in-card" aria-labelledby="check-in-title">

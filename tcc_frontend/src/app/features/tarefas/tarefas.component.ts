@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { forkJoin, finalize } from 'rxjs';
 import { Categoria, Prioridade, StatusTarefa, Tarefa } from './models/tarefa.models';
 import { TarefaApiService } from './services/tarefa-api.service';
 import { ResumoGamificacao } from '../gamificacao/models/gamificacao.models';
 import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.service';
-import { TrilhaGamificacaoComponent } from '../../shared/components/trilha-gamificacao/trilha-gamificacao.component';
 
 @Component({
   selector: 'app-tarefas',
-  imports: [ReactiveFormsModule, TrilhaGamificacaoComponent],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './tarefas.component.html',
   styleUrl: './tarefas.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
