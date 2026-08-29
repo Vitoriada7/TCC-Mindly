@@ -1,21 +1,24 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
 import { Habito } from './models/habito.models';
 import { HabitoApiService } from './services/habito-api.service';
+import { ResumoGamificacao } from '../gamificacao/models/gamificacao.models';
+import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.service';
 
 type DiaSemana = { data: string; rotulo: string; dia: number };
 
 @Component({
   selector: 'app-habitos',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './habitos.component.html',
   styleUrl: './habitos.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HabitosComponent {
   private readonly habitoApi = inject(HabitoApiService);
+  private readonly gamificacaoApi = inject(GamificacaoApiService);
   private readonly formBuilder = inject(FormBuilder).nonNullable;
   private readonly route = inject(ActivatedRoute);
   private readonly hoje = new Date();
@@ -26,6 +29,7 @@ export class HabitosComponent {
   protected readonly processando = signal(false);
   protected readonly habitos = signal<Habito[]>([]);
   protected readonly sequenciaAtual = signal(0);
+  protected readonly resumoGamificacao = signal<ResumoGamificacao | null>(null);
   protected readonly habitoEmEdicao = signal<Habito | null>(null);
   protected readonly modalAberto = signal(false);
   protected readonly dias = this.criarDiasSemana();
@@ -105,10 +109,10 @@ export class HabitosComponent {
   protected carregar(): void {
     this.carregando.set(true);
     this.erro.set(null);
-    forkJoin({ habitos: this.habitoApi.listar(this.dias[0].data, this.dias[6].data), resumo: this.habitoApi.resumo() })
+    forkJoin({ habitos: this.habitoApi.listar(this.dias[0].data, this.dias[6].data), resumo: this.habitoApi.resumo(), gamificacao: this.gamificacaoApi.resumo() })
       .pipe(finalize(() => this.carregando.set(false)))
       .subscribe({
-        next: ({ habitos, resumo }) => { this.habitos.set(habitos); this.sequenciaAtual.set(resumo.sequenciaAtual); },
+        next: ({ habitos, resumo, gamificacao }) => { this.habitos.set(habitos); this.sequenciaAtual.set(resumo.sequenciaAtual); this.resumoGamificacao.set(gamificacao); },
         error: () => this.erro.set('Não foi possível carregar seus hábitos. Tente novamente.'),
       });
   }

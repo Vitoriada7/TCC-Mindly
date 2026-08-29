@@ -1,14 +1,13 @@
 <section class="page">
   <div class="intro">
     <div><p class="eyebrow">CONSTÂNCIA GENTIL</p><h1>Seus hábitos</h1><p>Cada dia é uma nova chance. Celebre o que já conseguiu.</p></div>
-    <button class="primary" type="button" (click)="abrirCriacao()"><span class="material-symbols-rounded">add</span>Novo hábito</button>
+    <div class="header-actions">
+      <button class="primary" type="button" (click)="abrirCriacao()"><span class="material-symbols-rounded">add</span>Novo hábito</button>
+      <a class="achievement-link" routerLink="/conquistas" aria-label="Ver minhas conquistas"><span class="material-symbols-rounded" aria-hidden="true">emoji_events</span></a>
+    </div>
   </div>
 
   @if (erro(); as mensagem) { <div class="feedback" role="alert">{{ mensagem }} <button type="button" (click)="carregar()">Tentar novamente</button></div> }
-
-  @if (!carregando() && habitos().length) {
-    <article class="celebrate"><span class="material-symbols-rounded">local_fire_department</span><div><strong>{{ sequenciaAtual() }} {{ sequenciaAtual() === 1 ? 'dia de sequência!' : 'dias de sequência!' }}</strong><p>{{ totalConcluidosSemana() }} {{ totalConcluidosSemana() === 1 ? 'marcação nesta semana.' : 'marcações nesta semana.' }}</p></div></article>
-  }
 
   @if (carregando()) {
     <div class="habit-list"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>

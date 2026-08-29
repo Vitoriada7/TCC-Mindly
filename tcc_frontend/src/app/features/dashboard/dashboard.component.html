@@ -18,15 +18,17 @@
   }
 
   <section class="overview-grid" aria-label="Resumo do dia">
-    <article class="card mood-card unavailable-card">
+    <article class="card mood-card">
       <div class="card-heading">
         <div><p class="eyebrow">COMO VOCÊ ESTÁ?</p><h2>Seu humor hoje</h2></div>
         <span class="soft-icon lavender material-symbols-rounded" aria-hidden="true">wb_sunny</span>
       </div>
-      <div class="empty-card-content">
-        <span class="empty-icon material-symbols-rounded" aria-hidden="true">sentiment_neutral</span>
-        <div><strong>Sem registro hoje</strong><p>O acompanhamento emocional estará disponível em breve.</p></div>
-      </div>
+      @if (resumoGamificacao(); as gamificacao) {
+        <div class="empty-card-content">
+          <span class="empty-icon material-symbols-rounded" aria-hidden="true">{{ gamificacao.emocional.registrouHoje ? 'favorite' : 'sentiment_neutral' }}</span>
+          <div><strong>{{ gamificacao.emocional.registrouHoje ? 'Registro feito hoje' : 'Sem registro hoje' }}</strong><p>{{ gamificacao.emocional.registrouHoje ? 'Você reservou um momento para se perceber.' : 'Reserve um momento para observar como você está.' }}</p></div>
+        </div>
+      }
     </article>
 
     <article class="card focus-card">
@@ -44,31 +46,14 @@
       <a routerLink="/tarefas">Ver suas tarefas <span aria-hidden="true">→</span></a>
     </article>
 
-    <article class="card streak-card">
-      <span class="fire material-symbols-rounded" aria-hidden="true">
-        local_fire_department
-      </span>
-    
-      <div>
-        <p class="eyebrow">SEQUÊNCIA ATUAL</p>
-    
-        @if (resumoHabitos(); as resumo) {
-          <strong>
-            {{ resumo.sequenciaAtual }}
-            {{ resumo.sequenciaAtual === 1 ? 'dia' : 'dias' }}
-          </strong>
-    
-          <p>
-            Continue registrando seus hábitos diariamente.
-          </p>
-        } @else {
-          <strong>0 dias</strong>
-    
-          <p>
-            Comece criando seu primeiro hábito.
-          </p>
-        }
-      </div>
+    <article class="card streak-card gamification-card">
+      @if (resumoGamificacao(); as resumo) {
+        <div class="track"><span class="fire material-symbols-rounded" aria-hidden="true">local_fire_department</span><div><p class="eyebrow">HÁBITOS</p><strong>{{ resumo.habitos.sequenciaAtual }} {{ resumo.habitos.sequenciaAtual === 1 ? 'dia' : 'dias' }}</strong></div></div>
+        <div class="track"><span class="task-track material-symbols-rounded" aria-hidden="true">task_alt</span><div><p class="eyebrow">TAREFAS</p><strong>{{ resumo.tarefas.concluidasSemana }} de {{ resumo.tarefas.metaSemanal }}</strong><p>meta semanal</p></div></div>
+        <div class="track"><span class="emotion-track material-symbols-rounded" aria-hidden="true">favorite</span><div><p class="eyebrow">AUTOCUIDADO</p><strong>{{ resumo.emocional.sequenciaAtual }} {{ resumo.emocional.sequenciaAtual === 1 ? 'dia' : 'dias' }}</strong></div></div>
+      } @else {
+        <div class="track"><span class="fire material-symbols-rounded" aria-hidden="true">auto_awesome</span><div><p class="eyebrow">SEU PROGRESSO</p><strong>Comece no seu ritmo</strong></div></div>
+      }
     </article>
   </section>
 

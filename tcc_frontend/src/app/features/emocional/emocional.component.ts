@@ -1,5 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { EmocionalApiService } from './emocional-api.service';
+import { forkJoin } from 'rxjs';
+import { ResumoGamificacao } from '../gamificacao/models/gamificacao.models';
+import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.service';
 
 type Humor = { label: string; value: string; icon: string; description: string };
 
@@ -11,6 +15,8 @@ type Humor = { label: string; value: string; icon: string; description: string }
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmocionalComponent {
+  private readonly emocionalApi = inject(EmocionalApiService);
+  private readonly gamificacaoApi = inject(GamificacaoApiService);
   protected readonly humores: Humor[] = [
     { label: 'Radiante', value: 'radiante', icon: 'sentiment_very_satisfied', description: 'Me sinto leve e feliz.' },
     { label: 'Bem', value: 'bem', icon: 'sentiment_satisfied', description: 'Tudo está equilibrado.' },
@@ -20,7 +26,8 @@ export class EmocionalComponent {
   ];
 
   protected readonly humorSelecionado = signal<string | null>(null);
-  protected readonly diasRegistrados = signal(new Set<number>([2, 4, 7, 9, 12, 15, 18, 20, 22]));
+  protected readonly diasRegistrados = signal<ReadonlySet<number>>(new Set());
+  protected readonly resumoGamificacao = signal<ResumoGamificacao | null>(null);
   protected readonly toastVisivel = signal(false);
   protected readonly toastMensagem = signal('Seu registro diário foi concluído com sucesso!');
   protected readonly dataAtual = new Date();
@@ -57,6 +64,27 @@ export class EmocionalComponent {
       this.mostrarToast();
       window.history.replaceState({}, '', window.location.href);
     }
+    this.carregarRegistros();
+  }
+
+  private carregarRegistros(): void {
+    forkJoin({ registros: this.emocionalApi.listar(), gamificacao: this.gamificacaoApi.resumo() }).subscribe({
+      next: ({ registros, gamificacao }) => {
+        this.resumoGamificacao.set(gamificacao);
+        const ano = this.dataAtual.getFullYear();
+        const mes = this.dataAtual.getMonth();
+        const datas = registros.map((registro) => new Date(registro.dataRegistro));
+        this.diasRegistrados.set(new Set(datas
+          .filter((data) => data.getFullYear() === ano && data.getMonth() === mes)
+          .map((data) => data.getDate())));
+        const registroHoje = registros.find((_registro, index) => {
+          const data = datas[index];
+          return data.getFullYear() === ano && data.getMonth() === mes && data.getDate() === this.dataAtual.getDate();
+        });
+        this.humorSelecionado.set(registroHoje?.sentimento ?? null);
+      },
+      error: () => undefined,
+    });
   }
 
   protected selecionarHumor(valor: string): void {

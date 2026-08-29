@@ -4,17 +4,27 @@
 .eyebrow { margin: 0; color: #8c72df; font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .intro h1 { margin: 0; font-size: 30px; letter-spacing: -1px; }
 .intro p { margin: 0; color: #7e7b8b; line-height: 1.7; max-width: 620px; }
-.cards-grid { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.achievement-card { display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center; padding: 22px 22px 22px 24px; border-radius: 20px; border: 1px solid #f0edf8; background: #fff; box-shadow: 0 12px 24px rgba(75, 57, 126, .06); }
-.achievement-card span.material-symbols-rounded { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 14px; color: #7f64e9; background: #f2efff; font-size: 22px; }
-.achievement-copy h2 { margin: 0 0 6px; font-size: 15px; }
-.achievement-copy p { margin: 0; color: #7f7b8a; font-size: 12px; line-height: 1.6; }
-.status-label { white-space: nowrap; padding: 8px 12px; border-radius: 999px; font-size: 11px; font-weight: 700; color: #6c5b9e; background: #f5f1ff; }
+.achievements,.category { display: grid; gap: 18px; }
+.category + .category { margin-top: 14px; }
+.category.selected { padding:14px; border-radius:20px; background:#f3f0ff; }
+.category-title { display: flex; align-items: center; gap: 9px; }
+.category-title span { color: #8066de; font-size: 21px; }
+.category-title h2 { margin: 0; font-size: 18px; }
+.cards-grid { display: grid; width: 100%; max-width: 474px; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.achievement-card { position: relative; display: flex; flex-direction: column; align-items: flex-start; width: 100%; aspect-ratio: 1; padding: 12px; overflow: hidden; border-radius: 17px; border: 1px solid #f0edf8; background: #fff; box-shadow: 0 8px 18px rgba(75, 57, 126, .06); }
+.achievement-card .achievement-icon { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 10px; color: #7f64e9; background: #f2efff; font-size: 17px; }
+.achievement-copy { margin-top: 9px; min-height: 0; }
+.achievement-copy h3 { margin: 0 0 4px; font-size: 12px; line-height: 1.25; overflow-wrap: anywhere; }
+.achievement-copy p { display: -webkit-box; margin: 0; overflow: hidden; color: #7f7b8a; font-size: 10px; line-height: 1.35; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.achievement-card small { margin-top: 6px; color: #7559de; font-size: 9px; font-weight: 700; }
+.load-error { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px; border-radius: 16px; background: #fff1f1; color: #8b4040; }
+.load-error button { border: 0; background: transparent; color: inherit; font-weight: 700; cursor: pointer; }
+.status-label { margin-top: auto; white-space: nowrap; padding: 4px 7px; border-radius: 999px; font-size: 9px; font-weight: 700; line-height:1.2; color: #6c5b9e; background: #f5f1ff; }
 .achievement-card.concluida { border-color: #d9f6e4; background: #f6f9f4; }
 .achievement-card.concluida .status-label { color: #2a6e4b; background: #e7f5e7; }
 .achievement-card.desbloqueada { border-color: #e8e3ff; }
 .achievement-card.desbloqueada .status-label { color: #6f58d0; background: #f2effe; }
-@media (max-width: 900px) { .cards-grid { grid-template-columns: 1fr; } }
-@media (max-width: 700px) { .page { padding: 28px 18px 112px; } }
+@media (max-width: 700px) { .page { padding: 28px 18px 112px; }.category.selected { padding:10px; }.cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }.achievement-card { aspect-ratio:auto; min-height:174px; }.achievement-copy { width:100%; }.achievement-copy p { line-height:1.45; }.status-label { line-height:1.2; } }
+@media (max-width: 340px) { .cards-grid { grid-template-columns:1fr; }.achievement-card { min-height:160px; } }
 
 .intro { padding:28px; border-radius:28px; background:linear-gradient(135deg,#f4d5f7 0%,#c9b0ff 45%,#8f6bff 100%); box-shadow:0 24px 50px rgba(127,90,183,.14); }.intro .eyebrow { color:#6f4bd7; }.intro p { color:#5f5a76; }

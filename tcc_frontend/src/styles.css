@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..700,0..1,0&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..700,0..1,0&family=Montserrat:wght@600;700;800&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap');
 @import 'leaflet/dist/leaflet.css';
 @import './styles/_tokens.css';
 @import './styles/_reset.css';
@@ -16,4 +16,55 @@
   line-height: 1;
   text-transform: none;
   white-space: nowrap;
+}
+
+.achievement-link {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 43px;
+  height: 43px;
+  border: 1px solid rgb(255 255 255 / 72%);
+  border-radius: 14px;
+  color: #7251ce;
+  background: rgb(255 255 255 / 72%);
+  box-shadow: 0 9px 20px rgb(91 63 170 / 14%);
+  text-decoration: none;
+  backdrop-filter: blur(8px);
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.achievement-link:hover,
+.achievement-link:focus-visible {
+  background: #fff;
+  outline: 3px solid rgb(255 255 255 / 35%);
+  transform: translateY(-2px);
+}
+
+.achievement-link .material-symbols-rounded {
+  font-size: 23px;
+}
+
+::view-transition-old(mindly-surface) {
+  animation: mindly-fade-out 380ms ease-in both;
+}
+
+::view-transition-new(mindly-surface) {
+  animation: mindly-reveal 620ms cubic-bezier(.16, .82, .28, 1) both;
+}
+
+@keyframes mindly-fade-out {
+  to { opacity: 0; transform: scale(1.025); }
+}
+
+@keyframes mindly-reveal {
+  from { opacity: 0; clip-path: circle(18% at 50% 48%); }
+  to { opacity: 1; clip-path: circle(78% at 50% 48%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(mindly-surface),
+  ::view-transition-new(mindly-surface) {
+    animation: none;
+  }
 }

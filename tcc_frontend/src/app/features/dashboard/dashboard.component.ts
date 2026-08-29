@@ -7,6 +7,8 @@ import { TarefaApiService } from '../tarefas/services/tarefa-api.service';
 import { UsuarioService } from '../../core/user/usuario.service';
 import { HabitoApiService } from '../habitos/services/habito-api.service';
 import { ResumoHabitos } from '../habitos/models/habito.models';
+import { ResumoGamificacao } from '../gamificacao/models/gamificacao.models';
+import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,6 +21,7 @@ export class DashboardComponent {
   private readonly tarefaApi = inject(TarefaApiService);
   private readonly usuarioService = inject(UsuarioService);
   private readonly habitoApi = inject(HabitoApiService);
+  private readonly gamificacaoApi = inject(GamificacaoApiService);
   private readonly formBuilder = inject(FormBuilder).nonNullable;
 
   protected readonly carregando = signal(true);
@@ -26,6 +29,7 @@ export class DashboardComponent {
   protected readonly tarefas = signal<Tarefa[]>([]);
   protected readonly categorias = signal<Categoria[]>([]);
   protected readonly resumoHabitos = signal<ResumoHabitos | null>(null);
+  protected readonly resumoGamificacao = signal<ResumoGamificacao | null>(null);
   protected readonly concluindoIds = signal<ReadonlySet<number>>(new Set());
   protected readonly modalAberto = signal(false);
   protected readonly criando = signal(false);
@@ -71,13 +75,14 @@ export class DashboardComponent {
   protected carregar(): void {
     this.carregando.set(true);
     this.erro.set(null);
-    forkJoin({ tarefas: this.tarefaApi.listar(), categorias: this.tarefaApi.listarCategorias(), resumoHabitos: this.habitoApi.resumo() })
+    forkJoin({ tarefas: this.tarefaApi.listar(), categorias: this.tarefaApi.listarCategorias(), resumoHabitos: this.habitoApi.resumo(), resumoGamificacao: this.gamificacaoApi.resumo() })
       .pipe(finalize(() => this.carregando.set(false)))
       .subscribe({
-        next: ({ tarefas, categorias, resumoHabitos }) => {
+        next: ({ tarefas, categorias, resumoHabitos, resumoGamificacao }) => {
           this.tarefas.set(tarefas);
           this.categorias.set(categorias);
           this.resumoHabitos.set(resumoHabitos);
+          this.resumoGamificacao.set(resumoGamificacao);
           if (!this.formulario.controls.categoriaId.value && categorias[0]) {
             this.formulario.controls.categoriaId.setValue(categorias[0].id);
           }
@@ -95,9 +100,10 @@ export class DashboardComponent {
       proximo.delete(tarefa.id);
       return proximo;
     }))).subscribe({
-      next: (atualizada) => this.tarefas.update((tarefas) =>
-        tarefas.map((item) => (item.id === atualizada.id ? atualizada : item)),
-      ),
+      next: (atualizada) => {
+        this.tarefas.update((tarefas) => tarefas.map((item) => (item.id === atualizada.id ? atualizada : item)));
+        this.atualizarGamificacao();
+      },
       error: () => this.erro.set('Não foi possível concluir esta tarefa. Tente novamente.'),
     });
   }
@@ -155,5 +161,12 @@ export class DashboardComponent {
     return data.getFullYear() === this.agora.getFullYear()
       && data.getMonth() === this.agora.getMonth()
       && data.getDate() === this.agora.getDate();
+  }
+
+  private atualizarGamificacao(): void {
+    this.gamificacaoApi.resumo().subscribe({
+      next: (resumo) => this.resumoGamificacao.set(resumo),
+      error: () => undefined,
+    });
   }
 }

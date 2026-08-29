@@ -1,0 +1,16 @@
+<aside class="track-card" [class.compact]="compacto()" [class.habitos]="trilha() === 'HABITOS'" [class.tarefas]="trilha() === 'TAREFAS'" [class.emocional]="trilha() === 'EMOCIONAL'" aria-label="Seu progresso nesta trilha">
+  @if (compacto()) {
+    <span class="track-icon material-symbols-rounded" aria-hidden="true">{{ icone() }}</span>
+    <strong class="compact-value">{{ valor() }}</strong>
+    @if (progresso() !== null && meta() !== null) {
+      <div class="progress compact-progress" [attr.aria-label]="progresso() + ' de ' + meta()"><span [style.width.%]="meta() ? (progresso()! / meta()!) * 100 : 0"></span></div>
+    }
+  } @else {
+    <span class="track-icon material-symbols-rounded" aria-hidden="true">{{ icone() }}</span>
+    <div class="track-copy"><span class="track-title">{{ titulo() }}</span><strong>{{ valor() }}</strong><p>{{ descricao() }}</p></div>
+    @if (progresso() !== null && meta() !== null) {
+      <div class="progress" [attr.aria-label]="progresso() + ' de ' + meta()"><span [style.width.%]="meta() ? (progresso()! / meta()!) * 100 : 0"></span></div>
+    }
+    <a routerLink="/conquistas" [queryParams]="{ trilha: trilha() }" aria-label="Ver conquistas desta trilha"><span class="material-symbols-rounded" aria-hidden="true">chevron_right</span></a>
+  }
+</aside>

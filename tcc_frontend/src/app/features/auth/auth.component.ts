@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -6,7 +7,7 @@ import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'app-auth',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [NgOptimizedImage, ReactiveFormsModule, RouterLink],
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
