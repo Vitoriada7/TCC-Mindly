@@ -1,34 +1,25 @@
 <section class="page">
-  <app-google-tasks />
   <div class="intro">
-    <a class="achievement-link" routerLink="/conquistas" aria-label="Ver minhas conquistas">
-      <span class="material-symbols-rounded" aria-hidden="true">emoji_events</span>
-    </a>
+    <div class="header-shortcuts">
+      <a class="achievement-link" routerLink="/conquistas" aria-label="Ver minhas conquistas">
+        <span class="material-symbols-rounded" aria-hidden="true">emoji_events</span>
+      </a>
+    </div>
     <div class="intro-copy">
       <p class="eyebrow">ORGANIZAÇÃO SEM PRESSA</p>
       <h1>Minhas tarefas</h1>
       <p>Seu plano de hoje cabe em pequenos passos.</p>
       <div class="calendar-control">
-        <button type="button" class="all-tasks" [class.active]="diaSelecionado() === null" (click)="selecionarDia(null)">
-          <span class="material-symbols-rounded" aria-hidden="true">select_all</span>
-          <small>Todas</small>
-        </button>
-        <div
-          #calendario
-          class="calendar-strip"
-          [class.dragging]="arrastandoCalendario()"
-          aria-label="Filtrar tarefas pelo dia do prazo"
-          (pointerdown)="iniciarArrasteCalendario($event, calendario)"
-          (pointermove)="arrastarCalendario($event, calendario)"
-          (pointerup)="finalizarArrasteCalendario()"
-          (pointercancel)="finalizarArrasteCalendario()"
-          (pointerleave)="finalizarArrasteCalendario()"
-        >
+          <button type="button" class="all-tasks" [class.active]="diaSelecionado() === null" [attr.aria-pressed]="diaSelecionado() === null" (click)="selecionarDia(null)">
+            <span class="material-symbols-rounded" aria-hidden="true">select_all</span>
+            <small>Todas</small>
+          </button>
+        <div #calendario class="calendar-strip" tabindex="0" aria-label="Filtrar tarefas pelo dia do prazo. Deslize para ver mais dias." (scroll)="expandirCalendario(calendario)">
           @for (dia of diasCalendario(); track dia.iso) {
-            <button type="button" class="calendar-day" [class.active]="diaAtivo(dia.date)" (pointerup)="selecionarDiaPorToque($event, dia.date)" (click)="selecionarDia(dia.date)">
+            <button type="button" class="calendar-day" [class.active]="diaAtivo(dia.date)" [class.today]="diaHoje(dia.date)" [attr.aria-pressed]="diaAtivo(dia.date)" [attr.aria-label]="dia.label" [attr.aria-current]="diaHoje(dia.date) ? 'date' : null" (click)="selecionarDia(dia.date)">
               <span class="weekday">{{ dia.weekday }}</span>
               <strong>{{ dia.day }}</strong>
-              <small>{{ dia.month }}</small>
+              <small class="calendar-month">{{ dia.month }}</small>
             </button>
           }
         </div>

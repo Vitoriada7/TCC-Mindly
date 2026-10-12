@@ -6,11 +6,10 @@ import { Categoria, Prioridade, StatusTarefa, Tarefa } from './models/tarefa.mod
 import { TarefaApiService } from './services/tarefa-api.service';
 import { ResumoGamificacao } from '../gamificacao/models/gamificacao.models';
 import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.service';
-import { GoogleTasksComponent } from './google-tasks.component';
 
 @Component({
   selector: 'app-tarefas',
-  imports: [ReactiveFormsModule, RouterLink, GoogleTasksComponent],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './tarefas.component.html',
   styleUrls: ['./tarefas.component.css', './tarefas-modal.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,9 +31,8 @@ export class TarefasComponent {
   protected readonly processando = signal(false);
   protected readonly modalTarefaAberto = signal(false);
   protected readonly diaSelecionado = signal<Date | null>(null);
-  protected readonly arrastandoCalendario = signal(false);
-  private inicioArrasteCalendario = 0;
-  private scrollInicialCalendario = 0;
+  private readonly inicioCalendario = new Date();
+  private readonly quantidadeDiasCalendario = signal(60);
   protected readonly tarefasFiltradas = computed(() => {
     const selecionado = this.diaSelecionado();
     if (!selecionado) return this.tarefas();
@@ -57,15 +55,14 @@ export class TarefasComponent {
     return `Tarefas com prazo em ${data}`;
   });
   protected readonly diasCalendario = computed(() => {
-    const dataCentral = this.diaSelecionado() ?? new Date();
-    const inicio = new Date(dataCentral);
-    inicio.setDate(dataCentral.getDate() - 3);
-    return Array.from({ length: 7 }, (_, index) => {
+    const inicio = this.inicioCalendario;
+    return Array.from({ length: this.quantidadeDiasCalendario() }, (_, index) => {
       const data = new Date(inicio);
       data.setDate(inicio.getDate() + index);
       return {
         iso: data.toISOString(),
-        weekday: new Intl.DateTimeFormat('pt-BR', { weekday: 'short' }).format(data),
+        weekday: new Intl.DateTimeFormat('pt-BR', { weekday: 'short' }).format(data).replace('.', ''),
+        label: new Intl.DateTimeFormat('pt-BR', { dateStyle: 'full' }).format(data),
         day: data.getDate(),
         month: new Intl.DateTimeFormat('pt-BR', { month: 'short' }).format(data).replace('.', ''),
         date: data,
@@ -152,31 +149,14 @@ export class TarefasComponent {
     this.diaSelecionado.set(data ? new Date(data) : null);
   }
 
-  protected selecionarDiaPorToque(evento: PointerEvent, data: Date): void {
-    if (evento.pointerType === 'touch' || evento.pointerType === 'pen') {
-      this.selecionarDia(data);
+  protected expandirCalendario(calendario: HTMLElement): void {
+    if (calendario.scrollWidth - calendario.scrollLeft - calendario.clientWidth < 240) {
+      this.quantidadeDiasCalendario.update((quantidade) => quantidade + 30);
     }
   }
 
-  protected iniciarArrasteCalendario(evento: PointerEvent, calendario: HTMLElement): void {
-    if (evento.pointerType !== 'mouse' || evento.button !== 0) return;
-
-    this.arrastandoCalendario.set(true);
-    this.inicioArrasteCalendario = evento.clientX;
-    this.scrollInicialCalendario = calendario.scrollLeft;
-  }
-
-  protected arrastarCalendario(evento: PointerEvent, calendario: HTMLElement): void {
-    if (evento.pointerType !== 'mouse' || !this.arrastandoCalendario()) return;
-
-    const deslocamento = evento.clientX - this.inicioArrasteCalendario;
-    calendario.scrollLeft = this.scrollInicialCalendario - deslocamento;
-  }
-
-  protected finalizarArrasteCalendario(): void {
-    if (!this.arrastandoCalendario()) return;
-
-    this.arrastandoCalendario.set(false);
+  protected diaHoje(data: Date): boolean {
+    return data.toDateString() === new Date().toDateString();
   }
 
   protected diaAtivo(data: Date): boolean {
