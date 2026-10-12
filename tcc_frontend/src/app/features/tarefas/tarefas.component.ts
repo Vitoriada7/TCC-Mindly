@@ -6,10 +6,11 @@ import { Categoria, Prioridade, StatusTarefa, Tarefa } from './models/tarefa.mod
 import { TarefaApiService } from './services/tarefa-api.service';
 import { ResumoGamificacao } from '../gamificacao/models/gamificacao.models';
 import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.service';
+import { GoogleTasksComponent } from './google-tasks.component';
 
 @Component({
   selector: 'app-tarefas',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, GoogleTasksComponent],
   templateUrl: './tarefas.component.html',
   styleUrl: './tarefas.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

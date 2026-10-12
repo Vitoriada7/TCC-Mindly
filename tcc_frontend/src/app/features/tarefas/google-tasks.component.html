@@ -1,0 +1,23 @@
+<section aria-labelledby="google-tasks-title">
+  <div>
+    <h2 id="google-tasks-title">Suas tarefas no Google</h2>
+    <p>Conexão opcional. Envie suas tarefas para a lista Mindly no Google Tasks, com os prazos no calendário Google.</p>
+    <p class="detail">A sincronização envia alterações do Mindly para o Google quando você clicar no botão. Inclui descrições e remove do Google as tarefas sincronizadas que você excluiu aqui. Alterações feitas no Google não são importadas.</p>
+    <p class="detail">Prazos são enviados por dia; os horários continuam disponíveis no Mindly.</p>
+    @if (estado()?.ultimaSincronizacao; as data) { <p class="detail">Última sincronização: {{ data | date:'dd/MM/yyyy HH:mm' }}</p> }
+  </div>
+  <div class="actions">
+    @if (estado()?.conectado) {
+      <button type="button" [disabled]="processando()" (click)="sincronizar()">{{ processando() ? 'Aguarde...' : 'Sincronizar tarefas' }}</button>
+      <button type="button" class="secondary" [disabled]="processando()" (click)="conectar()">Reconectar</button>
+      <button type="button" class="secondary" [disabled]="processando()" (click)="desconectar()">Desconectar</button>
+    } @else if (estado()?.disponivel) {
+      <button type="button" [disabled]="processando()" (click)="conectar()">{{ processando() ? 'Aguarde...' : 'Conectar Google' }}</button>
+    } @else {
+      <p class="detail">{{ estado() ? 'Integração Google ainda não configurada.' : 'Verificando conexão...' }}</p>
+      <button type="button" class="secondary" [disabled]="processando()" (click)="carregar()">Verificar novamente</button>
+    }
+  </div>
+  @if (mensagem()) { <p role="status">{{ mensagem() }}</p> }
+  @if (erro()) { <p class="error" role="alert">{{ erro() }}</p> }
+</section>
