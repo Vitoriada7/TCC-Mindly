@@ -12,7 +12,7 @@
   <div class="drawer-backdrop" (click)="closeMore()"></div>
   <aside class="mobile-drawer" aria-label="Menu e perfil" (click)="$event.stopPropagation()">
     <header class="drawer-header">
-      <div class="avatar">{{ iniciais() }}</div>
+      <div class="avatar"><app-avatar [avatar]="usuario()?.avatar" [nome]="nomeUsuario()" /></div>
       <div><strong>{{ nomeUsuario() }}</strong><small>{{ emailUsuario() }}</small></div>
       <button type="button" class="close-drawer" (click)="closeMore()" aria-label="Fechar menu"><span class="material-symbols-rounded" aria-hidden="true">close</span></button>
     </header>

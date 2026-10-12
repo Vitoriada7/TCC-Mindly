@@ -38,5 +38,6 @@ public class ResumoGamificacaoResponse {
         private final long melhorSequencia;
         private final boolean registrouHoje;
         private final String sentimentoHoje;
+        private final long totalRegistros;
     }
 }

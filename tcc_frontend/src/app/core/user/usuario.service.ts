@@ -14,6 +14,10 @@ export class UsuarioService {
     return this.http.get<UsuarioAutenticado>(this.urlPerfil).pipe(tap((usuario) => this.usuario.set(usuario)));
   }
 
+  atualizarAvatar(avatar: string | null): Observable<UsuarioAutenticado> {
+    return this.http.put<UsuarioAutenticado>(`${this.urlPerfil}/avatar`, { avatar }).pipe(tap((usuario) => this.usuario.set(usuario)));
+  }
+
   atualizarPerfil(dados: AtualizarPerfilRequest): Observable<UsuarioAutenticado> {
     return this.http.put<UsuarioAutenticado>(this.urlPerfil, dados).pipe(tap((usuario) => this.usuario.set(usuario)));
   }

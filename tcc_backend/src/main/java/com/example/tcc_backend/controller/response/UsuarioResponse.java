@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 public class UsuarioResponse {
 
     private Long id;
+    private com.example.tcc_backend.domain.enums.Avatar avatar;
+    private java.util.Set<com.example.tcc_backend.domain.enums.Avatar> avataresLiberados;
+
 
     private String nome;
 

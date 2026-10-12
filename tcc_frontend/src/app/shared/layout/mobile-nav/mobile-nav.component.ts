@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { UsuarioService } from '../../../core/user/usuario.service';
+import { AvatarComponent } from '../../avatar/avatar.component';
 
 type ItemNavegacao = { label: string; icone: string; rota: string };
 
-@Component({ selector: 'app-mobile-nav', imports: [RouterLink, RouterLinkActive], templateUrl: './mobile-nav.component.html', styleUrl: './mobile-nav.component.css', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-mobile-nav', imports: [RouterLink, RouterLinkActive, AvatarComponent], templateUrl: './mobile-nav.component.html', styleUrl: './mobile-nav.component.css', changeDetection: ChangeDetectionStrategy.OnPush })
 export class MobileNavComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);

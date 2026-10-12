@@ -13,7 +13,7 @@
   </nav>
   <div class="sidebar-bottom">
     <section class="support-card"><span class="material-symbols-rounded">favorite</span><strong>Você não está só.</strong><p>Cuide de você hoje, no seu ritmo.</p></section>
-    <a class="profile-button" routerLink="/perfil"><span class="avatar material-symbols-rounded">person</span><span><strong>Sua conta</strong><small>Ver perfil</small></span><span class="material-symbols-rounded more">more_horiz</span></a>
+    <a class="profile-button" routerLink="/perfil"><span class="avatar"><app-avatar [avatar]="usuario()?.avatar" [nome]="usuario()?.nome || 'Mindly'" /></span><span><strong>Sua conta</strong><small>Ver perfil</small></span><span class="material-symbols-rounded more">more_horiz</span></a>
     <button class="logout-button" type="button" (click)="sair()"><span class="material-symbols-rounded">logout</span>Sair da conta</button>
   </div>
 </aside>

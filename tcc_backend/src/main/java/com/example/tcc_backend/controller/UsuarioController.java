@@ -26,6 +26,11 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.obterPerfil());
     }
 
+    @PutMapping("/me/avatar")
+    public ResponseEntity<UsuarioResponse> atualizarAvatar(@RequestBody com.example.tcc_backend.controller.request.AvatarRequest request) {
+        return ResponseEntity.ok(usuarioService.atualizarAvatar(request));
+    }
+
     @PutMapping("/me")
     public ResponseEntity<UsuarioResponse> atualizarPerfil(@Valid @RequestBody UsuarioUpdateRequest request) {
         return ResponseEntity.ok(usuarioService.atualizarPerfil(request));

@@ -17,12 +17,14 @@ public class UsuarioService {
     private final PasswordEncoder passwordEncoder;
 
     private final UsuarioAutenticadoService usuarioAutenticadoService;
+    private final GamificacaoService gamificacaoService;
 
     public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder,
-                          UsuarioAutenticadoService usuarioAutenticadoService) {
+                          UsuarioAutenticadoService usuarioAutenticadoService, GamificacaoService gamificacaoService) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
         this.usuarioAutenticadoService = usuarioAutenticadoService;
+        this.gamificacaoService = gamificacaoService;
     }
 
     public UsuarioResponse cadastrar(CadastroRequest request) {
@@ -37,10 +39,24 @@ public class UsuarioService {
         return UsuarioMapper.toResponse(usuarioSalvo);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public UsuarioResponse obterPerfil() {
+        gamificacaoService.obterResumo();
         return UsuarioMapper.toResponse(usuarioAutenticadoService.obterUsuarioAutenticado());
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    public UsuarioResponse atualizarAvatar(com.example.tcc_backend.controller.request.AvatarRequest request) {
+        gamificacaoService.obterResumo();
+        Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
+        if (request.avatar() != null && !usuario.getAvataresLiberados().contains(request.avatar())) {
+            throw new IllegalArgumentException("Conclua a conquista para liberar este avatar.");
+        }
+        usuario.setAvatar(request.avatar());
+        return UsuarioMapper.toResponse(usuarioRepository.save(usuario));
+    }
+
+    @org.springframework.transaction.annotation.Transactional
     public UsuarioResponse atualizarPerfil(UsuarioUpdateRequest request) {
         Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
         usuario.setApelido(request.getApelido().trim());

@@ -1,5 +1,7 @@
 export interface UsuarioAutenticado {
   id: number;
+  avatar?: string | null;
+  avataresLiberados?: string[];
   nome: string;
   apelido: string;
   email: string;

@@ -11,7 +11,8 @@ public class ConquistaResponse {
     private final String titulo;
     private final String descricao;
     private final String trilha;
-    private final StatusConquista status;
-    private final long progresso;
+    private StatusConquista status;
+    private long progresso;
     private final long meta;
+    public void concluir() { status = StatusConquista.CONCLUIDA; progresso = meta; }
 }
