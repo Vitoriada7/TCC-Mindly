@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Credenciais locais da IA
+config/gemini.local.properties

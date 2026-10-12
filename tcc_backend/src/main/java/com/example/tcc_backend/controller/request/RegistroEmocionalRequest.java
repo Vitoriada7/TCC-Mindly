@@ -25,4 +25,7 @@ public class RegistroEmocionalRequest {
 
     @Size(max = 10000)
     private String reflexao;
+
+    @Size(max = 4000)
+    private String complementoFinal;
 }

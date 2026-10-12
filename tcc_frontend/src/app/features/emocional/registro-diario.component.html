@@ -1,26 +1,263 @@
 <div class="page">
-  <div class="progress-track" aria-label="Progresso do registro"><div class="progress-fill" [style.width.%]="progressPercent()"></div></div>
-  <header class="flow-header"><a routerLink=".." class="back-link" aria-label="Voltar para o diário emocional"><span class="material-symbols-rounded" aria-hidden="true">arrow_back</span></a><div><p class="eyebrow">REGISTRO DIÁRIO</p><h1>{{ tituloAtual }}</h1></div></header>
+  <div class="progress-track" aria-label="Progresso do registro">
+    <div class="progress-fill" [style.width.%]="progressPercent()"></div>
+  </div>
+  <header class="flow-header">
+    <a routerLink=".." class="back-link" aria-label="Voltar para o diário emocional"
+      ><span class="material-symbols-rounded" aria-hidden="true">arrow_back</span></a
+    >
+    <div>
+      <p class="eyebrow">REGISTRO DIÁRIO</p>
+      <h1>{{ tituloAtual }}</h1>
+    </div>
+  </header>
   <section class="step-card">
     @if (passo() === 1) {
       <p class="hint">Escolha as emoções que melhor descrevem como você está se sentindo agora.</p>
-      <div class="emotion-row">@for (sentimento of sentimentos; track sentimento.value) { <button type="button" class="emotion-button" [class.active]="sentimentoSelecionado() === sentimento.value" (click)="selecionarSentimento(sentimento.value)" [attr.aria-pressed]="sentimentoSelecionado() === sentimento.value"><span class="material-symbols-rounded" aria-hidden="true">{{ sentimento.icon }}</span><strong>{{ sentimento.label }}</strong></button> }</div>
-      <p class="other-label">Outras opções</p><div class="sentiments-row">@for (sentimento of sentimentosEspecificos; track sentimento) { <button type="button" class="sentiment-chip" [class.active]="sentimentoDetalhadoSelecionado() === sentimento" (click)="selecionarDetalhe(sentimento)">{{ sentimento }}</button> }</div>
-    } @else if (passo() === 2) {
-      <p class="hint">Escreva sobre seus sentimentos hoje. Não existe certo ou errado aqui.</p><textarea rows="10" placeholder="Como foi seu dia? O que passou pela sua cabeça?" [value]="pensamento()" (input)="atualizarPensamento($event)"></textarea>
-      <div class="voice-area">
-        <button type="button" class="voice-button" [class.recording]="estadoAudio() === 'recording'" (click)="alternarGravacao()" [attr.aria-label]="estadoAudio() === 'recording' ? 'Parar gravação' : 'Gravar relato por áudio'"><span class="material-symbols-rounded" aria-hidden="true">{{ estadoAudio() === 'recording' ? 'stop' : 'mic' }}</span></button>
-        <div class="voice-copy"><strong>{{ estadoAudio() === 'recording' ? 'Ouvindo você…' : 'Prefere falar?' }}</strong><p>{{ estadoAudio() === 'idle' ? 'Toque no microfone para registrar sua voz.' : mensagemAudio() }}</p></div>
-        @if (estadoAudio() === 'recording') { <div class="sound-wave" aria-label="Gravação em andamento"><i></i><i></i><i></i><i></i><i></i></div> }
+      <div class="emotion-row">
+        @for (sentimento of sentimentos; track sentimento.value) {
+          <button
+            type="button"
+            class="emotion-button"
+            [class.active]="sentimentoSelecionado() === sentimento.value"
+            (click)="selecionarSentimento(sentimento.value)"
+            [attr.aria-pressed]="sentimentoSelecionado() === sentimento.value"
+          >
+            <span class="material-symbols-rounded" aria-hidden="true">{{ sentimento.icon }}</span
+            ><strong>{{ sentimento.label }}</strong>
+          </button>
+        }
       </div>
-      @if (estadoAudio() === 'transcribing' || estadoAudio() === 'complete' || transcricao()) { <div class="transcript-card" [class.transcribing]="estadoAudio() === 'transcribing'"><span class="material-symbols-rounded" aria-hidden="true">{{ estadoAudio() === 'transcribing' ? 'graphic_eq' : 'format_quote' }}</span><div><strong>{{ estadoAudio() === 'transcribing' ? 'Transcrevendo sua voz' : 'Transcrição do seu relato' }}</strong><p>{{ transcricao() || 'Organizando suas palavras com calma…' }}</p></div></div> }
-      <aside class="tip"><span class="material-symbols-rounded" aria-hidden="true">lightbulb</span><p><strong>Dica:</strong> escreva livremente, este espaço é seu.</p></aside>
+      <p class="other-label">Outras opções</p>
+      <div class="sentiments-row">
+        @for (sentimento of sentimentosEspecificos; track sentimento) {
+          <button
+            type="button"
+            class="sentiment-chip"
+            [class.active]="sentimentoDetalhadoSelecionado() === sentimento"
+            (click)="selecionarDetalhe(sentimento)"
+          >
+            {{ sentimento }}
+          </button>
+        }
+      </div>
+    } @else if (passo() === 2) {
+      <p class="hint">Escreva sobre seus sentimentos hoje. Não existe certo ou errado aqui.</p>
+      <textarea
+        aria-label="Seu relato emocional"
+        maxlength="10000"
+        rows="10"
+        placeholder="Como foi seu dia? O que passou pela sua cabeça?"
+        [value]="pensamento()"
+        (input)="atualizarPensamento($event)"
+      ></textarea>
+      <div class="voice-area">
+        <button
+          type="button"
+          class="voice-button"
+          [class.recording]="estadoAudio() === 'recording'"
+          (click)="alternarGravacao()"
+          [disabled]="
+            estadoAudio() === 'requesting' || estadoAudio() === 'transcribing' || gerando()
+          "
+          [attr.aria-label]="
+            estadoAudio() === 'recording' ? 'Parar gravação' : 'Gravar relato por áudio'
+          "
+        >
+          <span class="material-symbols-rounded" aria-hidden="true">{{
+            estadoAudio() === 'recording' ? 'stop' : 'mic'
+          }}</span>
+        </button>
+        <div class="voice-copy" role="status" aria-live="polite">
+          <strong>{{ estadoAudio() === 'recording' ? 'Ouvindo você…' : 'Prefere falar?' }}</strong>
+          <p>
+            {{
+              estadoAudio() === 'idle'
+                ? 'Toque no microfone para registrar sua voz.'
+                : mensagemAudio()
+            }}
+          </p>
+        </div>
+        @if (estadoAudio() === 'recording') {
+          <div class="sound-wave" aria-label="Gravação em andamento">
+            <i></i><i></i><i></i><i></i><i></i>
+          </div>
+        }
+      </div>
+      <label class="hint">
+        <input type="checkbox" [formControl]="analisarExpressaoVocal" />
+        Quero que o Gemini também observe a expressão da minha voz após a gravação.
+      </label>
+      <p class="hint">
+        Ao gravar, o áudio será enviado ao Gemini para transcrição e, se você escolher, análise
+        vocal.
+      </p>
+      @if (estadoAudio() === 'transcribing' || estadoAudio() === 'complete' || transcricao()) {
+        <div class="transcript-card" [class.transcribing]="estadoAudio() === 'transcribing'">
+          <span class="material-symbols-rounded" aria-hidden="true">{{
+            estadoAudio() === 'transcribing' ? 'graphic_eq' : 'format_quote'
+          }}</span>
+          <div>
+            <strong>{{
+              estadoAudio() === 'transcribing'
+                ? 'Transcrevendo sua voz'
+                : 'Transcrição do seu relato'
+            }}</strong>
+            <p>{{ transcricao() || 'Organizando suas palavras com calma…' }}</p>
+          </div>
+        </div>
+      }
+      @if (observacoesVocais().length) {
+        <aside class="transcript-card" aria-labelledby="observacoes-voz-titulo">
+          <div>
+            <strong id="observacoes-voz-titulo">Observações sobre sua voz</strong>
+            <ul>
+              @for (observacao of observacoesVocais(); track $index) {
+                <li>{{ observacao }}</li>
+              }
+            </ul>
+            <p>São estimativas da IA e podem estar erradas. O que você sente tem prioridade.</p>
+            <label>
+              <input type="checkbox" [formControl]="usarObservacoesVocais" />
+              Essas observações fazem sentido para mim. Quero usá-las nas perguntas e na reflexão.
+            </label>
+          </div>
+        </aside>
+      }
+      @if (avisoAnaliseVocal()) {
+        <p class="hint" role="status">{{ avisoAnaliseVocal() }}</p>
+      }
+      <p class="hint">
+        Ao continuar, seu relato será enviado ao Gemini para preparar perguntas e uma mensagem de
+        apoio. Ao usar o microfone, o áudio também será enviado para transcrição.
+      </p>
+      <aside class="tip">
+        <span class="material-symbols-rounded" aria-hidden="true">lightbulb</span>
+        <p><strong>Dica:</strong> escreva livremente, este espaço é seu.</p>
+      </aside>
     } @else if (passo() === 3) {
-      <p class="hint">Explore seus sentimentos no seu ritmo. Responda apenas ao que fizer sentido para você.</p>@for (item of perguntas; track item.titulo; let index = $index) { <article class="reflection-card"><span class="material-symbols-rounded" aria-hidden="true">auto_awesome</span><div><h2>{{ item.titulo }}</h2><p>{{ item.texto }}</p></div><textarea rows="3" placeholder="Escreva se quiser..." [value]="exploracoes()[index]" (input)="atualizarExploracao(index, $event)"></textarea></article> }
+      <p class="hint">
+        Explore seus sentimentos no seu ritmo. Responda apenas ao que fizer sentido para você.
+      </p>
+      @for (item of perguntas(); track item.titulo; let index = $index) {
+        <article class="reflection-card">
+          <span class="material-symbols-rounded" aria-hidden="true">auto_awesome</span>
+          <div>
+            <h2>{{ item.titulo }}</h2>
+            <p>{{ item.texto }}</p>
+          </div>
+          <textarea
+            [attr.aria-label]="item.texto"
+            maxlength="3600"
+            rows="3"
+            placeholder="Escreva se quiser..."
+            [value]="exploracoes()[index]"
+            (input)="atualizarExploracao(index, $event)"
+          ></textarea>
+        </article>
+      }
     } @else {
-      <p class="hint">Finalize seu registro com uma breve reflexão sobre o que deseja levar adiante.</p><textarea rows="10" placeholder="Diga o que vier na sua mente :)" [value]="reflexao()" (input)="atualizarReflexao($event)"></textarea>
+      <p class="hint">Um momento de cuidado para encerrar seu registro.</p>
+      @if (reflexao()) {
+        <article
+          class="reflection-card final-reflection"
+          aria-label="Mensagem de apoio gerada por IA"
+        >
+          <div>
+            <h2>Para levar com você</h2>
+            <p>{{ reflexao() }}</p>
+          </div>
+        </article>
+        <p class="hint">
+          Esta mensagem foi gerada por IA e pode conter imprecisões. Ela não substitui
+          acompanhamento profissional.
+        </p>
+      } @else {
+        <p class="hint">Seu relato pode ser salvo mesmo sem uma mensagem de apoio.</p>
+      }
+      <div class="final-note">
+        <label for="complemento-final">Quer registrar mais alguma coisa?</label>
+        <p id="complemento-hint" class="hint">
+          Este espaço é opcional. Anote o que ficou com você depois desta reflexão.
+        </p>
+        <textarea
+          id="complemento-final"
+          aria-describedby="complemento-hint"
+          rows="5"
+          maxlength="4000"
+          placeholder="Escreva o que ainda gostaria de guardar..."
+          [formControl]="complementoFinal"
+        ></textarea>
+      </div>
     }
   </section>
-  @if (erroSalvamento(); as erro) { <p class="form-error" role="alert">{{ erro }}</p> }
-  <footer class="actions-row">@if (passo() > 1) { <button class="secondary" type="button" (click)="voltar()" [disabled]="salvando()">Voltar</button> }<button class="primary" type="button" (click)="avancar()" [disabled]="!podeAvancar() || salvando()">{{ salvando() ? 'Salvando...' : passo() === 1 ? 'Estou me sentindo assim' : passo() < 4 ? 'Continuar' : 'Finalizar' }}<span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span></button></footer>
+  @if (erroSalvamento(); as erro) {
+    <p class="form-error" role="alert">{{ erro }}</p>
+  }
+  @if (erroIa(); as erro) {
+    <p class="form-error" role="alert">{{ erro }}</p>
+    <button class="secondary" type="button" (click)="continuarSemIa()">Continuar sem IA</button>
+  }
+  <footer class="actions-row">
+    @if (passo() > 1) {
+      <button
+        class="secondary"
+        type="button"
+        (click)="voltar()"
+        [disabled]="
+          salvando() ||
+          gerando() ||
+          estadoAudio() === 'requesting' ||
+          estadoAudio() === 'recording' ||
+          estadoAudio() === 'transcribing'
+        "
+      >
+        Voltar
+      </button>
+    }
+    <button
+      class="primary"
+      type="button"
+      (click)="avancar()"
+      [disabled]="
+        !podeAvancar() ||
+        salvando() ||
+        gerando() ||
+        estadoAudio() === 'requesting' ||
+        estadoAudio() === 'recording' ||
+        estadoAudio() === 'transcribing'
+      "
+    >
+      {{
+        gerando()
+          ? 'Preparando...'
+          : salvando()
+            ? 'Salvando...'
+            : passo() === 1
+              ? 'Estou me sentindo assim'
+              : passo() < 4
+                ? 'Continuar'
+                : 'Finalizar'
+      }}<span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
+    </button>
+  </footer>
 </div>
+
+<dialog
+  #carregamentoDialog
+  class="ai-loading-dialog"
+  aria-labelledby="loading-title"
+  aria-describedby="loading-description"
+  (cancel)="$event.preventDefault()"
+>
+  <div class="ai-loading-content" role="status" aria-live="polite" aria-atomic="true">
+    <div class="loading-heart" aria-hidden="true">
+      <span class="material-symbols-rounded">favorite</span>
+    </div>
+    <h2 id="loading-title">{{ mensagemCarregamento() }}</h2>
+    <p id="loading-description">
+      Um instante de cuidado. Aguarde enquanto organizamos suas palavras.
+    </p>
+    <div class="loading-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+  </div>
+</dialog>

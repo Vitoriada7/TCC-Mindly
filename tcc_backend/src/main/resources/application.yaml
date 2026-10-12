@@ -1,4 +1,10 @@
 spring:
+    config:
+        import: optional:file:./config/gemini.local.properties
+    servlet:
+        multipart:
+            max-file-size: 8MB
+            max-request-size: 9MB
     application:
         name: tcc_backend
 
@@ -24,3 +30,6 @@ jwt:
         key: classpath:authz.pub
     private:
         key: classpath:authz.pem
+gemini:
+    api-key: ${GEMINI_API_KEY:}
+    model: ${GEMINI_MODEL:gemini-3.5-flash-lite}
