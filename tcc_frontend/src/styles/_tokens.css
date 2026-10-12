@@ -1,5 +1,7 @@
 /* Valores compartilhados da identidade visual. Mantem a paleta atual das telas. */
 :root {
+  --page-title-size: clamp(20px, 2.5vw, 24px);
+  --page-description-size: 13px;
   --primary: #8065e9;
   --primary-light: #a98bff;
   --primary-hover: #7559de;
