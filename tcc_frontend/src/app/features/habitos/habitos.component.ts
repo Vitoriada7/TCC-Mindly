@@ -86,7 +86,7 @@ export class HabitosComponent {
   }
 
   protected alternarRegistro(habito: Habito, data: string): void {
-    if (this.processando()) return;
+    if (this.processando() || !this.podeAlterarData(data)) return;
     this.processando.set(true);
     const concluido = this.estaConcluido(habito, data);
     (concluido ? this.habitoApi.desmarcar(habito.id, data) : this.habitoApi.marcar(habito.id, data))
@@ -101,6 +101,10 @@ export class HabitosComponent {
       next: () => this.carregar(),
       error: () => this.erro.set('Não foi possível excluir o hábito.'),
     });
+  }
+
+  protected podeAlterarData(data: string): boolean {
+    return data === this.formatarData(new Date());
   }
 
   protected estaConcluido(habito: Habito, data: string): boolean { return habito.diasConcluidos.includes(data); }

@@ -19,7 +19,7 @@
           <div class="habit-copy"><strong>{{ habito.nome }}</strong><p>{{ quantidadeSemana(habito) }} {{ quantidadeSemana(habito) === 1 ? 'dia nesta semana' : 'dias nesta semana' }}</p></div>
           <div class="week">
             @for (dia of dias; track dia.data) {
-              <button type="button" [class.done]="estaConcluido(habito, dia.data)" [class.today]="dia.data === hojeIso" [disabled]="processando()" [attr.aria-label]="(estaConcluido(habito, dia.data) ? 'Desmarcar ' : 'Marcar ') + habito.nome + ' em ' + dia.data" (click)="alternarRegistro(habito, dia.data)"><small>{{ dia.rotulo }}</small><span class="material-symbols-rounded">{{ estaConcluido(habito, dia.data) ? 'check' : '' }}</span></button>
+              <button type="button" [class.done]="estaConcluido(habito, dia.data)" [class.today]="dia.data === hojeIso" [disabled]="processando() || !podeAlterarData(dia.data)" [attr.title]="podeAlterarData(dia.data) ? 'Registrar hábito de hoje' : 'Somente o dia atual pode ser alterado'" [attr.aria-label]="(estaConcluido(habito, dia.data) ? 'Desmarcar ' : 'Marcar ') + habito.nome + ' em ' + dia.data" (click)="alternarRegistro(habito, dia.data)"><small>{{ dia.rotulo }}</small><span class="material-symbols-rounded">{{ estaConcluido(habito, dia.data) ? 'check' : '' }}</span></button>
             }
           </div>
           <div class="actions"><button type="button" (click)="abrirEdicao(habito)" aria-label="Editar hábito"><span class="material-symbols-rounded">edit</span></button><button type="button" (click)="excluir(habito)" aria-label="Excluir hábito"><span class="material-symbols-rounded">delete</span></button></div>

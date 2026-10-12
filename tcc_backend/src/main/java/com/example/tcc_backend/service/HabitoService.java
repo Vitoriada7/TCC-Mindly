@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -88,6 +89,7 @@ public class HabitoService {
     public void marcarConcluido(Long id, LocalDate data) {
         Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
         Habito habito = obterDoUsuario(id, usuario.getId());
+        validarDataRegistro(data);
         RegistroHabito registro = registroHabitoRepository.findByHabitoIdAndData(habito.getId(), data)
                 .orElseGet(() -> RegistroHabito.builder().habito(habito).data(data).build());
         registro.setConcluido(true);
@@ -98,6 +100,7 @@ public class HabitoService {
     public void desmarcarConcluido(Long id, LocalDate data) {
         Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
         Habito habito = obterDoUsuario(id, usuario.getId());
+        validarDataRegistro(data);
         registroHabitoRepository.findByHabitoIdAndData(habito.getId(), data)
                 .ifPresent(registroHabitoRepository::delete);
     }
@@ -105,7 +108,7 @@ public class HabitoService {
     @Transactional(readOnly = true)
     public ResumoHabitosResponse obterResumo() {
         Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
-        LocalDate hoje = LocalDate.now();
+        LocalDate hoje = LocalDate.now(ZoneId.of("America/Sao_Paulo"));
         long concluidosHoje = registroHabitoRepository.countByHabitoUsuarioIdAndDataAndConcluidoTrue(usuario.getId(), hoje);
         long totalAtivos = habitoRepository.countByUsuarioIdAndAtivoTrue(usuario.getId());
         Set<LocalDate> diasComConclusao = registroHabitoRepository
@@ -121,6 +124,12 @@ public class HabitoService {
         return new ResumoHabitosResponse(sequencia, concluidosHoje, totalAtivos);
     }
 
+    private void validarDataRegistro(LocalDate data) {
+        if (data == null || !data.equals(LocalDate.now(ZoneId.of("America/Sao_Paulo")))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Somente o dia atual pode ser marcado ou desmarcado");
+        }
+    }
     private Habito obterDoUsuario(Long id, Long usuarioId) {
         return habitoRepository.findByIdAndUsuarioIdAndAtivoTrue(id, usuarioId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Hábito não encontrado"));
@@ -133,7 +142,7 @@ public class HabitoService {
         if (inicio != null && fim != null) {
             return new Periodo(inicio, fim);
         }
-        LocalDate referencia = inicio != null ? inicio : fim != null ? fim : LocalDate.now();
+        LocalDate referencia = inicio != null ? inicio : fim != null ? fim : LocalDate.now(ZoneId.of("America/Sao_Paulo"));
         LocalDate inicioSemana = referencia.with(DayOfWeek.MONDAY);
         LocalDate fimSemana = inicioSemana.plusDays(6);
         return new Periodo(inicio != null ? inicio : inicioSemana, fim != null ? fim : fimSemana);
