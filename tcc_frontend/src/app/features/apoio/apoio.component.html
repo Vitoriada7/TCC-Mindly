@@ -8,18 +8,6 @@
   </div>
 
   <section class="grid-layout">
-    <article class="card map-card">
-      <header class="card-heading">
-        <div><p class="eyebrow">ENCONTRAR</p><h2>Serviços próximos</h2></div>
-        <button class="location-button" type="button" (click)="usarMinhaLocalizacao()" [disabled]="buscandoLocalizacao()">
-          <span class="material-symbols-rounded" aria-hidden="true">my_location</span>
-          {{ buscandoLocalizacao() ? 'Localizando...' : 'Usar minha localização' }}
-        </button>
-      </header>
-      <div #mapa class="map-placeholder" aria-label="Mapa com a localização aproximada do usuário"></div>
-      <p class="location-message" aria-live="polite">{{ mensagemLocalizacao() }}</p>
-    </article>
-
     <article class="card contact-card">
       <header class="card-heading">
         <div><p class="eyebrow">SERVIÇOS</p><h2>Apoio próximo de você</h2></div>
@@ -99,11 +87,12 @@
       }
       @for (contato of contatos(); track contato.id) {
         <article class="contact-card-item">
-          <div>
-            <strong>{{ contato.nome }}</strong>
+          <div class="contact-person">
+            <strong>{{ contato.relacionamento || 'Contato pessoal' }}</strong>
             @if (contato.principal) { <span class="primary-badge">Principal</span> }
-            <p>{{ contato.relacionamento || 'Contato pessoal' }} · {{ contato.telefone }}</p>
+            <p>{{ contato.nome }}</p>
           </div>
+          <span class="contact-phone">{{ contato.telefone }}</span>
           <div class="contact-actions">
             <button type="button" (click)="editarContato(contato)" aria-label="Editar contato">
               <span class="material-symbols-rounded" aria-hidden="true">edit</span>

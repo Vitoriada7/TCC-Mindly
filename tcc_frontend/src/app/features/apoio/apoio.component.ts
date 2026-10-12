@@ -1,20 +1,15 @@
 import { isPlatformBrowser } from '@angular/common';
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  ElementRef,
   OnInit,
-  OnDestroy,
   PLATFORM_ID,
-  ViewChild,
   inject,
   signal,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import * as L from 'leaflet';
 import { ApoioApiService } from './apoio-api.service';
 import { ContatoEmergencia, ContatoEmergenciaRequest } from './apoio.models';
 
@@ -25,20 +20,12 @@ import { ContatoEmergencia, ContatoEmergenciaRequest } from './apoio.models';
   styleUrl: './apoio.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ApoioComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('mapa') private mapaElemento?: ElementRef<HTMLElement>;
-
+export class ApoioComponent implements OnInit {
   private readonly apoioApi = inject(ApoioApiService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
-  private mapa?: L.Map;
-  private marcadorUsuario?: L.Marker;
 
   protected readonly contatos = signal<ContatoEmergencia[]>([]);
-  protected readonly buscandoLocalizacao = signal(false);
-  protected readonly mensagemLocalizacao = signal(
-    'Use sua localização para visualizar sua posição aproximada no mapa.',
-  );
   protected readonly carregandoContatos = signal(true);
   protected readonly salvandoContato = signal(false);
   protected readonly formularioVisivel = signal(false);
@@ -54,48 +41,6 @@ export class ApoioComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.carregarContatos();
-  }
-
-  ngAfterViewInit(): void {
-    if (!isPlatformBrowser(this.platformId) || !this.mapaElemento) {
-      return;
-    }
-    this.mapa = L.map(this.mapaElemento.nativeElement, { scrollWheelZoom: false }).setView(
-      [-30.0346, -51.2177],
-      7,
-    );
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors',
-    }).addTo(this.mapa);
-  }
-
-  ngOnDestroy(): void {
-    this.mapa?.remove();
-  }
-
-  protected usarMinhaLocalizacao(): void {
-    if (!isPlatformBrowser(this.platformId) || !navigator.geolocation) {
-      this.mensagemLocalizacao.set('Seu navegador não oferece suporte à localização.');
-      return;
-    }
-
-    this.buscandoLocalizacao.set(true);
-    this.mensagemLocalizacao.set('Obtendo sua localização...');
-    navigator.geolocation.getCurrentPosition(
-      ({ coords }) => {
-        this.buscandoLocalizacao.set(false);
-        this.mensagemLocalizacao.set('Sua localização aproximada está indicada no mapa.');
-        this.mostrarLocalizacao(coords.latitude, coords.longitude);
-      },
-      () => {
-        this.buscandoLocalizacao.set(false);
-        this.mensagemLocalizacao.set(
-          'Não foi possível acessar sua localização. Verifique a permissão do navegador.',
-        );
-      },
-      { enableHighAccuracy: false, timeout: 10_000, maximumAge: 300_000 },
-    );
   }
 
   protected abrirFormulario(): void {
@@ -177,25 +122,4 @@ export class ApoioComponent implements OnInit, AfterViewInit, OnDestroy {
       },
     });
   }
-
-  private mostrarLocalizacao(latitude: number, longitude: number): void {
-    if (!this.mapa) {
-      return;
-    }
-    const posicao: L.LatLngExpression = [latitude, longitude];
-    const iconeUsuario = L.divIcon({
-      className: 'marcador-mapa marcador-usuario',
-      html: '<span></span>',
-    });
-    this.marcadorUsuario?.remove();
-    this.marcadorUsuario = L.marker(posicao, {
-      icon: iconeUsuario,
-      title: 'Sua localização',
-    })
-      .bindPopup('Sua localização aproximada')
-      .addTo(this.mapa);
-    this.mapa.setView(posicao, 14);
-    this.marcadorUsuario.openPopup();
-  }
-
 }
