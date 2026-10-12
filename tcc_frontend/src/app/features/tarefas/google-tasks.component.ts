@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, signal, viewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
@@ -17,13 +17,29 @@ export class GoogleTasksComponent {
   protected readonly processando = signal(false);
   protected readonly mensagem = signal('');
   protected readonly erro = signal('');
+  protected readonly modalAberto = signal(false);
+  private readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('dialog');
+  private readonly trigger = viewChild<ElementRef<HTMLButtonElement>>('trigger');
 
   constructor() {
+    effect((onCleanup) => {
+      const dialog = this.dialog()?.nativeElement;
+      if (!dialog || !this.modalAberto()) return;
+      const overflowAnterior = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      dialog.showModal();
+      onCleanup(() => {
+        dialog.close();
+        document.body.style.overflow = overflowAnterior;
+        this.trigger()?.nativeElement.focus();
+      });
+    });
     const url = new URL(window.location.href);
     const code = url.searchParams.get('code');
     const state = url.searchParams.get('state');
     const negado = url.searchParams.get('error');
     if (code || state || negado) {
+      this.modalAberto.set(true);
       for (const parametro of ['code', 'state', 'error', 'error_description', 'scope', 'authuser', 'prompt']) {
         url.searchParams.delete(parametro);
       }
@@ -39,6 +55,16 @@ export class GoogleTasksComponent {
       if (negado) this.erro.set('Conexão cancelada. Você pode continuar usando o Mindly normalmente.');
       this.carregar();
     }
+  }
+  protected abrirModal(): void {
+    this.modalAberto.set(true);
+    this.carregar();
+  }
+  protected fecharModal(): void {
+    this.modalAberto.set(false);
+  }
+  protected fecharPeloFundo(event: MouseEvent): void {
+    if (event.target === this.dialog()?.nativeElement) this.fecharModal();
   }
   protected carregar(): void {
     this.api.estado().subscribe({ next: (estado) => this.estado.set(estado), error: (erro: unknown) => this.falha(erro) });
