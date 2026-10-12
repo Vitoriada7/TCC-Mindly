@@ -14,7 +14,7 @@
   background:
     radial-gradient(circle at 82% 12%, rgb(236 96 255 / 18%), transparent 34%),
     radial-gradient(circle at 8% 88%, rgb(111 92 255 / 17%), transparent 38%),
-    linear-gradient(155deg, #fff 0%, #faf7ff 48%, #f3edff 100%);
+    linear-gradient(155deg, var(--surface) 0%, #faf7ff 48%, #f3edff 100%);
 }
 
 .skip-area {
@@ -25,7 +25,7 @@
   overflow: hidden;
   border: 0;
   padding: max(28px, env(safe-area-inset-top)) 24px max(22px, env(safe-area-inset-bottom));
-  color: #2f2f3a;
+  color: var(--text);
   background: transparent;
   font: inherit;
   cursor: pointer;
@@ -65,7 +65,7 @@
 .name {
   margin-top: 16px;
   color: #9257d7;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-heading);
   font-size: clamp(2.55rem, 12vw, 4.1rem);
   font-weight: 700;
   letter-spacing: -.045em;

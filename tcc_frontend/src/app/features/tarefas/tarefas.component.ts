@@ -12,7 +12,7 @@ import { GoogleTasksComponent } from './google-tasks.component';
   selector: 'app-tarefas',
   imports: [ReactiveFormsModule, RouterLink, GoogleTasksComponent],
   templateUrl: './tarefas.component.html',
-  styleUrl: './tarefas.component.css',
+  styleUrls: ['./tarefas.component.css', './tarefas-modal.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TarefasComponent {

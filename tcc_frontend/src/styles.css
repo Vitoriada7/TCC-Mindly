@@ -7,7 +7,7 @@
 .material-symbols-rounded {
   display: inline-block;
   direction: ltr;
-  font-family: 'Material Symbols Rounded';
+  font-family: var(--font-icons);
   font-feature-settings: 'liga';
   font-style: normal;
   font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
@@ -36,7 +36,7 @@
 
 .achievement-link:hover,
 .achievement-link:focus-visible {
-  background: #fff;
+  background: var(--surface);
   outline: 3px solid rgb(255 255 255 / 35%);
   transform: translateY(-2px);
 }

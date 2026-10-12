@@ -4,7 +4,7 @@
 .chart-days { display: flex; flex: 1; min-width: 0; gap: 0; }
 .chart-day { flex: 1 1 0; min-width: 0; text-align: center; }
 .chart-column { position: relative; height: 130px; margin: 5px 0 14px; background: repeating-linear-gradient(to bottom, #eeebf5 0, #eeebf5 1px, transparent 1px, transparent 25%); }
-.chart-dot { position: absolute; left: 50%; width: 10px; height: 10px; transform: translate(-50%, -50%); border-radius: 50%; background: #7b61df; box-shadow: 0 0 0 3px #f0ebff; }
+.chart-dot { position: absolute; left: 50%; width: 10px; height: 10px; transform: translate(-50%, -50%); border-radius: var(--radius-circle); background: #7b61df; box-shadow: 0 0 0 3px #f0ebff; }
 .chart-missing { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); color: #aaa3b6; }
 .chart-date { color: #696572; font-size: 10px; }
 .chart-note { margin: 14px 0 0; color: #696572; font-size: 11px; line-height: 1.5; }

@@ -1,1 +1,47 @@
-/* Tokens visuais globais serão definidos quando a identidade visual for aplicada. */
+/* Valores compartilhados da identidade visual. Mantem a paleta atual das telas. */
+:root {
+  --primary: #8065e9;
+  --primary-light: #a98bff;
+  --primary-hover: #7559de;
+  --surface: #fff;
+  --background: #f8f9fc;
+  --text: #2f2f3a;
+  --text-heading: #33323e;
+  --text-muted: #777285;
+  --text-secondary: #7e7b8b;
+  --text-subtle: #9b98a4;
+  --border: #eeeafa;
+  --primary-subtle: #f0edff;
+  --primary-soft: #f3f0ff;
+  --primary-faint: #f5f3ff;
+  --primary-text: #7155d5;
+  --secondary-text: #7058d5;
+  --secondary-surface: #f1effa;
+  --blue: #539dce;
+  --blue-surface: #e9f6ff;
+  --green: #60aa70;
+  --green-surface: #eaf8ed;
+  --pink: #d875a4;
+  --pink-surface: #fff0f7;
+  --orange: #df9052;
+  --orange-surface: #fff1e8;
+  --error-text: #9e3958;
+  --error-surface: #fff0f3;
+
+  --font-body: 'Nunito Sans', Arial, sans-serif;
+  --font-heading: 'Montserrat', sans-serif;
+  --font-icons: 'Material Symbols Rounded';
+
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 18px;
+  --radius-3xl: 20px;
+  --radius-4xl: 24px;
+  --radius-pill: 999px;
+  --radius-circle: 50%;
+
+  --sidebar-width: 252px;
+  --sidebar-width-compact: 218px;
+}
