@@ -28,12 +28,24 @@
   </section>
 
   <section class="calendar-card" aria-labelledby="registros-title">
-    <div class="section-heading"><div><p class="eyebrow">SEUS REGISTROS</p><h2 id="registros-title">{{ mesAtual() }}</h2></div><span class="material-symbols-rounded calendar-icon" aria-hidden="true">calendar_month</span></div>
+    <div class="section-heading"><div><p class="eyebrow">SEUS REGISTROS</p><h2 id="registros-title" aria-live="polite">{{ mesAtual() }}</h2></div><span class="material-symbols-rounded calendar-icon" aria-hidden="true">calendar_month</span></div>
+    <nav class="calendar-navigation" aria-label="Navegação entre meses">
+      <button type="button" aria-label="Mês anterior" (click)="navegarMes(-1)"><span class="material-symbols-rounded" aria-hidden="true">chevron_left</span></button>
+      <button type="button" aria-label="Próximo mês" (click)="navegarMes(1)"><span class="material-symbols-rounded" aria-hidden="true">chevron_right</span></button>
+    </nav>
     <div class="calendar-grid" aria-label="Calendário de registros">
       @for (dia of diasSemana; track dia) { <span class="weekday">{{ dia }}</span> }
       @for (shift of primeirosDias(); track $index) { <span class="day empty"></span> }
-      @for (dia of diasDoMes(); track dia) { <span class="day" [class.registered]="diasRegistrados().has(dia)">{{ dia }}</span> }
+      @for (dia of diasDoMes(); track dia) {
+        @if (diasRegistrados().has(dia)) {
+          <button type="button" class="day registered" (click)="abrirRegistro(dia)"
+            [attr.aria-label]="'Ver registro de ' + dia + ' de ' + mesAtual()"
+            aria-haspopup="dialog">{{ dia }}</button>
+        } @else { <span class="day">{{ dia }}</span> }
+      }
     </div>
-    <p class="calendar-footer"><span class="dot"></span>Dias em que você reservou um momento para si.</p>
+    <p class="calendar-footer"><span class="dot"></span>Toque em um dia marcado para ver seu registro.</p>
   </section>
 </div>
+<app-registro-detalhes [registro]="registroSelecionado()" [sentimento]="sentimentoRegistro()"
+  (fechar)="registroSelecionado.set(null)" />
