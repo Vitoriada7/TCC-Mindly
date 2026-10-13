@@ -15,7 +15,7 @@ export class MobileNavComponent {
     { label: 'Início', icone: 'home', rota: '/' }, { label: 'Diário', icone: 'edit_note', rota: '/emocional' }, { label: 'Tarefas', icone: 'check_circle', rota: '/tarefas' }, { label: 'Hábitos', icone: 'calendar_month', rota: '/habitos' }, { label: 'Mais', icone: 'more_horiz', rota: '' },
   ];
   protected readonly atalhos: ItemNavegacao[] = [
-    { label: 'Conquistas', icone: 'emoji_events', rota: '/conquistas' }, { label: 'Centros de apoio', icone: 'support_agent', rota: '/apoio' }, { label: 'Meu perfil', icone: 'person', rota: '/perfil' },
+    { label: 'Conquistas', icone: 'emoji_events', rota: '/conquistas' }, { label: 'Centros de apoio', icone: 'support_agent', rota: '/apoio' },
     { label: 'Recursos', icone: 'spa', rota: '/recursos' },
   ];
   protected readonly showMore = signal(false);
@@ -24,7 +24,6 @@ export class MobileNavComponent {
   protected readonly nomeUsuario = computed(() => this.usuario()?.nome || 'Sua conta');
   protected readonly emailUsuario = computed(() => this.usuario()?.email || 'Mindly');
 
-  constructor() { if (!this.usuario()) this.usuarioService.obterPerfil().subscribe({ error: () => undefined }); }
   protected toggleMore(): void { this.showMore.update((valor) => !valor); }
   protected closeMore(): void { this.showMore.set(false); }
   protected sair(): void { this.authService.logout(); this.closeMore(); this.router.navigate(['/login']); }

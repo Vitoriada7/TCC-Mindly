@@ -10,5 +10,5 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withViewTransitions()),
     provideHttpClient(withInterceptors([jwtInterceptor])),
-  ]
+  ],
 };

@@ -17,7 +17,6 @@ type ItemNavegacao = { rotulo: string; icone: string; rota?: string; emBreve?: b
 export class SidebarComponent {
   private readonly usuarioService = inject(UsuarioService);
   protected readonly usuario = this.usuarioService.usuario;
-  constructor() { if (!this.usuario()) this.usuarioService.obterPerfil().subscribe({ error: () => undefined }); }
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   protected readonly itens: ItemNavegacao[] = [
