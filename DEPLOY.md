@@ -72,6 +72,8 @@ Use SPRING_PROFILES_ACTIVE=prod. PORT e fornecida pelo Render; a aplicacao a res
 Configure CORS_ALLOWED_ORIGINS com a origem exata do frontend, sem barra final. Multiplas origens
 sao separadas por virgula. Previews precisam ser autorizados explicitamente; nao sao liberados por curinga.
 
+GEMINI_REQUEST_TIMEOUT_SECONDS configura o limite total de cada chamada ao Google (padrao: 90 segundos).
+Um timeout nao confirma falha de credencial; significa que a chamada nao terminou no prazo.
 GEMINI_API_KEY e usada apenas no backend. GEMINI_MODEL mantem o modelo configurado no projeto.
 Para Google Tasks, configure GOOGLE_TASKS_CLIENT_ID, GOOGLE_TASKS_CLIENT_SECRET,
 GOOGLE_TASKS_REDIRECT_URI e GOOGLE_TASKS_ENCRYPTION_KEY. Esta ultima precisa ser uma chave AES
