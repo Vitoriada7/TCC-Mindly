@@ -16,6 +16,8 @@ import java.util.*;
 @Service
 public class GeminiService {
     private static final Logger log = LoggerFactory.getLogger(GeminiService.class);
+    @Value("${gemini.request-timeout-seconds:90}")
+    private long timeoutSegundos = 90;
     private final String chave;
     private final String modelo;
     private final ObjectMapper mapper;
@@ -81,7 +83,7 @@ public class GeminiService {
                     "generationConfig", Map.of("responseMimeType", "application/json", "responseSchema", schema,
                             "maxOutputTokens", 2048));
             var request = HttpRequest.newBuilder(URI.create("https://generativelanguage.googleapis.com/v1beta/models/" + modelo + ":generateContent"))
-                    .timeout(Duration.ofSeconds(45)).header("Content-Type", "application/json")
+                    .timeout(Duration.ofSeconds(timeoutSegundos)).header("Content-Type", "application/json")
                     .header("x-goog-api-key", chave).POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(corpo))).build();
             etapa = "requisicao_http";
             var response = cliente.send(request, HttpResponse.BodyHandlers.ofString());
@@ -111,6 +113,9 @@ public class GeminiService {
                 throw indisponivel();
             }
             return resultado;
+        } catch (HttpTimeoutException e) {
+            log.warn("Gemini: timeout na etapa {}; limite={}s", etapa, timeoutSegundos);
+            throw indisponivel();
         } catch (ResponseStatusException e) {
             throw e;
         } catch (InterruptedException e) {
