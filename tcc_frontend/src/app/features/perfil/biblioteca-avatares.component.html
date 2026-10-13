@@ -27,3 +27,5 @@
   }
   @if (erro(); as mensagem) { <div class="feedback" role="alert">{{ mensagem }} <button type="button" (click)="carregar()">Tentar novamente</button></div> }
 </section>
+
+<app-carregamento [ativo]="carregando()" />

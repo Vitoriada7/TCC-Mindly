@@ -1,3 +1,4 @@
+import { CarregamentoComponent } from '../../shared/components/carregamento/carregamento.component';
 import { isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -15,7 +16,7 @@ import { ContatoEmergencia, ContatoEmergenciaRequest } from './apoio.models';
 
 @Component({
   selector: 'app-apoio',
-  imports: [ReactiveFormsModule],
+  imports: [CarregamentoComponent, ReactiveFormsModule],
   templateUrl: './apoio.component.html',
   styleUrl: './apoio.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

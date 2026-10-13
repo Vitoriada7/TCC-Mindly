@@ -1,3 +1,4 @@
+import { CarregamentoComponent } from '../../shared/components/carregamento/carregamento.component';
 import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -9,7 +10,7 @@ import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.s
 
 @Component({
   selector: 'app-biblioteca-avatares',
-  imports: [NgOptimizedImage, RouterLink],
+  imports: [CarregamentoComponent, NgOptimizedImage, RouterLink],
   templateUrl: './biblioteca-avatares.component.html',
   styleUrl: './biblioteca-avatares.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

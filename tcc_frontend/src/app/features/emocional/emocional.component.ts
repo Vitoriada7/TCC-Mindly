@@ -1,7 +1,8 @@
+import { CarregamentoComponent } from '../../shared/components/carregamento/carregamento.component';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { EmocionalApiService } from './emocional-api.service';
-import { catchError, forkJoin, of } from 'rxjs';
+import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ResumoGamificacao } from '../gamificacao/models/gamificacao.models';
 import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.service';
 import { RegistroEmocional } from './emocional.models';
@@ -11,7 +12,7 @@ type Humor = { label: string; value: string; icon: string; description: string }
 
 @Component({
   selector: 'app-emocional',
-  imports: [RouterLink, RegistroDetalhesComponent],
+  imports: [CarregamentoComponent, RouterLink, RegistroDetalhesComponent],
   templateUrl: './emocional.component.html',
   styleUrl: './emocional.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,6 +29,7 @@ export class EmocionalComponent {
   ];
 
   protected readonly humorSelecionado = signal<string | null>(null);
+  protected readonly carregando = signal(true);
   private readonly datasRegistradas = signal<Date[]>([]);
   private readonly registros = signal<RegistroEmocional[]>([]);
   protected readonly registroSelecionado = signal<RegistroEmocional | null>(null);
@@ -87,7 +89,7 @@ export class EmocionalComponent {
     forkJoin({
       registros: this.emocionalApi.listar(),
       gamificacao: this.gamificacaoApi.resumo().pipe(catchError(() => of(null))),
-    }).subscribe({
+    }).pipe(finalize(() => this.carregando.set(false))).subscribe({
       next: ({ registros, gamificacao }) => {
         this.registros.set(registros);
         this.resumoGamificacao.set(gamificacao);

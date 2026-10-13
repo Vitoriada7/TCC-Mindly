@@ -1,3 +1,4 @@
+import { CarregamentoComponent } from '../../shared/components/carregamento/carregamento.component';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -14,7 +15,7 @@ import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.s
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [CarregamentoComponent, ReactiveFormsModule, RouterLink],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css', './dashboard-modal.css', './dashboard-chart.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

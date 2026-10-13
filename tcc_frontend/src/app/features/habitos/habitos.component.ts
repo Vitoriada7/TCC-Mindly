@@ -1,3 +1,4 @@
+import { CarregamentoComponent } from '../../shared/components/carregamento/carregamento.component';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -11,7 +12,7 @@ type DiaSemana = { data: string; rotulo: string; dia: number };
 
 @Component({
   selector: 'app-habitos',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [CarregamentoComponent, ReactiveFormsModule, RouterLink],
   templateUrl: './habitos.component.html',
   styleUrl: './habitos.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

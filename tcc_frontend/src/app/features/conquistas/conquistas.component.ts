@@ -1,3 +1,4 @@
+import { CarregamentoComponent } from '../../shared/components/carregamento/carregamento.component';
 import { ChangeDetectionStrategy, Component, ElementRef, computed, inject, signal, viewChild } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { AVATARES } from '../../core/user/avatares';
@@ -9,7 +10,7 @@ import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.s
 
 @Component({
   selector: 'app-conquistas',
-  imports: [NgOptimizedImage],
+  imports: [CarregamentoComponent, NgOptimizedImage],
   templateUrl: './conquistas.component.html',
   styleUrl: './conquistas.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

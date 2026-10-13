@@ -1,3 +1,4 @@
+import { CarregamentoComponent } from '../../shared/components/carregamento/carregamento.component';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -9,7 +10,7 @@ import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.s
 
 @Component({
   selector: 'app-tarefas',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [CarregamentoComponent, ReactiveFormsModule, RouterLink],
   templateUrl: './tarefas.component.html',
   styleUrls: ['./tarefas.component.css', './tarefas-modal.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
