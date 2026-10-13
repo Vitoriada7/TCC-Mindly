@@ -3,6 +3,8 @@ package com.example.tcc_backend.service;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,6 +15,7 @@ import java.util.*;
 
 @Service
 public class GeminiService {
+    private static final Logger log = LoggerFactory.getLogger(GeminiService.class);
     private final String chave;
     private final String modelo;
     private final ObjectMapper mapper;
@@ -59,12 +62,19 @@ public class GeminiService {
 
     public String texto(JsonNode resultado, int limite, boolean permiteVazio) {
         var texto = resultado.path("texto");
-        if (!texto.isTextual() || texto.asText().length() > limite || (!permiteVazio && texto.asText().isBlank())) throw indisponivel();
+        if (!texto.isTextual() || texto.asText().length() > limite || (!permiteVazio && texto.asText().isBlank())) {
+            log.warn("Gemini: campo texto invalido ou fora do limite esperado");
+            throw indisponivel();
+        }
         return texto.asText().trim();
     }
 
     private JsonNode chamar(String instrucao, List<Map<String, Object>> partes, Map<String, Object> schema) {
-        if (chave.isBlank()) throw indisponivel();
+        if (chave.isBlank()) {
+            log.warn("Gemini: GEMINI_API_KEY ausente no backend");
+            throw indisponivel();
+        }
+        String etapa = "preparacao";
         try {
             var corpo = Map.of("systemInstruction", Map.of("parts", List.of(Map.of("text", instrucao))),
                     "contents", List.of(Map.of("role", "user", "parts", partes)),
@@ -73,20 +83,55 @@ public class GeminiService {
             var request = HttpRequest.newBuilder(URI.create("https://generativelanguage.googleapis.com/v1beta/models/" + modelo + ":generateContent"))
                     .timeout(Duration.ofSeconds(45)).header("Content-Type", "application/json")
                     .header("x-goog-api-key", chave).POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(corpo))).build();
+            etapa = "requisicao_http";
             var response = cliente.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200) throw indisponivel();
+            if (response.statusCode() != 200) {
+                log.warn("Gemini: HTTP {} retornado pelo Google; status={}",
+                        response.statusCode(), statusSeguro(response.body()));
+                throw indisponivel();
+            }
+            etapa = "resposta_json";
             var candidato = mapper.readTree(response.body()).path("candidates").path(0);
-            if (!"STOP".equals(candidato.path("finishReason").asText())) throw indisponivel();
+            String motivo = candidato.path("finishReason").asText();
+            if (!"STOP".equals(motivo)) {
+                String motivoSeguro = Set.of("MAX_TOKENS", "SAFETY", "RECITATION", "OTHER",
+                        "BLOCKLIST", "PROHIBITED_CONTENT", "SPII", "MALFORMED_FUNCTION_CALL")
+                        .contains(motivo) ? motivo : "AUSENTE_OU_DESCONHECIDO";
+                log.warn("Gemini: resposta sem conclusao normal; finishReason={}", motivoSeguro);
+                throw indisponivel();
+            }
             StringBuilder texto = new StringBuilder();
             for (var parte : candidato.path("content").path("parts")) {
                 if (!parte.path("thought").asBoolean(false)) texto.append(parte.path("text").asText(""));
             }
-            return mapper.readTree(texto.toString());
+            etapa = "conteudo_json";
+            var resultado = mapper.readTree(texto.toString());
+            if (resultado == null || !resultado.isObject()) {
+                log.warn("Gemini: conteudo nao retornou um objeto JSON");
+                throw indisponivel();
+            }
+            return resultado;
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (InterruptedException e) {
+            log.warn("Gemini: requisicao interrompida");
             Thread.currentThread().interrupt();
             throw indisponivel();
         } catch (Exception e) {
+            // Mensagens de excecao e corpos HTTP podem conter dados privados.
+            log.warn("Gemini: falha na etapa {}; tipo={}", etapa, e.getClass().getSimpleName());
             throw indisponivel();
+        }
+    }
+
+    String statusSeguro(String corpo) {
+        try {
+            String status = mapper.readTree(corpo).path("error").path("status").asText();
+            return Set.of("INVALID_ARGUMENT", "UNAUTHENTICATED", "PERMISSION_DENIED", "NOT_FOUND",
+                    "RESOURCE_EXHAUSTED", "INTERNAL", "UNAVAILABLE", "DEADLINE_EXCEEDED",
+                    "FAILED_PRECONDITION").contains(status) ? status : "DESCONHECIDO";
+        } catch (Exception e) {
+            return "DESCONHECIDO";
         }
     }
 
