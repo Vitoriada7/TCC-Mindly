@@ -3,6 +3,76 @@
 @import './styles/_tokens.css';
 @import './styles/_reset.css';
 @import './styles/_utilities.css';
+/* Os estados globais precisam prevalecer sobre os estilos encapsulados das telas. */
+:root {
+  --hover-brightness: .95;
+  --hover-link-bg: #f0ecfa;
+  --hover-outline: #8256ca;
+}
+
+:root[data-theme='dark'] {
+  --hover-brightness: 1.1;
+  --hover-link-bg: #31293f;
+  --hover-outline: #c3afff;
+}
+
+:root :is(a, button, input, select, textarea, summary) {
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    filter 150ms ease;
+}
+
+:root :is(a, summary):hover:not([aria-disabled='true']):not(.coming-soon):not(app-perfil a) {
+  filter: brightness(var(--hover-brightness));
+  text-decoration: none !important;
+  transform: none !important;
+}
+
+:root
+  :is(button, a.primary, a.secondary, a.primary-button, a.secondary-button):hover:not(
+    :disabled
+  ):not([aria-disabled='true']):not(.coming-soon):not(app-perfil a) {
+  filter: brightness(var(--hover-brightness));
+  box-shadow: none !important;
+  transform: none !important;
+  text-decoration: none !important;
+}
+
+:root
+  :is(
+    .nav-link,
+    .profile-button,
+    .profile-link,
+    .drawer-links a,
+    .mobile-nav a
+  ):hover {
+  background: var(--hover-link-bg) !important;
+  text-decoration: none !important;
+}
+
+:root a { text-decoration: none !important; }
+
+:root :is(input, select, textarea):hover:not(:disabled) {
+  border-color: var(--hover-outline) !important;
+}
+
+:root :is(a, button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--hover-outline) !important;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root :is(a, button, input, select, textarea, summary) {
+    transition: none;
+  }
+
+  :root :is(a, button):hover {
+    transform: none !important;
+  }
+}
 
 .material-symbols-rounded {
   display: inline-block;
@@ -26,8 +96,8 @@
   height: 43px;
   border: 1px solid rgb(255 255 255 / 72%);
   border-radius: 14px;
-  color: #7251ce;
-  background: rgb(255 255 255 / 72%);
+  color: var(--violet, #7251ce);
+  background: var(--glass, rgb(255 255 255 / 72%));
   box-shadow: 0 9px 20px rgb(91 63 170 / 14%);
   text-decoration: none;
   backdrop-filter: blur(8px);

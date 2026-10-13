@@ -1,5 +1,7 @@
 /* Valores compartilhados da identidade visual. Mantem a paleta atual das telas. */
 :root {
+  color-scheme: light;
+  --on-primary: #fff;
   --page-title-size: clamp(20px, 2.5vw, 24px);
   --page-description-size: 13px;
   --primary: #8065e9;
@@ -46,4 +48,69 @@
 
   --sidebar-width: 252px;
   --sidebar-width-compact: 218px;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --primary: #7357d5;
+  --primary-light: #825cca;
+  --primary-hover: #865ed8;
+  --surface-hover: #352d49;
+  --border-hover: #a58ade;
+  --surface: #211e2e;
+  --background: #16141f;
+  --text: #eeeaf7;
+  --text-heading: #f4f0fc;
+  --text-muted: #b7b0c9;
+  --text-secondary: #c2bbd1;
+  --text-subtle: #aaa2bc;
+  --border: #3c354f;
+  --primary-subtle: #33294d;
+  --primary-soft: #2b243e;
+  --primary-faint: #292336;
+  --primary-text: #c3afff;
+  --primary-button: #7051cf;
+  --secondary-text: #c3afff;
+  --secondary-surface: #33294d;
+  --blue: #8ac5f2;
+  --blue-surface: #203449;
+  --green: #95d4ab;
+  --green-surface: #203a30;
+  --pink: #efa9cc;
+  --pink-surface: #42283a;
+  --orange: #f0bd8b;
+  --orange-surface: #403023;
+  --error-text: #ffabc1;
+  --error-surface: #422633;
+
+  /* Substituições para as cores locais das telas no tema escuro. */
+  --ink: var(--text-heading);
+  --muted: var(--text-muted);
+  --violet: #c3afff;
+  --rose: #efa9cc;
+  --mint: #95d4ab;
+  --sky: #8ac5f2;
+  --amber: #f1cd83;
+  --peach: #f0bd8b;
+  --wash: #292535;
+  --wash-violet: #33294d;
+  --wash-rose: #42283a;
+  --wash-mint: #203a30;
+  --wash-sky: #203449;
+  --wash-amber: #403722;
+  --wash-peach: #403023;
+  --glow-violet: #49365f;
+  --glow-rose: #51344b;
+  --glow-mint: #294739;
+  --glow-sky: #293e57;
+  --glow-amber: #514024;
+  --glow-peach: #62422e;
+  --tone-violet: #7051cf;
+  --tone-rose: #9e456c;
+  --tone-mint: #34734e;
+  --tone-sky: #316b99;
+  --tone-amber: #926827;
+  --tone-peach: #995b34;
+  --edge: var(--border);
+  --glass: rgb(33 30 46 / 94%);
 }

@@ -1,7 +1,6 @@
 <section class="page">
-  @if (carregando()) {
-    <p class="feedback" role="status">Carregando seu perfil...</p>
-  } @else if (usuario(); as usuario) {
+  @if (!carregando()) {
+  @if (usuario(); as usuario) {
     <article class="profile-card">
       <div class="profile-cover" aria-hidden="true"><span class="material-symbols-rounded">spa</span></div>
       <header class="profile-identity">
@@ -34,10 +33,17 @@
         <a routerLink="/conquistas"><span class="link-icon material-symbols-rounded" aria-hidden="true">emoji_events</span><span><strong>Minhas conquistas</strong><small>Celebre seus avanços e descubra novas recompensas.</small></span><span class="material-symbols-rounded" aria-hidden="true">chevron_right</span></a>
         <a routerLink="/emocional"><span class="link-icon material-symbols-rounded" aria-hidden="true">auto_stories</span><span><strong>Meu diário</strong><small>Um espaço para acolher o que você sente.</small></span><span class="material-symbols-rounded" aria-hidden="true">chevron_right</span></a>
       </nav>
+      <section class="appearance" aria-labelledby="titulo-aparencia">
+        <div><h2 id="titulo-aparencia">Tema escuro</h2><p id="descricao-tema">Uma aparência mais suave para ambientes com pouca luz.</p></div>
+        <button type="button" class="theme-toggle" role="switch" aria-label="Tema escuro" aria-describedby="descricao-tema" [attr.aria-checked]="tema.escuro()" [attr.aria-busy]="salvandoTema()" [disabled]="salvandoTema()" (click)="alternarTema()"><span class="toggle-thumb"><span class="material-symbols-rounded" aria-hidden="true">{{ tema.escuro() ? 'dark_mode' : 'light_mode' }}</span></span></button>
+      </section>
       <section class="account" aria-labelledby="titulo-conta"><h2 id="titulo-conta">Sua conta</h2><p>{{ usuario.email }}</p><button class="logout" type="button" (click)="sair()"><span class="material-symbols-rounded" aria-hidden="true">logout</span>Sair da conta</button></section>
     </article>
   } @else {
     <div class="feedback" role="alert">{{ erro() }} <button type="button" (click)="carregar()">Tentar novamente</button></div>
   }
   @if (erro() && usuario()) { <div class="feedback" role="alert">{{ erro() }}</div> }
+  }
 </section>
+
+<app-carregamento [ativo]="carregando()" />

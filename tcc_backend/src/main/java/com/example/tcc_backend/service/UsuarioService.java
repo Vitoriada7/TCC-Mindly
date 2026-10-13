@@ -2,6 +2,7 @@ package com.example.tcc_backend.service;
 
 import com.example.tcc_backend.controller.request.CadastroRequest;
 import com.example.tcc_backend.controller.request.UsuarioUpdateRequest;
+import com.example.tcc_backend.controller.request.TemaRequest;
 import com.example.tcc_backend.controller.response.UsuarioResponse;
 import com.example.tcc_backend.domain.Usuario;
 import com.example.tcc_backend.mapper.UsuarioMapper;
@@ -60,6 +61,13 @@ public class UsuarioService {
     public UsuarioResponse atualizarPerfil(UsuarioUpdateRequest request) {
         Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
         usuario.setApelido(request.getApelido().trim());
+        return UsuarioMapper.toResponse(usuarioRepository.save(usuario));
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public UsuarioResponse atualizarTema(TemaRequest request) {
+        Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
+        usuario.setTemaEscuro(request.temaEscuro());
         return UsuarioMapper.toResponse(usuarioRepository.save(usuario));
     }
 
