@@ -1,0 +1,15 @@
+<dialog
+  #dialog
+  aria-labelledby="titulo-carregamento"
+  aria-describedby="descricao-carregamento"
+  (cancel)="$event.preventDefault()"
+>
+  <div class="loading-content" role="status" aria-live="polite" aria-atomic="true">
+    <div class="loading-icon" aria-hidden="true">
+      <span class="material-symbols-rounded">progress_activity</span>
+    </div>
+    <h2 id="titulo-carregamento" tabindex="-1" autofocus>Carregando seus dados</h2>
+    <p id="descricao-carregamento">Só um instante, estamos preparando tudo para você.</p>
+    <div class="loading-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+  </div>
+</dialog>

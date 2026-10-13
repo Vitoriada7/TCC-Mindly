@@ -1,15 +1,12 @@
 <div class="page">
-  <div class="intro">
-    <div>
-      <p class="eyebrow">CONQUISTAS</p>
-      <h1>Veja seus pequenos avanços.</h1>
-      <p>Conquistas mostram como seus esforços respiram junto com o seu ritmo. Celebre cada etapa com tranquilidade.</p>
-    </div>
-  </div>
-
+  <header class="intro">
+    <p class="eyebrow">CONQUISTAS</p>
+    <h1>Veja seus pequenos avanços.</h1>
+    <p>Cada conquista libera um novo avatar. Toque em um companheiro para descobrir como conquistá-lo.</p>
+  </header>
   <section class="achievements" aria-label="Lista de conquistas">
     @if (carregando()) {
-      <p>Carregando suas conquistas...</p>
+      <p role="status">Carregando suas conquistas...</p>
     } @else if (erro(); as mensagemErro) {
       <div class="load-error" role="alert"><span>{{ mensagemErro }}</span><button type="button" (click)="carregar()">Tentar novamente</button></div>
     } @else {
@@ -18,11 +15,13 @@
           <header class="category-title"><span class="material-symbols-rounded" aria-hidden="true">{{ categoria.icone }}</span><h2 [id]="'categoria-' + categoria.trilha">{{ categoria.titulo }}</h2></header>
           <div class="cards-grid">
             @for (conquista of categoria.conquistas; track conquista.codigo) {
-              <article class="achievement-card" [class.concluida]="conquista.status === 'CONCLUIDA'" [class.desbloqueada]="conquista.status === 'EM_PROGRESSO'">
-                <span class="achievement-icon material-symbols-rounded" aria-hidden="true">{{ categoria.icone }}</span>
-                <div class="achievement-copy"><h3>{{ conquista.titulo }}</h3><p>{{ conquista.descricao }}</p></div>
-                @if (conquista.status !== 'CONCLUIDA') { <small>{{ conquista.progresso }} de {{ conquista.meta }}</small> }
-                <span class="status-label">{{ conquista.status === 'CONCLUIDA' ? 'Concluída' : conquista.status === 'EM_PROGRESSO' ? 'Em andamento' : 'Bloqueada' }}</span>
+              <article class="achievement" [class.completed]="conquista.status === 'CONCLUIDA'">
+                <h3 [id]="'titulo-' + conquista.codigo">{{ conquista.titulo }}</h3>
+                <button class="avatar-circle" type="button" aria-haspopup="dialog" [attr.aria-labelledby]="'titulo-' + conquista.codigo + ' status-' + conquista.codigo" (click)="abrir(conquista)">
+                  @if (recompensa(conquista.codigo); as avatar) { <img [ngSrc]="avatar.imagem" width="144" height="144" alt="" /> }
+                  <span class="state-icon material-symbols-rounded" aria-hidden="true">{{ conquista.status === 'CONCLUIDA' ? 'check' : 'lock' }}</span>
+                </button>
+                <span class="status-label" [id]="'status-' + conquista.codigo">{{ conquista.status === 'CONCLUIDA' ? 'Concluída' : 'Bloqueada' }}</span>
               </article>
             }
           </div>
@@ -31,3 +30,32 @@
     }
   </section>
 </div>
+<dialog #dialog aria-labelledby="conquista-modal-titulo" aria-describedby="conquista-modal-descricao" (click)="fecharPeloFundo($event)">
+  <button class="close" type="button" aria-label="Fechar detalhes da conquista" autofocus (click)="fechar()"><span class="material-symbols-rounded" aria-hidden="true">close</span></button>
+  @if (selecionada(); as conquista) {
+    <div class="details" [class.completed]="conquista.status === 'CONCLUIDA'">
+      <p class="eyebrow">{{ conquista.status === 'CONCLUIDA' ? 'SUA CONQUISTA' : 'SEU PRÓXIMO PASSO' }}</p>
+      <h2 id="conquista-modal-titulo">{{ conquista.titulo }}</h2>
+      @if (recompensa(conquista.codigo); as avatar) {
+        <div class="avatar-circle modal-avatar">
+          <img [ngSrc]="avatar.imagem" width="180" height="180" [alt]="avatar.nome" />
+          <span class="state-icon material-symbols-rounded" aria-hidden="true">{{ conquista.status === 'CONCLUIDA' ? 'check' : 'lock' }}</span>
+        </div>
+        <strong class="avatar-name">{{ avatar.nome }}</strong>
+      }
+      <span class="status-label">{{ conquista.status === 'CONCLUIDA' ? 'Avatar liberado' : 'Avatar bloqueado' }}</span>
+      <p id="conquista-modal-descricao">{{ conquista.descricao }}</p>
+      @if (conquista.status !== 'CONCLUIDA') {
+        <div class="progress-copy"><span>{{ conquista.status === 'EM_PROGRESSO' ? 'Em andamento' : 'Ainda não iniciada' }}</span><strong>{{ conquista.progresso }} de {{ conquista.meta }}</strong></div>
+        <progress [value]="conquista.progresso" [max]="conquista.meta" aria-label="Progresso da conquista"></progress>
+        <p class="hint">Ao concluir, este avatar fica disponível para o seu perfil.</p>
+      } @else {
+        <button class="primary" type="button" (click)="usarAvatar()" [disabled]="salvandoAvatar() || avatarSalvo()">{{ salvandoAvatar() ? 'Aplicando...' : avatarSalvo() ? 'Avatar em uso' : 'Usar como avatar' }}</button>
+        @if (avatarSalvo()) { <p class="success" role="status">Seu avatar foi atualizado!</p> }
+        @if (erroAvatar(); as mensagem) { <p class="error" role="alert">{{ mensagem }}</p> }
+      }
+    </div>
+  }
+</dialog>
+
+<app-carregamento [ativo]="carregando()" />

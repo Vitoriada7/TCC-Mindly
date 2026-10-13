@@ -48,6 +48,8 @@ class RegistroEmocionalServiceTests {
 
         assertThat(response.getId()).isEqualTo(1L);
         assertThat(response.getSentimento()).isEqualTo("bem");
+        assertThat(response.getComplementoFinal()).isEqualTo("Quero descansar mais");
+        assertThat(response.getReflexao()).isEqualTo("Continuar");
         ArgumentCaptor<RegistroEmocional> captor = ArgumentCaptor.forClass(RegistroEmocional.class);
         verify(registroEmocionalRepository).save(captor.capture());
         assertThat(captor.getValue().getUsuario()).isSameAs(usuario);
@@ -76,6 +78,7 @@ class RegistroEmocionalServiceTests {
         request.setPensamento(" Um dia tranquilo ");
         request.setExploracoes(List.of("", "Com mais calma", ""));
         request.setReflexao("Continuar");
+        request.setComplementoFinal(" Quero descansar mais ");
         return request;
     }
 }

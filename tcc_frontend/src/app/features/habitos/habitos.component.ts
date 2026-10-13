@@ -1,3 +1,4 @@
+import { CarregamentoComponent } from '../../shared/components/carregamento/carregamento.component';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -11,7 +12,7 @@ type DiaSemana = { data: string; rotulo: string; dia: number };
 
 @Component({
   selector: 'app-habitos',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [CarregamentoComponent, ReactiveFormsModule, RouterLink],
   templateUrl: './habitos.component.html',
   styleUrl: './habitos.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -86,7 +87,7 @@ export class HabitosComponent {
   }
 
   protected alternarRegistro(habito: Habito, data: string): void {
-    if (this.processando()) return;
+    if (this.processando() || !this.podeAlterarData(data)) return;
     this.processando.set(true);
     const concluido = this.estaConcluido(habito, data);
     (concluido ? this.habitoApi.desmarcar(habito.id, data) : this.habitoApi.marcar(habito.id, data))
@@ -101,6 +102,10 @@ export class HabitosComponent {
       next: () => this.carregar(),
       error: () => this.erro.set('Não foi possível excluir o hábito.'),
     });
+  }
+
+  protected podeAlterarData(data: string): boolean {
+    return data === this.formatarData(new Date());
   }
 
   protected estaConcluido(habito: Habito, data: string): boolean { return habito.diasConcluidos.includes(data); }

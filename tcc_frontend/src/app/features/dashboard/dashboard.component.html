@@ -23,32 +23,20 @@
         <div><p class="eyebrow">COMO VOCÊ ESTÁ?</p><h2>Seu humor hoje</h2></div>
         <span class="soft-icon lavender material-symbols-rounded" aria-hidden="true">wb_sunny</span>
       </div>
-      @if (resumoGamificacao(); as gamificacao) {
+      @if (carregando()) {
+        <div class="skeleton-copy"></div>
+      } @else if (erroEmocional()) {
+        <p class="chart-note" role="status">Não foi possível carregar seu humor.</p>
+      } @else {
         <div class="empty-card-content">
-          <span class="empty-icon material-symbols-rounded" aria-hidden="true">{{ gamificacao.emocional.registrouHoje ? 'favorite' : 'sentiment_neutral' }}</span>
-          <div><strong>{{ gamificacao.emocional.registrouHoje ? 'Registro feito hoje' : 'Sem registro hoje' }}</strong><p>{{ gamificacao.emocional.registrouHoje ? 'Você reservou um momento para se perceber.' : 'Reserve um momento para observar como você está.' }}</p></div>
+          <span class="empty-icon material-symbols-rounded" aria-hidden="true">{{ humorHoje()?.icone ?? 'sentiment_neutral' }}</span>
+          <div><strong>{{ humorHoje()?.rotulo ?? registroHoje()?.sentimento ?? 'Sem registro hoje' }}</strong><p>{{ registroHoje() ? 'Seu último registro de hoje.' : 'Reserve um momento para observar como você está.' }}</p></div>
         </div>
       }
     </article>
 
-    <article class="card focus-card">
-      <div class="card-heading">
-        <div><p class="eyebrow">SEU FOCO HOJE</p><h2>Pequenos passos</h2></div>
-        <span class="soft-icon peach material-symbols-rounded" aria-hidden="true">auto_awesome</span>
-      </div>
-      @if (carregando()) {
-        <div class="skeleton-copy"></div>
-      } @else if (prioridadesHoje()) {
-        <p>Você tem <strong>{{ prioridadesHoje() }} {{ prioridadesHoje() === 1 ? 'prioridade' : 'prioridades' }}</strong> para hoje. Escolha uma e comece com calma.</p>
-      } @else {
-        <p>Não há tarefas pendentes com prazo para hoje. Aproveite seu ritmo.</p>
-      }
-      <a routerLink="/tarefas">Ver suas tarefas <span aria-hidden="true">→</span></a>
-    </article>
-
     <article class="card streak-card gamification-card">
       @if (resumoGamificacao(); as resumo) {
-        <div class="track"><span class="fire material-symbols-rounded" aria-hidden="true">local_fire_department</span><div><p class="eyebrow">HÁBITOS</p><strong>{{ resumo.habitos.sequenciaAtual }} {{ resumo.habitos.sequenciaAtual === 1 ? 'dia' : 'dias' }}</strong></div></div>
         <div class="track"><span class="task-track material-symbols-rounded" aria-hidden="true">task_alt</span><div><p class="eyebrow">TAREFAS</p><strong>{{ resumo.tarefas.concluidasSemana }} de {{ resumo.tarefas.metaSemanal }}</strong><p>meta semanal</p></div></div>
         <div class="track"><span class="emotion-track material-symbols-rounded" aria-hidden="true">favorite</span><div><p class="eyebrow">AUTOCUIDADO</p><strong>{{ resumo.emocional.sequenciaAtual }} {{ resumo.emocional.sequenciaAtual === 1 ? 'dia' : 'dias' }}</strong></div></div>
       } @else {
@@ -60,8 +48,10 @@
   <section class="content-grid">
     <article class="card tasks-card" id="tarefas-hoje">
       <header class="section-title">
-        <div><p class="eyebrow">ORGANIZAÇÃO</p><h2>Para hoje</h2></div>
-        <span class="section-note">{{ tarefasHoje().length }} {{ tarefasHoje().length === 1 ? 'tarefa' : 'tarefas' }}</span>
+        <div><p class="eyebrow">ORGANIZAÇÃO</p><h2>Suas prioridades de hoje</h2></div>
+        @if (!carregando() && !erro()) {
+          <span class="section-note">{{ prioridadesHoje() }} {{ prioridadesHoje() === 1 ? 'prioridade pendente' : 'prioridades pendentes' }}</span>
+        }
       </header>
       @if (carregando()) {
         <div class="task-list"><div class="skeleton-task"></div><div class="skeleton-task"></div><div class="skeleton-task"></div></div>
@@ -81,10 +71,37 @@
       <button class="add-task" type="button" (click)="abrirFormulario()"><span class="material-symbols-rounded" aria-hidden="true">add</span> Adicionar uma tarefa</button>
     </article>
 
-    <article class="card progress-card unavailable-card">
-      <header class="section-title"><div><p class="eyebrow">BEM-ESTAR</p><h2>Seu ritmo</h2></div></header>
-      <div class="tabs" aria-label="Período do progresso"><button class="active" type="button" disabled>Semana</button><button type="button" disabled>Mês</button></div>
-      <div class="empty-chart"><span class="material-symbols-rounded" aria-hidden="true">show_chart</span><p>Seu progresso emocional aparecerá aqui quando os registros estiverem disponíveis.</p></div>
+    <article class="card progress-card">
+      <header class="section-title"><div><p class="eyebrow">BEM-ESTAR</p><h2>Seu ritmo emocional</h2></div><a routerLink="/emocional">Ver diário</a></header>
+      <div class="tabs" aria-label="Período do progresso">
+        <button type="button" [class.active]="periodo() === 'semana'" [attr.aria-pressed]="periodo() === 'semana'" (click)="selecionarPeriodo('semana')">Semana</button>
+        <button type="button" [class.active]="periodo() === 'mes'" [attr.aria-pressed]="periodo() === 'mes'" (click)="selecionarPeriodo('mes')">Mês</button>
+      </div>
+      <nav class="period-navigation" aria-label="Navegar pelos períodos emocionais">
+        <button type="button" (click)="navegarPeriodo(-1)" [attr.aria-label]="periodo() === 'mes' ? 'Mês anterior' : 'Semana anterior'"><span class="material-symbols-rounded" aria-hidden="true">chevron_left</span></button>
+        <span aria-live="polite">{{ rotuloPeriodo() }}</span>
+        <button type="button" (click)="navegarPeriodo(1)" [disabled]="deslocamentoPeriodo() === 0" [attr.aria-label]="periodo() === 'mes' ? 'Próximo mês' : 'Próxima semana'"><span class="material-symbols-rounded" aria-hidden="true">chevron_right</span></button>
+      </nav>
+      @if (carregando()) {
+        <div class="skeleton-copy"></div>
+      } @else if (erroEmocional()) {
+        <div class="empty-chart" role="status"><p>Não foi possível carregar os registros emocionais.</p><button class="secondary" type="button" (click)="carregar()">Tentar novamente</button></div>
+      } @else if (diasComRegistro()) {
+        <div class="emotion-chart" [class.month-chart]="periodo() === 'mes'">
+          <div class="chart-axis" aria-hidden="true">@for (humor of humores; track humor.valor) { <span>{{ humor.rotulo }}</span> }</div>
+          <div class="chart-days" role="list" aria-label="Último humor registrado em cada dia">
+            @for (dia of diasEmocionais(); track dia.chave) {
+              <div class="chart-day" role="listitem" [attr.aria-label]="dia.legenda" [attr.title]="dia.legenda">
+                <div class="chart-column">@if (dia.nivel >= 0) { <span class="chart-dot" [style.top.%]="dia.nivel * 25" aria-hidden="true"></span> }</div>
+                <span class="chart-date" [class.hidden-date]="!dia.exibirDia" aria-hidden="true">{{ dia.dia }}</span>
+              </div>
+            }
+          </div>
+        </div>
+        <p class="chart-note">Último registro de cada dia. Dias sem registro ficam em branco.</p>
+      } @else {
+        <div class="empty-chart"><span class="material-symbols-rounded" aria-hidden="true">show_chart</span><p>Nenhum registro neste período. Registre como você se sente para acompanhar seu ritmo.</p></div>
+      }
     </article>
   </section>
 
@@ -101,7 +118,11 @@
         }
       }
     </article>
-    <article class="quote-card"><span aria-hidden="true">“</span><p>Você não precisa fazer tudo de uma vez. Só precisa começar.</p><small>— um lembrete para hoje</small></article>
+    <article class="quote-card" aria-label="Mensagem motivacional">
+      <span aria-hidden="true">“</span>
+      <p>Você não precisa fazer tudo de uma vez. Só precisa começar.</p>
+      <small>— um lembrete para hoje</small>
+    </article>
   </section>
 </div>
 
@@ -124,3 +145,5 @@
     </section>
   </div>
 }
+
+<app-carregamento [ativo]="carregando()" />

@@ -8,24 +8,23 @@
   </div>
 
   <section class="grid-layout">
-    <article class="card map-card">
-      <header class="card-heading">
-        <div><p class="eyebrow">ENCONTRAR</p><h2>Serviços próximos</h2></div>
-        <button class="location-button" type="button" (click)="usarMinhaLocalizacao()" [disabled]="buscandoLocalizacao()">
-          <span class="material-symbols-rounded" aria-hidden="true">my_location</span>
-          {{ buscandoLocalizacao() ? 'Localizando...' : 'Usar minha localização' }}
-        </button>
-      </header>
-      <div #mapa class="map-placeholder" aria-label="Mapa com a localização aproximada do usuário"></div>
-      <p class="location-message" aria-live="polite">{{ mensagemLocalizacao() }}</p>
-    </article>
-
     <article class="card contact-card">
       <header class="card-heading">
-        <div><p class="eyebrow">SERVIÇOS</p><h2>Saúde mental no RS</h2></div>
+        <div><p class="eyebrow">SERVIÇOS</p><h2>Apoio próximo de você</h2></div>
       </header>
       <div class="support-list">
-        <p class="empty-message">A busca de CAPS, clínicas e outros serviços próximos será disponibilizada futuramente.</p>
+        <p class="empty-message">Encontre um lugar para conversar e receber apoio na sua região.</p>
+        <a
+          class="secondary-button support-search"
+          href="https://www.google.com/maps/search/?api=1&amp;query=apoio%20psicol%C3%B3gico%20perto%20de%20mim"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-describedby="support-search-description"
+        >
+          <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
+          Buscar apoio perto de mim
+        </a>
+        <p id="support-search-description" class="empty-message">Abre uma busca no Google Maps em uma nova aba.</p>
       </div>
     </article>
   </section>
@@ -88,11 +87,12 @@
       }
       @for (contato of contatos(); track contato.id) {
         <article class="contact-card-item">
-          <div>
-            <strong>{{ contato.nome }}</strong>
+          <div class="contact-person">
+            <strong>{{ contato.relacionamento || 'Contato pessoal' }}</strong>
             @if (contato.principal) { <span class="primary-badge">Principal</span> }
-            <p>{{ contato.relacionamento || 'Contato pessoal' }} · {{ contato.telefone }}</p>
+            <p>{{ contato.nome }}</p>
           </div>
+          <span class="contact-phone">{{ contato.telefone }}</span>
           <div class="contact-actions">
             <button type="button" (click)="editarContato(contato)" aria-label="Editar contato">
               <span class="material-symbols-rounded" aria-hidden="true">edit</span>
@@ -115,3 +115,5 @@
     <a href="tel:192">192</a>.
   </p>
 </div>
+
+<app-carregamento [ativo]="carregandoContatos()" />

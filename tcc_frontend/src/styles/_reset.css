@@ -5,9 +5,11 @@
 }
 
 body {
+  background: var(--background);
+  color: var(--text);
   margin: 0;
   min-width: 320px;
-  font-family: 'Nunito Sans', Arial, sans-serif;
+  font-family: var(--font-body);
 }
 
 button,
@@ -17,6 +19,6 @@ input {
 
 button:focus-visible,
 a:focus-visible {
-  outline: 3px solid #a98bff;
+  outline: 3px solid var(--primary-light);
   outline-offset: 3px;
 }

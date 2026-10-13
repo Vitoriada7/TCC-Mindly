@@ -39,6 +39,7 @@ public class RegistroEmocionalService {
         registro.setSentimentoDetalhado(normalizar(request.getSentimentoDetalhado()));
         registro.setPensamento(normalizar(request.getPensamento()));
         registro.setReflexao(normalizar(request.getReflexao()));
+        registro.setComplementoFinal(normalizar(request.getComplementoFinal()));
         registro.setExploracoes(request.getExploracoes() == null ? null
                 : String.join(SEPARADOR_EXPLORACOES, request.getExploracoes()));
         return RegistroEmocionalMapper.toResponse(registroEmocionalRepository.save(registro));

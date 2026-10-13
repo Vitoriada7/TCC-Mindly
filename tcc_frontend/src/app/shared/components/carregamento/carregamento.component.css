@@ -1,0 +1,91 @@
+:host {
+  display: contents;
+}
+dialog {
+  width: min(390px, calc(100vw - 40px));
+  max-height: calc(100dvh - 40px);
+  margin: auto;
+  padding: 32px 24px;
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  color: var(--text);
+  background: var(--surface);
+  box-shadow: 0 24px 80px rgb(49 30 78 / 25%);
+}
+dialog::backdrop {
+  background: rgb(32 22 48 / 48%);
+  backdrop-filter: blur(5px);
+}
+.loading-content {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  text-align: center;
+}
+.loading-icon {
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+}
+.loading-icon span {
+  display: block;
+  color: var(--primary-text);
+  font-size: 52px;
+  animation: loading-spin 1s linear infinite;
+}
+h2 {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.4;
+  outline: none;
+}
+p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.loading-dots {
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+}
+.loading-dots i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--primary-text);
+  animation: loading-dot 1.4s ease-in-out infinite;
+}
+.loading-dots i:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.loading-dots i:nth-child(3) {
+  animation-delay: 0.4s;
+}
+@keyframes loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loading-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.4;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-5px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .loading-icon span,
+  .loading-dots i {
+    animation: none;
+  }
+}

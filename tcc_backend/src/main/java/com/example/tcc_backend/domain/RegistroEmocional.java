@@ -49,6 +49,9 @@ public class RegistroEmocional {
     @Column(columnDefinition = "TEXT")
     private String reflexao;
 
+    @Column(columnDefinition = "TEXT")
+    private String complementoFinal;
+
     @Column(name = "data_registro", nullable = false)
     private LocalDateTime dataRegistro;
 

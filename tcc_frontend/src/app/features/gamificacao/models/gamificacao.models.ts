@@ -14,6 +14,6 @@ export interface Conquista {
 export interface ResumoGamificacao {
   habitos: { sequenciaAtual: number; melhorSequencia: number; concluidosHoje: number; metaHoje: number };
   tarefas: { sequenciaSemanal: number; concluidasSemana: number; metaSemanal: number; concluidasNoPrazoSemana: number };
-  emocional: { sequenciaAtual: number; melhorSequencia: number; registrouHoje: boolean; sentimentoHoje: string | null };
+  emocional: { sequenciaAtual: number; melhorSequencia: number; registrouHoje: boolean; sentimentoHoje: string | null; totalRegistros?: number };
   conquistas: Conquista[];
 }

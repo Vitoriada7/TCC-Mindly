@@ -1,7 +1,10 @@
+import { CarregamentoComponent } from '../../shared/components/carregamento/carregamento.component';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { forkJoin, finalize } from 'rxjs';
+import { catchError, forkJoin, finalize, of } from 'rxjs';
+import { EmocionalApiService } from '../emocional/emocional-api.service';
+import { RegistroEmocional } from '../emocional/emocional.models';
 import { Categoria, Tarefa } from '../tarefas/models/tarefa.models';
 import { TarefaApiService } from '../tarefas/services/tarefa-api.service';
 import { UsuarioService } from '../../core/user/usuario.service';
@@ -12,13 +15,14 @@ import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.s
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [CarregamentoComponent, ReactiveFormsModule, RouterLink],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css',
+  styleUrls: ['./dashboard.component.css', './dashboard-modal.css', './dashboard-chart.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent {
   private readonly tarefaApi = inject(TarefaApiService);
+  private readonly emocionalApi = inject(EmocionalApiService);
   private readonly usuarioService = inject(UsuarioService);
   private readonly habitoApi = inject(HabitoApiService);
   private readonly gamificacaoApi = inject(GamificacaoApiService);
@@ -35,6 +39,76 @@ export class DashboardComponent {
   protected readonly criando = signal(false);
   protected readonly erroFormulario = signal<string | null>(null);
   protected readonly agora = new Date();
+  protected readonly registros = signal<RegistroEmocional[]>([]);
+  protected readonly erroEmocional = signal(false);
+  protected readonly periodo = signal<'semana' | 'mes'>('semana');
+  protected readonly deslocamentoPeriodo = signal(0);
+  protected readonly intervalo = computed(() => {
+    const inicio = new Date(this.agora.getFullYear(), this.agora.getMonth(), this.agora.getDate());
+    if (this.periodo() === 'mes') {
+      inicio.setDate(1);
+      inicio.setMonth(inicio.getMonth() + this.deslocamentoPeriodo());
+    } else {
+      inicio.setDate(inicio.getDate() - (inicio.getDay() + 6) % 7 + this.deslocamentoPeriodo() * 7);
+    }
+    const total = this.periodo() === 'mes'
+      ? new Date(inicio.getFullYear(), inicio.getMonth() + 1, 0).getDate() : 7;
+    const fim = new Date(inicio);
+    fim.setDate(inicio.getDate() + total - 1);
+    return { inicio, fim, total };
+  });
+  protected readonly rotuloPeriodo = computed(() => {
+    const { inicio, fim } = this.intervalo();
+    if (this.periodo() === 'mes') {
+      return new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(inicio);
+    }
+    const formato = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit' });
+    return `${formato.format(inicio)} a ${formato.format(fim)} · ${fim.getFullYear()}`;
+  });
+
+  protected selecionarPeriodo(periodo: 'semana' | 'mes'): void {
+    this.periodo.set(periodo);
+    this.deslocamentoPeriodo.set(0);
+  }
+
+  protected navegarPeriodo(direcao: -1 | 1): void {
+    this.deslocamentoPeriodo.update((valor) => Math.min(0, valor + direcao));
+  }
+  protected readonly humores = [
+    { valor: 'radiante', rotulo: 'Radiante', icone: 'sentiment_very_satisfied' },
+    { valor: 'bem', rotulo: 'Bem', icone: 'sentiment_satisfied' },
+    { valor: 'neutra', rotulo: 'Neutra', icone: 'sentiment_neutral' },
+    { valor: 'cansada', rotulo: 'Cansada', icone: 'sentiment_dissatisfied' },
+    { valor: 'dificil', rotulo: 'Difícil', icone: 'sentiment_very_dissatisfied' },
+  ];
+  protected readonly registroHoje = computed<RegistroEmocional | undefined>(() => this.registros()
+    .filter((registro) => this.ehHoje(registro.dataRegistro))
+    .sort((a, b) => new Date(b.dataRegistro).getTime() - new Date(a.dataRegistro).getTime())[0]);
+  protected readonly humorHoje = computed(() => this.humores.find(
+    (humor) => humor.valor === this.registroHoje()?.sentimento,
+  ));
+  protected readonly diasEmocionais = computed(() => {
+    const ultimosPorDia = new Map<string, RegistroEmocional>();
+    for (const registro of this.registros()) {
+      const chave = new Date(registro.dataRegistro).toDateString();
+      const anterior = ultimosPorDia.get(chave);
+      if (!anterior || new Date(registro.dataRegistro) > new Date(anterior.dataRegistro)) {
+        ultimosPorDia.set(chave, registro);
+      }
+    }
+    const { inicio, total } = this.intervalo();
+    return Array.from({ length: total }, (_, indice) => {
+      const data = new Date(inicio);
+      data.setDate(inicio.getDate() + indice);
+      const registro = ultimosPorDia.get(data.toDateString());
+      const nivel = this.humores.findIndex((humor) => humor.valor === registro?.sentimento);
+      const rotulo = nivel >= 0 ? this.humores[nivel].rotulo : registro?.sentimento ?? 'Sem registro';
+      return { chave: data.toDateString(), dia: data.getDate(), nivel,
+        exibirDia: this.periodo() === 'semana' || indice % 5 === 0 || indice === total - 1,
+        legenda: `${data.toLocaleDateString('pt-BR')}: ${rotulo}` };
+    });
+  });
+  protected readonly diasComRegistro = computed(() => this.diasEmocionais().filter((dia) => dia.nivel >= 0).length);
 
   protected readonly tarefasHoje = computed(() =>
     this.tarefas()
@@ -75,10 +149,15 @@ export class DashboardComponent {
   protected carregar(): void {
     this.carregando.set(true);
     this.erro.set(null);
-    forkJoin({ tarefas: this.tarefaApi.listar(), categorias: this.tarefaApi.listarCategorias(), resumoHabitos: this.habitoApi.resumo(), resumoGamificacao: this.gamificacaoApi.resumo() })
+    this.erroEmocional.set(false);
+    forkJoin({ tarefas: this.tarefaApi.listar(), categorias: this.tarefaApi.listarCategorias(), resumoHabitos: this.habitoApi.resumo(), resumoGamificacao: this.gamificacaoApi.resumo(), registros: this.emocionalApi.listar().pipe(catchError(() => {
+      this.erroEmocional.set(true);
+      return of([] as RegistroEmocional[]);
+    })) })
       .pipe(finalize(() => this.carregando.set(false)))
       .subscribe({
-        next: ({ tarefas, categorias, resumoHabitos, resumoGamificacao }) => {
+        next: ({ tarefas, categorias, resumoHabitos, resumoGamificacao, registros }) => {
+          this.registros.set(registros);
           this.tarefas.set(tarefas);
           this.categorias.set(categorias);
           this.resumoHabitos.set(resumoHabitos);

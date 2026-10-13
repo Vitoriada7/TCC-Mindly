@@ -39,6 +39,19 @@ public class Usuario {
     @Column(nullable = false)
     private Boolean ativo;
 
+    @Builder.Default
+    private Boolean temaEscuro = false;
+
+    @Enumerated(EnumType.STRING)
+    private com.example.tcc_backend.domain.enums.Avatar avatar;
+
+    @ElementCollection
+    @CollectionTable(name = "usuario_avatar", joinColumns = @JoinColumn(name = "usuario_id"))
+    @Column(name = "avatar", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private java.util.Set<com.example.tcc_backend.domain.enums.Avatar> avataresLiberados = new java.util.HashSet<>();
+
     @PrePersist
     public void prePersist() {
         dataCriacao = LocalDateTime.now();

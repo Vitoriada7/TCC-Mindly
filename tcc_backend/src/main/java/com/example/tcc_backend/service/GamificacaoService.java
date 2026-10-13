@@ -44,9 +44,10 @@ public class GamificacaoService {
         this.registroEmocionalRepository = registroEmocionalRepository;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ResumoGamificacaoResponse obterResumo() {
-        Long usuarioId = usuarioAutenticadoService.obterUsuarioAutenticado().getId();
+        var usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
+        Long usuarioId = usuario.getId();
         LocalDate hoje = LocalDate.now();
 
         Set<LocalDate> diasHabitos = registroHabitoRepository
@@ -82,11 +83,16 @@ public class GamificacaoService {
                 sequenciaTarefas, tarefasSemana, META_TAREFAS_SEMANAL, tarefasNoPrazoSemana);
         var resumoEmocional = new ResumoGamificacaoResponse.EmocionalGamificacaoResponse(
                 sequenciaEmocional, calcularMelhorSequencia(diasEmocionais), registroHoje != null,
-                registroHoje == null ? null : registroHoje.getSentimento());
+                registroHoje == null ? null : registroHoje.getSentimento(), registrosEmocionais.size());
 
-        return new ResumoGamificacaoResponse(resumoHabitos, resumoTarefas, resumoEmocional,
-                criarConquistas(diasHabitos.size(), sequenciaHabitos, concluidas, tarefasSemana,
-                        registrosEmocionais, sequenciaEmocional));
+        var conquistas = criarConquistas(diasHabitos.size(), calcularMelhorSequencia(diasHabitos), concluidas,
+                melhorSemana(concluidas), registrosEmocionais, calcularMelhorSequencia(diasEmocionais));
+        for (var conquista : conquistas) {
+            var avatar = com.example.tcc_backend.domain.enums.Avatar.daConquista(conquista.getCodigo());
+            if (conquista.getStatus() == StatusConquista.CONCLUIDA) usuario.getAvataresLiberados().add(avatar);
+            if (usuario.getAvataresLiberados().contains(avatar)) conquista.concluir();
+        }
+        return new ResumoGamificacaoResponse(resumoHabitos, resumoTarefas, resumoEmocional, conquistas);
     }
 
     private List<ConquistaResponse> criarConquistas(long diasHabitos, long sequenciaHabitos,
@@ -101,6 +107,12 @@ public class GamificacaoService {
         conquistas.add(conquista("NO_TEMPO_CERTO", "No tempo certo", "Conclua 10 tarefas dentro do prazo.", "TAREFAS", tarefasNoPrazo, 10));
         conquistas.add(conquista("PRIMEIRO_REGISTRO", "Primeiro olhar", "Faça seu primeiro registro emocional.", "EMOCIONAL", registros.size(), 1));
         conquistas.add(conquista("SEMANA_CONSCIENTE", "Semana consciente", "Registre suas emoções por 7 dias seguidos.", "EMOCIONAL", sequenciaEmocional, 7));
+        conquistas.add(conquista("HABITOS_30_DIAS", "Cultivando sua rotina", "Conclua hábitos em 30 dias diferentes.", "HABITOS", diasHabitos, 30));
+        conquistas.add(conquista("HABITOS_30_SEGUIDOS", "Uma nova fase", "Mantenha 30 dias de hábitos em sequência.", "HABITOS", sequenciaHabitos, 30));
+        conquistas.add(conquista("TAREFAS_25", "Colecionando avanços", "Conclua 25 tarefas.", "TAREFAS", concluidas.size(), 25));
+        conquistas.add(conquista("TAREFAS_50", "No seu ritmo", "Conclua 50 tarefas.", "TAREFAS", concluidas.size(), 50));
+        conquistas.add(conquista("REGISTROS_30", "Páginas de você", "Faça 30 registros emocionais.", "EMOCIONAL", registros.size(), 30));
+        conquistas.add(conquista("EMOCOES_30_SEGUIDOS", "Tempo para si", "Registre suas emoções por 30 dias seguidos.", "EMOCIONAL", sequenciaEmocional, 30));
         return conquistas;
     }
 
@@ -109,6 +121,12 @@ public class GamificacaoService {
         StatusConquista status = progresso >= meta ? StatusConquista.CONCLUIDA
                 : progresso > 0 ? StatusConquista.EM_PROGRESSO : StatusConquista.BLOQUEADA;
         return new ConquistaResponse(codigo, titulo, descricao, trilha, status, Math.min(progresso, meta), meta);
+    }
+
+    private long melhorSemana(List<Tarefa> tarefas) {
+        return tarefas.stream().collect(Collectors.groupingBy(
+                tarefa -> tarefa.getDataConclusao().toLocalDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
+                Collectors.counting())).values().stream().mapToLong(Long::longValue).max().orElse(0);
     }
 
     private boolean foiConcluidaNoPrazo(Tarefa tarefa) {

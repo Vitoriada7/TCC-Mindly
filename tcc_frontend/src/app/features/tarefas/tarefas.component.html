@@ -1,33 +1,25 @@
 <section class="page">
   <div class="intro">
-    <a class="achievement-link" routerLink="/conquistas" aria-label="Ver minhas conquistas">
-      <span class="material-symbols-rounded" aria-hidden="true">emoji_events</span>
-    </a>
+    <div class="header-shortcuts">
+      <a class="achievement-link" routerLink="/conquistas" aria-label="Ver minhas conquistas">
+        <span class="material-symbols-rounded" aria-hidden="true">emoji_events</span>
+      </a>
+    </div>
     <div class="intro-copy">
       <p class="eyebrow">ORGANIZAÇÃO SEM PRESSA</p>
       <h1>Minhas tarefas</h1>
       <p>Seu plano de hoje cabe em pequenos passos.</p>
       <div class="calendar-control">
-        <button type="button" class="all-tasks" [class.active]="diaSelecionado() === null" (click)="selecionarDia(null)">
-          <span class="material-symbols-rounded" aria-hidden="true">select_all</span>
-          <small>Todas</small>
-        </button>
-        <div
-          #calendario
-          class="calendar-strip"
-          [class.dragging]="arrastandoCalendario()"
-          aria-label="Filtrar tarefas pelo dia do prazo"
-          (pointerdown)="iniciarArrasteCalendario($event, calendario)"
-          (pointermove)="arrastarCalendario($event, calendario)"
-          (pointerup)="finalizarArrasteCalendario()"
-          (pointercancel)="finalizarArrasteCalendario()"
-          (pointerleave)="finalizarArrasteCalendario()"
-        >
+          <button type="button" class="all-tasks" [class.active]="diaSelecionado() === null" [attr.aria-pressed]="diaSelecionado() === null" (click)="selecionarDia(null)">
+            <span class="material-symbols-rounded" aria-hidden="true">select_all</span>
+            <small>Todas</small>
+          </button>
+        <div #calendario class="calendar-strip" tabindex="0" aria-label="Filtrar tarefas pelo dia do prazo. Deslize para ver mais dias." (scroll)="expandirCalendario(calendario)">
           @for (dia of diasCalendario(); track dia.iso) {
-            <button type="button" class="calendar-day" [class.active]="diaAtivo(dia.date)" (pointerup)="selecionarDiaPorToque($event, dia.date)" (click)="selecionarDia(dia.date)">
+            <button type="button" class="calendar-day" [class.active]="diaAtivo(dia.date)" [class.today]="diaHoje(dia.date)" [attr.aria-pressed]="diaAtivo(dia.date)" [attr.aria-label]="dia.label" [attr.aria-current]="diaHoje(dia.date) ? 'date' : null" (click)="selecionarDia(dia.date)">
               <span class="weekday">{{ dia.weekday }}</span>
               <strong>{{ dia.day }}</strong>
-              <small>{{ dia.month }}</small>
+              <small class="calendar-month">{{ dia.month }}</small>
             </button>
           }
         </div>
@@ -89,3 +81,5 @@
 @if (modalTarefaAberto()) { <div class="backdrop" (click)="fecharModalTarefa()"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-tarefa" (click)="$event.stopPropagation()"><header><div><p class="eyebrow">ORGANIZAÇÃO</p><h2 id="titulo-modal-tarefa">{{ tarefaEmEdicao() ? 'Editar tarefa' : 'Nova tarefa' }}</h2></div><button class="close" type="button" (click)="fecharModalTarefa()">×</button></header>@if (categorias().length) { <form [formGroup]="formularioTarefa" (ngSubmit)="salvarTarefa()"><label for="titulo">Título</label><input id="titulo" formControlName="titulo" maxlength="150" placeholder="O que você precisa fazer?" /><label for="categoria">Categoria</label><select id="categoria" formControlName="categoriaId">@for (categoria of categorias(); track categoria.id) { <option [ngValue]="categoria.id">{{ categoria.nome }}</option> }</select><div class="form-row"><div><label for="prioridade">Prioridade</label><select id="prioridade" formControlName="prioridade"><option value="BAIXA">Baixa</option><option value="MEDIA">Média</option><option value="ALTA">Alta</option></select></div><div><label for="prazo">Prazo</label><input id="prazo" type="datetime-local" formControlName="dataLimite" /></div></div><label for="descricao">Descrição <span>opcional</span></label><textarea id="descricao" formControlName="descricao" rows="3"></textarea>@if (erroFormulario(); as erroForm) { <p class="form-error" role="alert">{{ erroForm }}</p> }<footer><button class="secondary" type="button" (click)="fecharModalTarefa()">Cancelar</button><button class="primary" type="submit" [disabled]="processando()">{{ processando() ? 'Salvando...' : 'Salvar tarefa' }}</button></footer></form> } @else { <div class="no-categories"><span class="material-symbols-rounded">label_off</span><strong>Crie uma categoria antes de criar tarefas.</strong><p>As categorias organizam suas tarefas e são pessoais para sua conta.</p><button class="secondary" type="button" (click)="fecharModalTarefa(); abrirCategorias()">Gerenciar categorias</button></div> }</section></div> }
 
 @if (modalCategoriasAberto()) { <div class="backdrop" (click)="fecharCategorias()"><section class="modal categories-modal" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-categorias" (click)="$event.stopPropagation()"><header><div><p class="eyebrow">ORGANIZAÇÃO</p><h2 id="titulo-modal-categorias">Categorias</h2></div><button class="close" type="button" (click)="fecharCategorias()">×</button></header><form class="category-form" [formGroup]="formularioCategoria" (ngSubmit)="salvarCategoria()"><input formControlName="nome" placeholder="Nome da categoria" maxlength="50" /><button class="primary" type="submit" [disabled]="processando()">{{ categoriaEditadaId() ? 'Salvar' : 'Adicionar' }}</button></form>@if (erroFormulario(); as erroCategoria) { <p class="form-error" role="alert">{{ erroCategoria }}</p> }<div class="category-list">@for (categoria of categorias(); track categoria.id) { <div><span>{{ categoria.nome }}</span><aside><button type="button" (click)="editarCategoria(categoria)" aria-label="Editar categoria"><span class="material-symbols-rounded">edit</span></button><button type="button" (click)="excluirCategoria(categoria)" aria-label="Excluir categoria"><span class="material-symbols-rounded">delete</span></button></aside></div> } @empty { <p class="category-empty">Ainda não há categorias. Crie a primeira para começar.</p> }</div></section></div> }
+
+<app-carregamento [ativo]="carregando()" />

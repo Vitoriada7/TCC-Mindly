@@ -1,0 +1,46 @@
+<dialog #dialog aria-labelledby="registro-detalhes-title" (close)="fechar.emit()">
+  @if (registro(); as item) {
+    <header>
+      <div>
+        <p class="eyebrow">SEU REGISTRO</p>
+        <h2 id="registro-detalhes-title">{{ item.dataRegistro | date: 'dd/MM/yyyy' }}</h2>
+      </div>
+      <button type="button" autofocus aria-label="Fechar detalhes do registro" (click)="fecharDialog()">
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
+    </header>
+    <section>
+      <h3>Como você se sentiu</h3>
+      <p>{{ sentimento() }}</p>
+      @if (item.sentimentoDetalhado) { <p>{{ item.sentimentoDetalhado }}</p> }
+    </section>
+    <section>
+      <h3>Seu relato</h3>
+      <p>{{ item.pensamento || 'Você não escreveu um relato neste dia.' }}</p>
+    </section>
+    @if (item.exploracoes?.length) {
+      <section>
+        <details class="perguntas-ia">
+          <summary>
+            <span>Perguntas geradas pela IA</span>
+            <span class="material-symbols-rounded" aria-hidden="true">expand_more</span>
+          </summary>
+          <p class="perguntas-hint">Releia as perguntas e as respostas que você registrou.</p>
+          @for (exploracao of item.exploracoes; track $index) {
+            <p class="exploracao">{{ exploracao }}</p>
+          }
+        </details>
+      </section>
+    }
+    @if (item.reflexao) {
+      <section class="reflexao">
+        <h3>Mensagem de apoio</h3>
+        <p>{{ item.reflexao }}</p>
+        <small>Mensagem gerada por IA.</small>
+      </section>
+    }
+    @if (item.complementoFinal) {
+      <section><h3>Seu complemento final</h3><p>{{ item.complementoFinal }}</p></section>
+    }
+  }
+</dialog>

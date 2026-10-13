@@ -1,5 +1,5 @@
-.app-shell { display: flex; width: 100%; min-height: 100dvh; background: #f8f9fc; }
-.workspace { width: calc(100% - 252px); min-height: 100dvh; margin-left: 252px; }
+.app-shell { display: flex; width: 100%; min-height: 100dvh; background: var(--background); }
+.workspace { width: calc(100% - var(--sidebar-width)); min-height: 100dvh; margin-left: var(--sidebar-width); }
 
-@media (max-width: 950px) { .workspace { width: calc(100% - 218px); margin-left: 218px; } }
+@media (max-width: 950px) { .workspace { width: calc(100% - var(--sidebar-width-compact)); margin-left: var(--sidebar-width-compact); } }
 @media (max-width: 700px) { .workspace { width: 100%; margin-left: 0; } }

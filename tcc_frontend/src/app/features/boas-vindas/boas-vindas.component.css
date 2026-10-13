@@ -14,7 +14,7 @@
   background:
     radial-gradient(circle at 82% 12%, rgb(236 96 255 / 18%), transparent 34%),
     radial-gradient(circle at 8% 88%, rgb(111 92 255 / 17%), transparent 38%),
-    linear-gradient(155deg, #fff 0%, #faf7ff 48%, #f3edff 100%);
+    linear-gradient(155deg, var(--surface) 0%, var(--surface) 48%, var(--wash-violet, #f3edff) 100%);
 }
 
 .skip-area {
@@ -25,7 +25,7 @@
   overflow: hidden;
   border: 0;
   padding: max(28px, env(safe-area-inset-top)) 24px max(22px, env(safe-area-inset-bottom));
-  color: #2f2f3a;
+  color: var(--text);
   background: transparent;
   font: inherit;
   cursor: pointer;
@@ -33,7 +33,7 @@
 }
 
 .skip-area:focus-visible {
-  outline: 3px solid #7b61ff;
+  outline: 3px solid var(--edge, #7b61ff);
   outline-offset: -6px;
 }
 
@@ -64,8 +64,8 @@
 
 .name {
   margin-top: 16px;
-  color: #9257d7;
-  font-family: 'Montserrat', sans-serif;
+  color: var(--violet, #9257d7);
+  font-family: var(--font-heading);
   font-size: clamp(2.55rem, 12vw, 4.1rem);
   font-weight: 700;
   letter-spacing: -.045em;
@@ -76,7 +76,7 @@
 
 .tagline {
   margin-top: 13px;
-  color: #5f5772;
+  color: var(--muted, #5f5772);
   font-size: clamp(.9rem, 3.7vw, 1.05rem);
   font-weight: 600;
   letter-spacing: .01em;
@@ -88,7 +88,7 @@
   grid-row: 3;
   align-self: end;
   margin-bottom: 22px;
-  color: #6f6b7c;
+  color: var(--muted, #6f6b7c);
   font-size: .78rem;
   font-weight: 700;
   letter-spacing: .08em;
@@ -111,7 +111,7 @@
   width: 100%;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #6d45f5, #c64ef3);
+  background: linear-gradient(90deg, var(--tone-violet, #6d45f5), var(--tone-violet, #c64ef3));
   transform-origin: left;
   animation: progress 4.2s linear both;
 }

@@ -1,0 +1,31 @@
+<section class="page">
+  <a class="back" routerLink="/perfil"><span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>Voltar ao perfil</a>
+  <header class="intro"><p class="eyebrow">SUAS RECOMPENSAS</p><h1>Biblioteca de avatares</h1><p>Escolha um companheiro para o seu perfil. Cada conquista abre uma nova possibilidade.</p></header>
+  @if (carregando()) {
+    <p role="status">Carregando seus avatares...</p>
+  } @else {
+    <div class="library-toolbar"><span>{{ totalLiberados() }} de {{ biblioteca().length }} liberados</span><button type="button" class="initials-option" (click)="selecionarAvatar(null)" [disabled]="salvando()" [attr.aria-pressed]="!usuario()?.avatar">Usar minhas iniciais</button></div>
+    @if (sucesso()) { <p class="success" role="status">Seu avatar foi atualizado!</p> }
+    <div class="avatar-grid">
+      @for (avatar of avataresLiberados(); track avatar.id) {
+        <article class="avatar-card" [class.locked]="!avatar.liberado" [class.active]="usuario()?.avatar === avatar.id">
+          <h2>{{ avatar.nome }}</h2>
+          <button type="button" class="avatar-circle" [disabled]="!avatar.liberado || salvando()" [attr.aria-pressed]="usuario()?.avatar === avatar.id" [attr.aria-label]="avatar.nome + (usuario()?.avatar === avatar.id ? ': em uso' : avatar.liberado ? ': usar como avatar' : ': bloqueado')" (click)="selecionarAvatar(avatar.id)">
+            <img [ngSrc]="avatar.imagem" width="144" height="144" alt="" />
+            <span class="state-icon material-symbols-rounded" aria-hidden="true">{{ !avatar.liberado ? 'lock' : usuario()?.avatar === avatar.id ? 'check' : 'lock_open' }}</span>
+          </button>
+          @if (usuario()?.avatar === avatar.id) {
+            <span class="avatar-state">Em uso</span>
+          }
+          <p>{{ avatar.conquistaInfo?.titulo }}</p>
+          @if (!avatar.liberado && avatar.conquistaInfo; as conquista) { <small>{{ conquista.descricao }} {{ conquista.progresso }}/{{ conquista.meta }}</small> }
+        </article>
+      } @empty {
+        <div><p>Seus próximos companheiros estão nas conquistas.</p><a routerLink="/conquistas">Ver conquistas para liberar avatares</a></div>
+      }
+    </div>
+  }
+  @if (erro(); as mensagem) { <div class="feedback" role="alert">{{ mensagem }} <button type="button" (click)="carregar()">Tentar novamente</button></div> }
+</section>
+
+<app-carregamento [ativo]="carregando()" />
