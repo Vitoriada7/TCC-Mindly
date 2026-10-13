@@ -1,6 +1,6 @@
 spring:
     config:
-        import: optional:file:./config/gemini.local.properties,optional:file:./config/google.local.properties
+        import: optional:file:./config/gemini.local.properties,optional:file:./config/google.local.properties,optional:file:./config/application.local.properties
     servlet:
         multipart:
             max-file-size: 8MB
@@ -9,27 +9,39 @@ spring:
         name: tcc_backend
 
     datasource:
-        url: jdbc:postgresql://localhost:5432/mindly
-        username: postgres
-        password: 180507
+        url: ${DB_URL:jdbc:postgresql://localhost:5432/mindly}
+        username: ${DB_USERNAME:postgres}
+        password: ${DB_PASSWORD}
+        hikari:
+            maximum-pool-size: ${DB_POOL_SIZE:5}
+            minimum-idle: 1
+
+    flyway:
+        default-schema: ${DB_SCHEMA:public}
+        schemas: ${DB_SCHEMA:public}
+        baseline-on-migrate: false
 
     jpa:
         hibernate:
-            ddl-auto: update
-        show-sql: true
+            ddl-auto: validate
+        show-sql: false
         properties:
             hibernate:
-                format_sql: true
+                default_schema: ${DB_SCHEMA:public}
 
 server:
+    port: ${PORT:8080}
     error:
-        include-message: always
+        include-message: never
 
 jwt:
     public:
-        key: classpath:authz.pub
+        key: ${JWT_PUBLIC_KEY:file:./config/authz.pub}
     private:
-        key: classpath:authz.pem
+        key: ${JWT_PRIVATE_KEY:file:./config/authz.pem}
+app:
+    cors:
+        allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}
 gemini:
     api-key: ${GEMINI_API_KEY:}
     model: ${GEMINI_MODEL:gemini-3.5-flash-lite}

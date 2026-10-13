@@ -1,0 +1,3 @@
+DB_PASSWORD=SUBSTITUA_PELA_SENHA_LOCAL
+# Para banco novo, o Flyway executa V1 automaticamente.
+# Banco antigo: consulte DEPLOY.md antes de habilitar o baseline.
