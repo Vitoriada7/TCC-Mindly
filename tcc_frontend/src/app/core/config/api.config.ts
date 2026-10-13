@@ -1,3 +1,5 @@
+import { apiUrl } from './api.generated';
+
 export const apiConfig = {
-  urlBase: 'http://localhost:8080',
+  urlBase: apiUrl,
 } as const;
