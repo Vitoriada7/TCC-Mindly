@@ -1,0 +1,7 @@
+.env
+.env.*
+!.env.example
+*.local.properties
+tcc_backend/config/*.pem
+tcc_backend/config/*.pub
+tcc_backend/config/migration-backups/
