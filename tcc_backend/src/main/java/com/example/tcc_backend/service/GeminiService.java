@@ -20,14 +20,32 @@ public class GeminiService {
     private long timeoutSegundos = 90;
     private final String chave;
     private final String modelo;
+    private final URI endpoint;
     private final ObjectMapper mapper;
     private final HttpClient cliente = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
 
     public GeminiService(@Value("${gemini.api-key:}") String chave,
                          @Value("${gemini.model:gemini-3.5-flash-lite}") String modelo, ObjectMapper mapper) {
         this.chave = chave;
-        this.modelo = modelo;
+        this.modelo = normalizarModelo(modelo);
+        this.endpoint = URI.create("https://generativelanguage.googleapis.com/v1beta/models/"
+                + this.modelo + ":generateContent");
         this.mapper = mapper;
+        log.info("Gemini: modelo efetivo={}; caminho={}; chaveConfigurada={}",
+                this.modelo, endpoint.getPath(), !chave.isBlank());
+    }
+
+    static String normalizarModelo(String valor) {
+        String nome = Objects.requireNonNull(valor, "Configure gemini.model").strip();
+        if (nome.length() >= 2 && ((nome.startsWith("\"") && nome.endsWith("\""))
+                || (nome.startsWith("'") && nome.endsWith("'")))) {
+            nome = nome.substring(1, nome.length() - 1).strip();
+        }
+        if (nome.startsWith("models/")) nome = nome.substring("models/".length());
+        if (!nome.matches("[A-Za-z0-9][A-Za-z0-9._-]*")) {
+            throw new IllegalArgumentException("Configure GEMINI_MODEL com um nome de modelo, sem URL ou parametros.");
+        }
+        return nome;
     }
 
     public JsonNode gerar(String instrucao, Object dados, Map<String, Object> schema) {
@@ -82,14 +100,14 @@ public class GeminiService {
                     "contents", List.of(Map.of("role", "user", "parts", partes)),
                     "generationConfig", Map.of("responseMimeType", "application/json", "responseSchema", schema,
                             "maxOutputTokens", 2048));
-            var request = HttpRequest.newBuilder(URI.create("https://generativelanguage.googleapis.com/v1beta/models/" + modelo + ":generateContent"))
+            var request = HttpRequest.newBuilder(endpoint)
                     .timeout(Duration.ofSeconds(timeoutSegundos)).header("Content-Type", "application/json")
                     .header("x-goog-api-key", chave).POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(corpo))).build();
             etapa = "requisicao_http";
             var response = cliente.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
-                log.warn("Gemini: HTTP {} retornado pelo Google; status={}",
-                        response.statusCode(), statusSeguro(response.body()));
+                log.warn("Gemini: modelo={}; caminho={}; HTTP {} retornado pelo Google; status={}",
+                        modelo, endpoint.getPath(), response.statusCode(), statusSeguro(response.body()));
                 throw indisponivel();
             }
             etapa = "resposta_json";
@@ -114,7 +132,7 @@ public class GeminiService {
             }
             return resultado;
         } catch (HttpTimeoutException e) {
-            log.warn("Gemini: timeout na etapa {}; limite={}s", etapa, timeoutSegundos);
+            log.warn("Gemini: modelo={}; timeout na etapa {}; limite={}s", modelo, etapa, timeoutSegundos);
             throw indisponivel();
         } catch (ResponseStatusException e) {
             throw e;
