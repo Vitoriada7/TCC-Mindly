@@ -10,6 +10,18 @@ import { guestGuard } from './core/guards/guest.guard';
  */
 export const routes: Routes = [
   {
+    path: 'privacidade',
+    loadComponent: () => import('./features/legal/legal.component').then(m => m.LegalComponent),
+    data: { documento: 'privacidade' },
+    title: 'Política de Privacidade | Mindly',
+  },
+  {
+    path: 'termos',
+    loadComponent: () => import('./features/legal/legal.component').then(m => m.LegalComponent),
+    data: { documento: 'termos' },
+    title: 'Termos de Serviço | Mindly',
+  },
+  {
     path: 'boas-vindas',
     canActivate: [guestGuard],
     loadComponent: () =>

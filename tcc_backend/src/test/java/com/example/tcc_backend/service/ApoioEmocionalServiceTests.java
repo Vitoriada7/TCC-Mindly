@@ -50,41 +50,11 @@ class ApoioEmocionalServiceTests {
     }
 
     @Test
-    void analiseVocalRetornaObservacoesValidas() {
+    void transcreveAudioSemAnaliseVocal() throws Exception {
         var audio = new MockMultipartFile("audio", "relato.webm", "audio/webm;codecs=opus", new byte[]{1});
-        var resultado = mapper.readTree("{\"texto\":\"Meu dia foi difícil.\",\"analiseDisponivel\":true,\"observacoesVocais\":[\"Sua voz parece pausada.\"]}");
-        when(gemini.analisarVoz(any(byte[].class), eq("audio/webm"))).thenReturn(resultado);
-        when(gemini.texto(resultado, 10000, true)).thenReturn("Meu dia foi difícil.");
-        var resposta = service.analisarVoz(audio);
-        assertThat(resposta.analiseDisponivel()).isTrue();
-        assertThat(resposta.observacoesVocais()).containsExactly("Sua voz parece pausada.");
-    }
-
-    @Test
-    void preservaTranscricaoQuandoObservacaoForInvalida() {
-        var audio = new MockMultipartFile("audio", "relato.webm", "audio/webm", new byte[]{1});
-        var resultado = mapper.readTree("{\"analiseDisponivel\":true,\"observacoesVocais\":[123]}");
-        when(gemini.analisarVoz(any(byte[].class), anyString())).thenReturn(resultado);
-        when(gemini.texto(resultado, 10000, true)).thenReturn("Relato compreensível.");
-        var resposta = service.analisarVoz(audio);
-        assertThat(resposta.texto()).isEqualTo("Relato compreensível.");
-        assertThat(resposta.analiseDisponivel()).isFalse();
-        assertThat(resposta.observacoesVocais()).isEmpty();
-    }
-
-    @Test
-    void silencioNaoProduzObservacoesMesmoQuandoModeloAsRetorna() {
-        var audio = new MockMultipartFile("audio", "relato.wav", "audio/wav", new byte[]{1});
-        var resultado = mapper.readTree("{\"analiseDisponivel\":true,\"observacoesVocais\":[\"Voz calma.\"]}");
-        when(gemini.analisarVoz(any(byte[].class), anyString())).thenReturn(resultado);
-        when(gemini.texto(resultado, 10000, true)).thenReturn("");
-        assertThat(service.analisarVoz(audio).observacoesVocais()).isEmpty();
-    }
-
-    @Test
-    void analiseRejeitaAudioInvalidoAntesDeChamarGemini() {
-        var audio = new MockMultipartFile("audio", "arquivo.txt", "text/plain", new byte[]{1});
-        assertThatThrownBy(() -> service.analisarVoz(audio)).isInstanceOf(ResponseStatusException.class);
-        verifyNoInteractions(gemini);
+        when(gemini.transcrever(any(byte[].class), eq("audio/webm"))).thenReturn("Meu relato.");
+        assertThat(service.transcrever(audio).texto()).isEqualTo("Meu relato.");
+        verify(gemini).transcrever(new byte[]{1}, "audio/webm");
+        verifyNoMoreInteractions(gemini);
     }
 }

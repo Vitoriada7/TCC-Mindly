@@ -63,6 +63,10 @@
       {{ modoCadastro() ? 'Já tem uma conta?' : 'Ainda não tem uma conta?' }}
       <a [routerLink]="modoCadastro() ? '/login' : '/cadastro'">{{ modoCadastro() ? 'Entrar' : 'Criar conta' }}</a>
     </small>
+    <nav aria-label="Documentos do Mindly" class="legal-links">
+      <a routerLink="/privacidade">Política de Privacidade</a>
+      <a routerLink="/termos">Termos de Serviço</a>
+    </nav>
   </main>
 
   <aside>

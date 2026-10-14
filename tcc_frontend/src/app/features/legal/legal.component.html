@@ -1,0 +1,64 @@
+<main class="legal-page">
+  <nav aria-label="Navegação institucional"><a routerLink="/boas-vindas">Mindly</a><a routerLink="/login">Entrar no aplicativo</a></nav>
+  <header>
+    <h1>{{ privacidade ? 'Política de Privacidade' : 'Termos de Serviço' }}</h1>
+    <p class="updated">Última atualização: 13 de outubro de 2026.</p>
+  </header>
+  <article>
+    @if (privacidade) {
+      <h2>1. Sobre o Mindly</h2>
+      <p>O Mindly é um projeto acadêmico de organização pessoal e acompanhamento do bem-estar. Esta política descreve o tratamento de dados na aplicação, incluindo a integração opcional com o Google Tasks.</p>
+      <p>A responsável pelo Mindly e pelo tratamento dos dados é <strong>Débora Martins de Oliveira</strong>. Para dúvidas ou solicitações de privacidade, entre em contato pelo e-mail <a href="mailto:mindly.suporte.app@gmail.com">mindly.suporte.app@gmail.com</a>.</p>
+      <h2>2. Dados utilizados</h2>
+      <ul>
+        <li><strong>Conta:</strong> nome, apelido, e-mail, data de nascimento, data de cadastro e senha protegida por hash, além de preferências de tema e avatar.</li>
+        <li><strong>Organização:</strong> títulos, descrições, categorias, prioridades, prazos e conclusões de tarefas; hábitos e suas marcações; progresso e conquistas.</li>
+        <li><strong>Diário emocional:</strong> sentimentos, relatos, respostas, reflexões, complementos e datas que você registra. Esses dados podem revelar informações sensíveis sobre saúde e bem-estar.</li>
+        <li><strong>Voz:</strong> quando você autoriza o microfone e usa os recursos de voz, o áudio é enviado para transcrição ou análise; textos e observações resultantes podem integrar seu registro. O código atual não mantém uma gravação permanente de áudio no banco do Mindly.</li>
+        <li><strong>Contatos de apoio:</strong> nomes, telefones e relacionamentos de contatos que você cadastra. Forneça dados de terceiros apenas quando tiver autorização.</li>
+        <li><strong>Dados técnicos:</strong> token de sessão e preferências no armazenamento do navegador. Os provedores de hospedagem podem processar IP, informações de acesso e registros técnicos para operar o serviço.</li>
+      </ul>
+      <h2>3. Finalidades e escolhas</h2>
+      <p>Usamos esses dados para autenticar sua conta, salvar sua rotina e registros, apresentar progresso, oferecer recursos solicitados e manter a segurança e o funcionamento do aplicativo. Recursos de microfone e integração Google são opcionais. O cadastro e o uso de uma funcionalidade não autorizam usos diferentes dos aqui descritos.</p>
+      <h2>4. Integração com o Google</h2>
+      <p>Ao conectar sua conta, o Mindly solicita a permissão Google Tasks para gerenciar tarefas. Embora essa permissão permita acesso amplo às tarefas, a funcionalidade utiliza uma lista Mindly e os vínculos das tarefas que ela sincroniza.</p>
+      <p>Quando você clica em sincronizar, enviamos títulos, descrições, datas de prazo e conclusões ao Google. Tarefas vinculadas excluídas no Mindly são removidas do Google na próxima sincronização. Alterações feitas no Google não são importadas. Registros emocionais e hábitos não são enviados por essa integração.</p>
+      <p>Guardamos no banco identificadores da lista e das tarefas, a data da sincronização e o token de renovação cifrado, para manter a conexão. O token de acesso é usado em memória nas chamadas. Não usamos esses dados para publicidade ou venda. O uso de dados recebidos das APIs Google deve observar a <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer">Política de Dados do Usuário dos Serviços de API Google</a>, incluindo os requisitos de Uso Limitado.</p>
+      <p>Você pode desconectar pelo ícone Google na tela de tarefas ou revogar a permissão nas configurações de sua Conta Google. Ao desconectar pelo Mindly, os tokens e vínculos locais são removidos; as tarefas já criadas no Google permanecem lá e podem ser excluídas diretamente nesse serviço.</p>
+      <h2>5. Inteligência artificial e terceiros</h2>
+      <p>Ao solicitar perguntas, mensagens de apoio, transcrição, o conteúdo necessário — como relatos, sentimentos, respostas ou áudio — é enviado ao Google Gemini. Resultados de IA podem ser salvos quando você conclui seu registro.</p>
+      <p>O tratamento pelo Gemini depende das condições do serviço utilizado. Em modalidades gratuitas, o Google pode utilizar entradas e respostas para melhorar produtos e realizar revisão humana. Evite enviar informações confidenciais ou sensíveis a esses recursos. Consulte os <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noopener noreferrer">termos do Gemini</a> antes de utilizá-los.</p>
+      <p>Render hospeda o frontend e o backend; Supabase fornece o banco de dados. Esses fornecedores processam dados necessários à operação e podem utilizar infraestrutura fora do Brasil. Outros serviços externos utilizados por recursos do aplicativo também podem receber dados técnicos ao serem acessados. Cada fornecedor possui suas próprias condições e práticas de privacidade.</p>
+      <h2>6. Armazenamento e proteção</h2>
+      <p>Dados cadastrados permanecem no banco enquanto necessários à conta e às funcionalidades. O aplicativo utiliza autenticação, isolamento de dados por usuário, hash de senhas, criptografia dos tokens Google e HTTPS no ambiente publicado. Nenhuma medida elimina todos os riscos de acesso indevido.</p>
+      <p>A exclusão pode exigir tratamento separado de cópias de segurança e registros técnicos dos fornecedores. Obrigações legais e necessidades de segurança podem justificar retenção específica. Não há promessa de eliminação imediata de todas as cópias ou de dados já enviados a terceiros.</p>
+      <h2>7. Seus direitos e exclusão</h2>
+      <p>Você pode solicitar informações sobre o tratamento, acesso, correção e, conforme aplicável, exclusão de seus dados, revogação de consentimento e encerramento da conta. A equipe poderá confirmar sua identidade sem solicitar sua senha. O aplicativo ainda não oferece um botão para exclusão completa da conta.</p>
+      <p>Para solicitar exclusão, envie um e-mail para <a href="mailto:mindly.suporte.app@gmail.com?subject=Solicita%C3%A7%C3%A3o%20de%20exclus%C3%A3o%20-%20Mindly">mindly.suporte.app@gmail.com</a>, informando o e-mail da conta e se deseja excluir dados específicos ou encerrar a conta. Não envie sua senha ou o conteúdo de seus registros emocionais. Débora Martins de Oliveira é a responsável pelo atendimento dessas solicitações.</p>
+      <h2>8. Atualizações</h2>
+      <p>Esta política poderá ser atualizada para refletir mudanças no serviço. Novas finalidades ou permissões serão informadas antes do uso correspondente. Consulte a data no topo desta página.</p>
+    } @else {
+      <h2>1. Objetivo do serviço</h2>
+      <p>O Mindly é um projeto acadêmico para organizar tarefas e hábitos e registrar experiências emocionais. Estes termos descrevem as condições de utilização da conta e dos recursos disponíveis.</p>
+      <h2>2. Conta e acesso</h2>
+      <p>Forneça informações corretas, mantenha seu e-mail atualizado e proteja sua senha. Não compartilhe credenciais nem use contas de outras pessoas. Se identificar acesso indevido, procure o responsável pelo serviço. Menores de idade devem utilizar o aplicativo com orientação de seus responsáveis e conforme as condições dos serviços externos utilizados.</p>
+      <h2>3. Uso responsável</h2>
+      <p>Não utilize o aplicativo para atividades ilícitas, assédio, exposição de dados de terceiros sem autorização, invasão de contas, exploração de falhas ou interferência no funcionamento do serviço. Você é responsável pelos conteúdos que decide cadastrar e deve respeitar direitos de outras pessoas.</p>
+      <h2>4. Bem-estar e inteligência artificial</h2>
+      <p>O Mindly não oferece diagnóstico, tratamento, psicoterapia ou atendimento de emergência. Mensagens e análises de IA podem conter erros e não substituem profissionais qualificados. O serviço não monitora continuamente seus registros nem garante identificar situações de risco. Em situações urgentes, procure atendimento presencial ou os serviços de emergência da sua região.</p>
+      <p>Recursos de IA dependem de fornecedores externos e estão sujeitos às condições desses serviços, inclusive de idade, privacidade e disponibilidade. Revise os resultados antes de utilizá-los.</p>
+      <h2>5. Integração opcional com o Google</h2>
+      <p>Conectar o Google é uma escolha sua. A sincronização envia dados de tarefas do Mindly para o Google Tasks mediante sua ação. Ela pode atualizar ou remover tarefas vinculadas e não importa alterações realizadas no Google. Prazos são enviados por dia, sem o horário. A integração pode falhar por indisponibilidade ou revogação de permissões.</p>
+      <p>Você pode desconectar a conta a qualquer momento. Dados já enviados ao Google permanecem nesse serviço até que sejam excluídos. Consulte a <a routerLink="/privacidade">Política de Privacidade</a> para conhecer os dados compartilhados.</p>
+      <h2>6. Disponibilidade e responsabilidades</h2>
+      <p>O aplicativo pode passar por manutenção, mudanças e interrupções. Não há garantia de disponibilidade contínua ou entrega de lembretes. Confira seus prazos e mantenha cópias de informações importantes. A equipe deve tratar falhas e solicitações dentro de suas possibilidades, preservando os direitos previstos na legislação aplicável.</p>
+      <h2>7. Conteúdo e privacidade</h2>
+      <p>Você mantém os direitos sobre os conteúdos que fornece. Seu uso pelo Mindly se limita ao necessário para executar as funcionalidades e às finalidades descritas na Política de Privacidade. O uso do aplicativo não concede autorização geral para divulgar seus registros emocionais.</p>
+      <h2>8. Encerramento da conta</h2>
+      <p>Você pode deixar de usar o serviço e solicitar o encerramento da conta e a exclusão dos dados pelo canal indicado na Política de Privacidade. Violações destas regras podem resultar em restrição de acesso, com análise das circunstâncias e comunicação quando possível, respeitando a legislação aplicável.</p>
+      <h2>9. Alterações e contato</h2>
+      <p>Mudanças relevantes nestes termos devem ser informadas aos usuários. A versão vigente será identificada pela data de atualização. A responsável pelo Mindly é <strong>Débora Martins de Oliveira</strong>. Encaminhe dúvidas e solicitações para <a href="mailto:mindly.suporte.app@gmail.com">mindly.suporte.app@gmail.com</a>. Consulte também a <a routerLink="/privacidade">Política de Privacidade</a>.</p>
+    }
+  </article>
+  <footer><a routerLink="/privacidade">Política de Privacidade</a><a routerLink="/termos">Termos de Serviço</a><a routerLink="/boas-vindas">Voltar ao Mindly</a></footer>
+</main>

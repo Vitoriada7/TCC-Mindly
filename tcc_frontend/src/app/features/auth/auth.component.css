@@ -47,3 +47,4 @@ aside > p { max-width:390px; margin:17px 0 0; color:rgb(255 255 255 / 82%); font
 @media(prefers-reduced-motion:reduce) { input,.primary { transition:none; } .auth-card { animation:none; } }
 
 .auth-card > .subtitle { font-size: var(--page-description-size); line-height: 1.45; }
+.legal-links { display:flex; flex-wrap:wrap; justify-content:center; gap:12px 20px; margin-top:20px; font-size:12px; }.legal-links a { color:var(--primary); text-underline-offset:3px; }

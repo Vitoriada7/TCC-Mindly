@@ -84,14 +84,6 @@
           </div>
         }
       </div>
-      <label class="hint">
-        <input type="checkbox" [formControl]="analisarExpressaoVocal" />
-        Quero que o Gemini também observe a expressão da minha voz após a gravação.
-      </label>
-      <p class="hint">
-        Ao gravar, o áudio será enviado ao Gemini para transcrição e, se você escolher, análise
-        vocal.
-      </p>
       @if (estadoAudio() === 'transcribing' || estadoAudio() === 'complete' || transcricao()) {
         <div class="transcript-card" [class.transcribing]="estadoAudio() === 'transcribing'">
           <span class="material-symbols-rounded" aria-hidden="true">{{
@@ -106,26 +98,6 @@
             <p>{{ transcricao() || 'Organizando suas palavras com calma…' }}</p>
           </div>
         </div>
-      }
-      @if (observacoesVocais().length) {
-        <aside class="transcript-card" aria-labelledby="observacoes-voz-titulo">
-          <div>
-            <strong id="observacoes-voz-titulo">Observações sobre sua voz</strong>
-            <ul>
-              @for (observacao of observacoesVocais(); track $index) {
-                <li>{{ observacao }}</li>
-              }
-            </ul>
-            <p>São estimativas da IA e podem estar erradas. O que você sente tem prioridade.</p>
-            <label>
-              <input type="checkbox" [formControl]="usarObservacoesVocais" />
-              Essas observações fazem sentido para mim. Quero usá-las nas perguntas e na reflexão.
-            </label>
-          </div>
-        </aside>
-      }
-      @if (avisoAnaliseVocal()) {
-        <p class="hint" role="status">{{ avisoAnaliseVocal() }}</p>
       }
       <p class="hint">
         Ao continuar, seu relato será enviado ao Gemini para preparar perguntas e uma mensagem de

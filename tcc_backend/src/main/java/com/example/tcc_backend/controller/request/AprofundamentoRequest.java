@@ -8,10 +8,4 @@ public record AprofundamentoRequest(
         @Size(max = 60) String sentimentoDetalhado,
         @NotBlank @Size(max = 10000) String pensamento,
         @Size(max = 3) List<@NotBlank @Size(max = 300) String> perguntas,
-        @Size(max = 3) List<@NotNull @Size(max = 4000) String> respostas,
-        @Size(max = 3) List<@NotBlank @Size(max = 200) String> observacoesVocais) {
-    public AprofundamentoRequest(String sentimento, String sentimentoDetalhado, String pensamento,
-                                List<String> perguntas, List<String> respostas) {
-        this(sentimento, sentimentoDetalhado, pensamento, perguntas, respostas, null);
-    }
-}
+        @Size(max = 3) List<@NotNull @Size(max = 4000) String> respostas) {}

@@ -72,9 +72,24 @@ Use SPRING_PROFILES_ACTIVE=prod. PORT e fornecida pelo Render; a aplicacao a res
 Configure CORS_ALLOWED_ORIGINS com a origem exata do frontend, sem barra final. Multiplas origens
 sao separadas por virgula. Previews precisam ser autorizados explicitamente; nao sao liberados por curinga.
 
-GEMINI_REQUEST_TIMEOUT_SECONDS configura o limite total de cada chamada ao Google (padrao: 90 segundos).
+GEMINI_MODEL define o modelo principal (padrao: gemini-3.5-flash-lite) e GEMINI_FALLBACK_MODEL define
+o alternativo (padrao: gemini-3.1-flash-lite). O primeiro HTTP 503 ou timeout do principal aciona
+o fallback imediatamente, quando ainda ha prazo e tentativas disponiveis. Vale para perguntas, apoio
+e transcricao. A mesma chave, instrucoes, dados e schema sao usados nos dois modelos.
+GEMINI_REQUEST_TIMEOUT_SECONDS configura um unico prazo total, incluindo fallback e esperas (padrao: 90 segundos).
+GEMINI_MAX_ATTEMPTS limita as chamadas SOMANDO os dois modelos (1 a 3; padrao: 3), nao por modelo.
+Com os padroes: principal, fallback e, se o fallback retornar HTTP 503, mais uma tentativa no fallback.
+O prazo de cada chamada e de no maximo prazoTotal/maxTentativas, limitado tambem pelo tempo restante.
+As repeticoes no mesmo modelo respeitam Retry-After, espera crescente e jitter; a troca de modelo e imediata.
+Um timeout do fallback encerra a operacao. Nao ha troca para o principal depois de usar o fallback.
+HTTP 400/401/403/404/429, erro de transporte, bloqueio de seguranca e erro de conteudo nao acionam fallback.
+GEMINI_FALLBACK_MODEL vazio desativa a troca. Usar o mesmo nome do principal tambem desativa a troca.
+GEMINI_MAX_ATTEMPTS=1 permite somente a chamada principal. O prefixo models/ e aceito em ambos os nomes.
+Os logs informam o modelo principal, o fallback e a razao da troca, sem imprimir chave, relato ou audio.
+Fallback e retentativas ajudam em indisponibilidade temporaria; ambos os modelos ainda podem falhar.
+Um timeout pode ter sido processado pelo Google; a troca de modelo pode consumir outra chamada da cota.
 Um timeout nao confirma falha de credencial; significa que a chamada nao terminou no prazo.
-GEMINI_API_KEY e usada apenas no backend. GEMINI_MODEL mantem o modelo configurado no projeto.
+GEMINI_API_KEY e usada apenas no backend. Confira os dois nomes no painel e publique o backend atualizado.
 Para Google Tasks, configure GOOGLE_TASKS_CLIENT_ID, GOOGLE_TASKS_CLIENT_SECRET,
 GOOGLE_TASKS_REDIRECT_URI e GOOGLE_TASKS_ENCRYPTION_KEY. Esta ultima precisa ser uma chave AES
 em Base64: gere com openssl rand -base64 32. Guarde-a de forma permanente; muda-la impede decifrar tokens existentes.

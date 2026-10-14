@@ -26,9 +26,4 @@ public class ApoioEmocionalController {
     public ResponseEntity<ApoioEmocionalResponse> transcrever(@RequestPart("audio") MultipartFile audio) {
         return ResponseEntity.ok(apoio.transcrever(audio));
     }
-
-    @PostMapping(value = "/analise-voz", consumes = "multipart/form-data")
-    public ResponseEntity<AnaliseVozResponse> analisarVoz(@RequestPart("audio") MultipartFile audio) {
-        return ResponseEntity.ok(apoio.analisarVoz(audio));
-    }
 }

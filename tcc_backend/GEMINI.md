@@ -8,24 +8,12 @@ não é empacotado no JAR; em outros ambientes, configure a variável de ambient
 Endpoints autenticados, todos POST:
 
 - `/registros-emocionais/ia/transcricao`: multipart com campo `audio`, até 8 MB.
-- `/registros-emocionais/ia/analise-voz`: mesmo upload; retorna `texto`,
-  `analiseDisponivel` e até três `observacoesVocais` de até 200 caracteres.
-  O Gemini recebe o áudio original para observar ritmo, pausas e expressão vocal.
 - `/registros-emocionais/ia/perguntas`: JSON com `sentimento`,
   `sentimentoDetalhado` opcional e `pensamento`. Retorna `perguntas` com três textos.
 - `/registros-emocionais/ia/apoio`: mesmo JSON, acrescido de `perguntas` e
   `respostas` opcionais. Retorna `texto` com até 1800 caracteres.
 
 O navegador grava até dois minutos e envia o áudio somente ao encerrar a gravação.
-Antes de gravar, a análise vocal pode ser ativada em uma opção desmarcada por padrão.
-As observações são estimativas experimentais, sem scores clínicos, e só entram nas
-perguntas e no apoio quando o usuário marca uma segunda confirmação. Os endpoints
-de perguntas e apoio aceitam `observacoesVocais` opcionais (até três textos de 200
-caracteres). O autorrelato tem prioridade. As observações não são persistidas
-separadamente e não alteram o sentimento escolhido. Uma nova gravação limpa as
-observações e sua confirmação. Se a análise falhar, o frontend tenta a transcrição
-convencional; isso pode gerar uma segunda chamada à API. Se as observações forem
-inválidas, a transcrição válida é preservada.
 A transcrição pode ser revisada antes de avançar. O áudio não é persistido pelo
 Mindly. O relato, as perguntas e respostas e o apoio final são salvos pelo endpoint
 existente de registro emocional, com o campo opcional `complementoFinal` salvo separadamente em uma coluna TEXT.
