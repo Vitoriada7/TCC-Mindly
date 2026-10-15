@@ -43,9 +43,11 @@ app:
     cors:
         allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}
 gemini:
+    max-attempts: ${GEMINI_MAX_ATTEMPTS:3}
     request-timeout-seconds: ${GEMINI_REQUEST_TIMEOUT_SECONDS:90}
     api-key: ${GEMINI_API_KEY:}
     model: ${GEMINI_MODEL:gemini-3.5-flash-lite}
+    fallback-model: ${GEMINI_FALLBACK_MODEL:gemini-3.1-flash-lite}
 
 google:
     tasks:

@@ -10,7 +10,7 @@ import {
   signal,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { finalize, map } from 'rxjs';
+import { finalize } from 'rxjs';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { EmocionalApiService } from './emocional-api.service';
 
@@ -49,10 +49,6 @@ export class RegistroDiarioComponent {
   );
   protected readonly estadoAudio = signal<EstadoAudio>('idle');
   protected readonly transcricao = signal('');
-  protected readonly analisarExpressaoVocal = new FormControl(false, { nonNullable: true });
-  protected readonly usarObservacoesVocais = new FormControl(false, { nonNullable: true });
-  protected readonly observacoesVocais = signal<string[]>([]);
-  protected readonly avisoAnaliseVocal = signal('');
   protected readonly mensagemAudio = signal('');
   protected readonly salvando = signal(false);
   protected readonly erroSalvamento = signal<string | null>(null);
@@ -192,7 +188,6 @@ export class RegistroDiarioComponent {
       if (!mime) throw new Error('Formato indisponivel');
       const recorder = new MediaRecorder(stream, { mimeType: mime });
       this.mediaRecorder = recorder;
-      const analisarVoz = this.analisarExpressaoVocal.value;
       const partes: Blob[] = [];
       let tamanho = 0;
       recorder.ondataavailable = (event) => {
@@ -212,32 +207,11 @@ export class RegistroDiarioComponent {
         recorder.stream.getTracks().forEach((track) => track.stop());
         if (this.destroyRef.destroyed) return;
         this.estadoAudio.set('transcribing');
-        this.mensagemAudio.set(
-          analisarVoz ? 'Transcrevendo e observando sua voz...' : 'Transcrevendo seu relato...',
-        );
+        this.mensagemAudio.set('Transcrevendo seu relato...');
         const audio = new Blob(partes, { type: mime });
-        const requisicao = analisarVoz
-          ? this.emocionalApi.analisarVoz(audio)
-          : this.emocionalApi
-              .transcrever(audio)
-              .pipe(
-                map(({ texto }) => ({
-                  texto,
-                  analiseDisponivel: false,
-                  observacoesVocais: [] as string[],
-                })),
-              );
-        requisicao.subscribe({
-          next: (resultado) => {
-            const { texto } = resultado;
+        this.emocionalApi.transcrever(audio).subscribe({
+          next: ({ texto }) => {
             if (this.destroyRef.destroyed) return;
-            if (resultado.analiseDisponivel) {
-              this.observacoesVocais.set(resultado.observacoesVocais);
-            } else if (analisarVoz && texto) {
-              this.avisoAnaliseVocal.set(
-                'Sua transcrição está pronta, mas não foi possível observar a expressão vocal com clareza.',
-              );
-            }
             this.transcricao.set(texto);
             this.estadoAudio.set(texto ? 'complete' : 'error');
             this.mensagemAudio.set(
@@ -261,9 +235,6 @@ export class RegistroDiarioComponent {
       };
       recorder.start(1000);
       this.transcricao.set('');
-      this.observacoesVocais.set([]);
-      this.avisoAnaliseVocal.set('');
-      this.usarObservacoesVocais.setValue(false);
       this.estadoAudio.set('recording');
       this.mensagemAudio.set('Gravando... toque para finalizar. Limite de 2 minutos.');
       this.limiteGravacao = window.setTimeout(() => {
@@ -292,7 +263,6 @@ export class RegistroDiarioComponent {
       pensamento: this.pensamento().trim(),
       perguntas: this.perguntas().map((item) => item.texto),
       respostas: this.exploracoes().map((texto) => texto.trim()),
-      observacoesVocais: this.usarObservacoesVocais.value ? this.observacoesVocais() : [],
     };
   }
 

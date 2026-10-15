@@ -47,7 +47,8 @@ export class App {
 
   private ehRotaPublica(url: string): boolean {
     return (
-      url.startsWith('/boas-vindas') || url.startsWith('/login') || url.startsWith('/cadastro')
+      url.startsWith('/boas-vindas') || url.startsWith('/login') || url.startsWith('/cadastro') ||
+      url.startsWith('/privacidade') || url.startsWith('/termos')
     );
   }
 }
