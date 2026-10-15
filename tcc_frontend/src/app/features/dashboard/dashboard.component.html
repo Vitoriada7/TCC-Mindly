@@ -28,10 +28,10 @@
       } @else if (erroEmocional()) {
         <p class="chart-note" role="status">Não foi possível carregar seu humor.</p>
       } @else {
-        <div class="empty-card-content">
+        <a class="empty-card-content mood-link" [routerLink]="registroHoje() ? '/emocional' : '/emocional/registro'" [attr.aria-label]="registroHoje() ? 'Ver histórico de registros emocionais' : 'Registrar meu humor de hoje'">
           <span class="empty-icon material-symbols-rounded" aria-hidden="true">{{ humorHoje()?.icone ?? 'sentiment_neutral' }}</span>
           <div><strong>{{ humorHoje()?.rotulo ?? registroHoje()?.sentimento ?? 'Sem registro hoje' }}</strong><p>{{ registroHoje() ? 'Seu último registro de hoje.' : 'Reserve um momento para observar como você está.' }}</p></div>
-        </div>
+        </a>
       }
     </article>
 

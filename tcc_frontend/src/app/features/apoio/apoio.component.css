@@ -21,9 +21,30 @@
 .cvv-card h2 { margin:4px 0 6px; font-size:18px; }
 .cvv-card p:not(.eyebrow) { margin:0; color:var(--muted, #6f697c); font-size:13px; }
 .contact-grid { display: grid; gap: 14px; margin-top: 18px; }
-.contact-card-item { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 16px; padding: 16px 18px; border-radius: var(--radius-xl); background: var(--surface); }
+.contact-card-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid var(--edge, #ddd8eb);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: 0 4px 12px rgba(54, 45, 94, .06);
+}
 .contact-person { min-width: 0; overflow-wrap: anywhere; }
-.contact-phone { color: var(--text-secondary); font-size: 12px; overflow-wrap: anywhere; }
+.contact-phone {
+  padding: 8px 12px;
+  border: 1px solid var(--edge, #ddd8eb);
+  border-radius: var(--radius-md);
+  background: var(--wash-violet, #f3efff);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
 .contact-card-item strong { font-size: 14px; }
 .contact-card-item p { margin: 6px 0 0; color: var(--text-secondary); font-size: 12px; }
 .contact-card-item a { color: var(--primary-hover); font-size: 12px; font-weight: 700; text-decoration: none; }

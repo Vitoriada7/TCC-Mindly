@@ -31,3 +31,6 @@
 @media (max-width: 700px) { .overview-grid { grid-template-columns: 1fr; } .section-title { flex-wrap: wrap; } }
 
 .welcome-copy { font-size: var(--page-description-size); line-height: 1.45; }
+.mood-link { color: inherit; text-decoration: none; border-radius: var(--radius-lg); padding: 8px; }
+.mood-link:hover { background: var(--wash-violet, #f3efff); }
+.mood-link:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
