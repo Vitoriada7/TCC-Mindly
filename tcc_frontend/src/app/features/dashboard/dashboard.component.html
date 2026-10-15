@@ -11,36 +11,64 @@
   </section>
 
   @if (erro(); as mensagemErro) {
-    <div class="feedback error" role="alert">
-      <span>Não foi possível atualizar todos os dados.</span>
-      <button type="button" (click)="carregar()">Tentar novamente</button>
-    </div>
+  <div class="feedback error" role="alert">
+    <span>Não foi possível atualizar todos os dados.</span>
+    <button type="button" (click)="carregar()">Tentar novamente</button>
+  </div>
   }
 
   <section class="overview-grid" aria-label="Resumo do dia">
     <article class="card mood-card">
       <div class="card-heading">
-        <div><p class="eyebrow">COMO VOCÊ ESTÁ?</p><h2>Seu humor hoje</h2></div>
+        <div>
+          <p class="eyebrow">COMO VOCÊ ESTÁ?</p>
+          <h2>Seu humor hoje</h2>
+        </div>
         <span class="soft-icon lavender material-symbols-rounded" aria-hidden="true">wb_sunny</span>
       </div>
       @if (carregando()) {
-        <div class="skeleton-copy"></div>
+      <div class="skeleton-copy"></div>
       } @else if (erroEmocional()) {
-        <p class="chart-note" role="status">Não foi possível carregar seu humor.</p>
+      <p class="chart-note" role="status">Não foi possível carregar seu humor.</p>
       } @else {
-        <a class="empty-card-content mood-link" [routerLink]="registroHoje() ? '/emocional' : '/emocional/registro'" [attr.aria-label]="registroHoje() ? 'Ver histórico de registros emocionais' : 'Registrar meu humor de hoje'">
-          <span class="empty-icon material-symbols-rounded" aria-hidden="true">{{ humorHoje()?.icone ?? 'sentiment_neutral' }}</span>
-          <div><strong>{{ humorHoje()?.rotulo ?? registroHoje()?.sentimento ?? 'Sem registro hoje' }}</strong><p>{{ registroHoje() ? 'Seu último registro de hoje.' : 'Reserve um momento para observar como você está.' }}</p></div>
-        </a>
+      <a class="empty-card-content mood-link"
+        [routerLink]="registroHoje() ? '/emocional' : '/emocional/registro'"
+        [attr.aria-label]="registroHoje() ? 'Ver histórico de registros emocionais' : 'Registrar meu humor de hoje'">
+        <span class="empty-icon material-symbols-rounded" aria-hidden="true">{{ humorHoje()?.icone ??
+          'sentiment_neutral' }}</span>
+        <div><strong>{{ humorHoje()?.rotulo ?? registroHoje()?.sentimento ?? 'Sem registro hoje' }}</strong>
+          <p>{{ registroHoje() ? 'Seu último registro de hoje.' : 'Reserve um momento para observar como você está.' }}
+          </p>
+        </div>
+      </a>
       }
     </article>
 
     <article class="card streak-card gamification-card">
       @if (resumoGamificacao(); as resumo) {
-        <div class="track"><span class="task-track material-symbols-rounded" aria-hidden="true">task_alt</span><div><p class="eyebrow">TAREFAS</p><strong>{{ resumo.tarefas.concluidasSemana }} de {{ resumo.tarefas.metaSemanal }}</strong><p>meta semanal</p></div></div>
-        <div class="track"><span class="emotion-track material-symbols-rounded" aria-hidden="true">favorite</span><div><p class="eyebrow">AUTOCUIDADO</p><strong>{{ resumo.emocional.sequenciaAtual }} {{ resumo.emocional.sequenciaAtual === 1 ? 'dia' : 'dias' }}</strong></div></div>
+      <div class="track">
+        <span class="task-track material-symbols-rounded" aria-hidden="true">task_alt</span>
+        <div>
+          <p class="eyebrow">TAREFAS</p>
+          <p><b>{{ resumo.tarefas.concluidasSemana }} de {{ resumo.tarefas.metaSemanal }}</b>
+          meta semanal</p>
+        </div>
+      </div>
+      <div class="track"><span class="emotion-track material-symbols-rounded" aria-hidden="true">favorite</span>
+        <div>
+          <p class="eyebrow">AUTOCUIDADO</p>
+          <p>
+            <strong>{{ resumo.emocional.sequenciaAtual }} {{
+              resumo.emocional.sequenciaAtual === 1 ? 'dia' : 'dias' }}</strong>
+          </p>
+        </div>
+      </div>
       } @else {
-        <div class="track"><span class="fire material-symbols-rounded" aria-hidden="true">auto_awesome</span><div><p class="eyebrow">SEU PROGRESSO</p><strong>Comece no seu ritmo</strong></div></div>
+      <div class="track"><span class="fire material-symbols-rounded" aria-hidden="true">auto_awesome</span>
+        <div>
+          <p class="eyebrow">SEU PROGRESSO</p><strong>Comece no seu ritmo</strong>
+        </div>
+      </div>
       }
     </article>
   </section>
@@ -48,74 +76,125 @@
   <section class="content-grid">
     <article class="card tasks-card" id="tarefas-hoje">
       <header class="section-title">
-        <div><p class="eyebrow">ORGANIZAÇÃO</p><h2>Suas prioridades de hoje</h2></div>
+        <div>
+          <p class="eyebrow">ORGANIZAÇÃO</p>
+          <h2>Suas prioridades de hoje</h2>
+        </div>
         @if (!carregando() && !erro()) {
-          <span class="section-note">{{ prioridadesHoje() }} {{ prioridadesHoje() === 1 ? 'prioridade pendente' : 'prioridades pendentes' }}</span>
+        <span class="section-note">{{ prioridadesHoje() }} {{ prioridadesHoje() === 1 ? 'prioridade pendente' :
+          'prioridades pendentes' }}</span>
         }
       </header>
       @if (carregando()) {
-        <div class="task-list"><div class="skeleton-task"></div><div class="skeleton-task"></div><div class="skeleton-task"></div></div>
+      <div class="task-list">
+        <div class="skeleton-task"></div>
+        <div class="skeleton-task"></div>
+        <div class="skeleton-task"></div>
+      </div>
       } @else if (tarefasHoje().length) {
-        <div class="task-list">
-          @for (tarefa of tarefasHoje(); track tarefa.id) {
-            <button class="task-item" type="button" [class.done]="tarefa.status === 'CONCLUIDA'" [class.overdue]="tarefa.vencida" [disabled]="concluindoIds().has(tarefa.id)" (click)="concluir(tarefa)">
-              <span class="check"><span class="material-symbols-rounded">{{ tarefa.status === 'CONCLUIDA' ? 'check' : '' }}</span></span>
-              <span class="task-info"><strong>{{ tarefa.titulo }}</strong><small>{{ prazoDa(tarefa) }}@if (categoriaDa(tarefa); as categoria) { · {{ categoria }} }</small></span>
-              <span class="tag" [class.overdue]="tarefa.vencida" [class.high]="!tarefa.vencida && tarefa.prioridade === 'ALTA'">{{ tarefa.vencida ? 'Vencida' : prioridadeRotulo(tarefa.prioridade) }}</span>
-            </button>
-          }
-        </div>
+      <div class="task-list">
+        @for (tarefa of tarefasHoje(); track tarefa.id) {
+        <button class="task-item" type="button" [class.done]="tarefa.status === 'CONCLUIDA'"
+          [class.overdue]="tarefa.vencida" [disabled]="concluindoIds().has(tarefa.id)" (click)="concluir(tarefa)">
+          <span class="check"><span class="material-symbols-rounded">{{ tarefa.status === 'CONCLUIDA' ? 'check' : ''
+              }}</span></span>
+          <span class="task-info"><strong>{{ tarefa.titulo }}</strong><small>{{ prazoDa(tarefa) }}@if
+              (categoriaDa(tarefa); as categoria) { · {{ categoria }} }</small></span>
+          <span class="tag" [class.overdue]="tarefa.vencida"
+            [class.high]="!tarefa.vencida && tarefa.prioridade === 'ALTA'">{{ tarefa.vencida ? 'Vencida' :
+            prioridadeRotulo(tarefa.prioridade) }}</span>
+        </button>
+        }
+      </div>
       } @else {
-        <div class="empty-tasks"><span class="material-symbols-rounded" aria-hidden="true">check_circle</span><div><strong>Nenhuma tarefa para hoje</strong><p>Quando precisar, adicione uma tarefa com prazo para hoje.</p></div></div>
+      <div class="empty-tasks"><span class="material-symbols-rounded" aria-hidden="true">check_circle</span>
+        <div><strong>Nenhuma tarefa para hoje</strong>
+          <p>Quando precisar, adicione uma tarefa com prazo para hoje.</p>
+        </div>
+      </div>
       }
-      <button class="add-task" type="button" (click)="abrirFormulario()"><span class="material-symbols-rounded" aria-hidden="true">add</span> Adicionar uma tarefa</button>
+      <button class="add-task" type="button" (click)="abrirFormulario()"><span class="material-symbols-rounded"
+          aria-hidden="true">add</span> Adicionar uma tarefa</button>
     </article>
 
     <article class="card progress-card">
-      <header class="section-title"><div><p class="eyebrow">BEM-ESTAR</p><h2>Seu ritmo emocional</h2></div><a routerLink="/emocional">Ver diário</a></header>
+      <header class="section-title">
+        <div>
+          <p class="eyebrow">BEM-ESTAR</p>
+          <h2>Seu ritmo emocional</h2>
+        </div><a routerLink="/emocional">Ver diário</a>
+      </header>
       <div class="tabs" aria-label="Período do progresso">
-        <button type="button" [class.active]="periodo() === 'semana'" [attr.aria-pressed]="periodo() === 'semana'" (click)="selecionarPeriodo('semana')">Semana</button>
-        <button type="button" [class.active]="periodo() === 'mes'" [attr.aria-pressed]="periodo() === 'mes'" (click)="selecionarPeriodo('mes')">Mês</button>
+        <button type="button" [class.active]="periodo() === 'semana'" [attr.aria-pressed]="periodo() === 'semana'"
+          (click)="selecionarPeriodo('semana')">Semana</button>
+        <button type="button" [class.active]="periodo() === 'mes'" [attr.aria-pressed]="periodo() === 'mes'"
+          (click)="selecionarPeriodo('mes')">Mês</button>
       </div>
       <nav class="period-navigation" aria-label="Navegar pelos períodos emocionais">
-        <button type="button" (click)="navegarPeriodo(-1)" [attr.aria-label]="periodo() === 'mes' ? 'Mês anterior' : 'Semana anterior'"><span class="material-symbols-rounded" aria-hidden="true">chevron_left</span></button>
+        <button type="button" (click)="navegarPeriodo(-1)"
+          [attr.aria-label]="periodo() === 'mes' ? 'Mês anterior' : 'Semana anterior'"><span
+            class="material-symbols-rounded" aria-hidden="true">chevron_left</span></button>
         <span aria-live="polite">{{ rotuloPeriodo() }}</span>
-        <button type="button" (click)="navegarPeriodo(1)" [disabled]="deslocamentoPeriodo() === 0" [attr.aria-label]="periodo() === 'mes' ? 'Próximo mês' : 'Próxima semana'"><span class="material-symbols-rounded" aria-hidden="true">chevron_right</span></button>
+        <button type="button" (click)="navegarPeriodo(1)" [disabled]="deslocamentoPeriodo() === 0"
+          [attr.aria-label]="periodo() === 'mes' ? 'Próximo mês' : 'Próxima semana'"><span
+            class="material-symbols-rounded" aria-hidden="true">chevron_right</span></button>
       </nav>
       @if (carregando()) {
-        <div class="skeleton-copy"></div>
+      <div class="skeleton-copy"></div>
       } @else if (erroEmocional()) {
-        <div class="empty-chart" role="status"><p>Não foi possível carregar os registros emocionais.</p><button class="secondary" type="button" (click)="carregar()">Tentar novamente</button></div>
+      <div class="empty-chart" role="status">
+        <p>Não foi possível carregar os registros emocionais.</p><button class="secondary" type="button"
+          (click)="carregar()">Tentar novamente</button>
+      </div>
       } @else if (diasComRegistro()) {
-        <div class="emotion-chart" [class.month-chart]="periodo() === 'mes'">
-          <div class="chart-axis" aria-hidden="true">@for (humor of humores; track humor.valor) { <span>{{ humor.rotulo }}</span> }</div>
-          <div class="chart-days" role="list" aria-label="Último humor registrado em cada dia">
-            @for (dia of diasEmocionais(); track dia.chave) {
-              <div class="chart-day" role="listitem" [attr.aria-label]="dia.legenda" [attr.title]="dia.legenda">
-                <div class="chart-column">@if (dia.nivel >= 0) { <span class="chart-dot" [style.top.%]="dia.nivel * 25" aria-hidden="true"></span> }</div>
-                <span class="chart-date" [class.hidden-date]="!dia.exibirDia" aria-hidden="true">{{ dia.dia }}</span>
-              </div>
-            }
+      <div class="emotion-chart" [class.month-chart]="periodo() === 'mes'">
+        <div class="chart-axis" aria-hidden="true">@for (humor of humores; track humor.valor) { <span>{{ humor.rotulo
+            }}</span> }</div>
+        <div class="chart-days" role="list" aria-label="Último humor registrado em cada dia">
+          @for (dia of diasEmocionais(); track dia.chave) {
+          <div class="chart-day" role="listitem" [attr.aria-label]="dia.legenda" [attr.title]="dia.legenda">
+            <div class="chart-column">@if (dia.nivel >= 0) { <span class="chart-dot" [style.top.%]="dia.nivel * 25"
+                aria-hidden="true"></span> }</div>
+            <span class="chart-date" [class.hidden-date]="!dia.exibirDia" aria-hidden="true">{{ dia.dia }}</span>
           </div>
+          }
         </div>
-        <p class="chart-note">Último registro de cada dia. Dias sem registro ficam em branco.</p>
+      </div>
+      <p class="chart-note">Último registro de cada dia. Dias sem registro ficam em branco.</p>
       } @else {
-        <div class="empty-chart"><span class="material-symbols-rounded" aria-hidden="true">show_chart</span><p>Nenhum registro neste período. Registre como você se sente para acompanhar seu ritmo.</p></div>
+      <div class="empty-chart"><span class="material-symbols-rounded" aria-hidden="true">show_chart</span>
+        <p>Nenhum registro neste período. Registre como você se sente para acompanhar seu ritmo.</p>
+      </div>
       }
     </article>
   </section>
 
   <section class="bottom-grid">
     <article class="card habits-card">
-      <header class="section-title"><div><p class="eyebrow">CONSTÂNCIA</p><h2>Seus hábitos</h2></div><a routerLink="/habitos">Ver todos</a></header>
+      <header class="section-title">
+        <div>
+          <p class="eyebrow">CONSTÂNCIA</p>
+          <h2>Seus hábitos</h2>
+        </div><a routerLink="/habitos">Ver todos</a>
+      </header>
       @if (carregando()) {
-        <div class="skeleton-copy"></div>
+      <div class="skeleton-copy"></div>
       } @else if (resumoHabitos(); as resumo) {
-        @if (resumo.totalHabitosAtivos) {
-          <div class="habits-summary"><span class="material-symbols-rounded" aria-hidden="true">local_fire_department</span><div><strong>{{ resumo.sequenciaAtual }} {{ resumo.sequenciaAtual === 1 ? 'dia de sequência' : 'dias de sequência' }}</strong><p>{{ resumo.habitosConcluidosHoje }} de {{ resumo.totalHabitosAtivos }} {{ resumo.totalHabitosAtivos === 1 ? 'hábito concluído hoje' : 'hábitos concluídos hoje' }}</p></div></div>
-        } @else {
-          <div class="empty-habits"><span class="material-symbols-rounded" aria-hidden="true">calendar_month</span><div><strong>Comece com um hábito</strong><p>Pequenas repetições constroem grandes mudanças.</p><a routerLink="/habitos">Criar hábito</a></div></div>
-        }
+      @if (resumo.totalHabitosAtivos) {
+      <div class="habits-summary"><span class="material-symbols-rounded" aria-hidden="true">local_fire_department</span>
+        <div><strong>{{ resumo.sequenciaAtual }} {{ resumo.sequenciaAtual === 1 ? 'dia de sequência' : 'dias de
+            sequência' }}</strong>
+          <p>{{ resumo.habitosConcluidosHoje }} de {{ resumo.totalHabitosAtivos }} {{ resumo.totalHabitosAtivos === 1 ?
+            'hábito concluído hoje' : 'hábitos concluídos hoje' }}</p>
+        </div>
+      </div>
+      } @else {
+      <div class="empty-habits"><span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
+        <div><strong>Comece com um hábito</strong>
+          <p>Pequenas repetições constroem grandes mudanças.</p><a routerLink="/habitos">Criar hábito</a>
+        </div>
+      </div>
+      }
       }
     </article>
     <article class="quote-card" aria-label="Mensagem motivacional">
@@ -127,23 +206,45 @@
 </div>
 
 @if (modalAberto()) {
-  <div class="modal-backdrop" (click)="fecharFormulario()">
-    <section class="task-modal" role="dialog" aria-modal="true" aria-labelledby="nova-tarefa-titulo" (click)="$event.stopPropagation()">
-      <header><div><p class="eyebrow">ORGANIZAÇÃO</p><h2 id="nova-tarefa-titulo">Nova tarefa</h2></div><button class="close" type="button" (click)="fecharFormulario()" aria-label="Fechar">×</button></header>
-      @if (categorias().length) {
-        <form [formGroup]="formulario" (ngSubmit)="criarTarefa()" novalidate>
-          <label for="titulo">Título</label><input id="titulo" formControlName="titulo" maxlength="150" placeholder="O que você precisa fazer?" />
-          <label for="categoria">Categoria</label><select id="categoria" formControlName="categoriaId">@for (categoria of categorias(); track categoria.id) { <option [ngValue]="categoria.id">{{ categoria.nome }}</option> }</select>
-          <div class="form-row"><div><label for="prioridade">Prioridade</label><select id="prioridade" formControlName="prioridade"><option value="BAIXA">Baixa</option><option value="MEDIA">Média</option><option value="ALTA">Alta</option></select></div><div><label for="prazo">Prazo</label><input id="prazo" type="datetime-local" formControlName="dataLimite" /></div></div>
-          <label for="descricao">Descrição <span>opcional</span></label><textarea id="descricao" formControlName="descricao" rows="3"></textarea>
-          @if (erroFormulario(); as erroFormulario) { <p class="form-error" role="alert">{{ erroFormulario }}</p> }
-          <footer><button class="secondary" type="button" (click)="fecharFormulario()" [disabled]="criando()">Cancelar</button><button class="primary-button" type="submit" [disabled]="criando()">{{ criando() ? 'Salvando...' : 'Salvar tarefa' }}</button></footer>
-        </form>
-      } @else {
-        <div class="no-categories"><strong>Você ainda não possui categorias.</strong><p>Uma categoria é necessária para criar tarefas. Esse gerenciamento será disponibilizado na tela de tarefas.</p><button class="secondary" type="button" (click)="fecharFormulario()">Fechar</button></div>
-      }
-    </section>
-  </div>
+<div class="modal-backdrop" (click)="fecharFormulario()">
+  <section class="task-modal" role="dialog" aria-modal="true" aria-labelledby="nova-tarefa-titulo"
+    (click)="$event.stopPropagation()">
+    <header>
+      <div>
+        <p class="eyebrow">ORGANIZAÇÃO</p>
+        <h2 id="nova-tarefa-titulo">Nova tarefa</h2>
+      </div><button class="close" type="button" (click)="fecharFormulario()" aria-label="Fechar">×</button>
+    </header>
+    @if (categorias().length) {
+    <form [formGroup]="formulario" (ngSubmit)="criarTarefa()" novalidate>
+      <label for="titulo">Título</label><input id="titulo" formControlName="titulo" maxlength="150"
+        placeholder="O que você precisa fazer?" />
+      <label for="categoria">Categoria</label><select id="categoria" formControlName="categoriaId">@for (categoria of
+        categorias(); track categoria.id) { <option [ngValue]="categoria.id">{{ categoria.nome }}</option> }</select>
+      <div class="form-row">
+        <div><label for="prioridade">Prioridade</label><select id="prioridade" formControlName="prioridade">
+            <option value="BAIXA">Baixa</option>
+            <option value="MEDIA">Média</option>
+            <option value="ALTA">Alta</option>
+          </select></div>
+        <div><label for="prazo">Prazo</label><input id="prazo" type="datetime-local" formControlName="dataLimite" />
+        </div>
+      </div>
+      <label for="descricao">Descrição <span>opcional</span></label><textarea id="descricao" formControlName="descricao"
+        rows="3"></textarea>
+      @if (erroFormulario(); as erroFormulario) { <p class="form-error" role="alert">{{ erroFormulario }}</p> }
+      <footer><button class="secondary" type="button" (click)="fecharFormulario()"
+          [disabled]="criando()">Cancelar</button><button class="primary-button" type="submit" [disabled]="criando()">{{
+          criando() ? 'Salvando...' : 'Salvar tarefa' }}</button></footer>
+    </form>
+    } @else {
+    <div class="no-categories"><strong>Você ainda não possui categorias.</strong>
+      <p>Uma categoria é necessária para criar tarefas. Esse gerenciamento será disponibilizado na tela de tarefas.</p>
+      <button class="secondary" type="button" (click)="fecharFormulario()">Fechar</button>
+    </div>
+    }
+  </section>
+</div>
 }
 
 <app-carregamento [ativo]="carregando()" />
