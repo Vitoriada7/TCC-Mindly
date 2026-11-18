@@ -1,7 +1,8 @@
-<div class="page">
+<div class="page" [class.emotion-step]="passo() === 1">
   <div class="progress-track" aria-label="Progresso do registro">
     <div class="progress-fill" [style.width.%]="progressPercent()"></div>
   </div>
+
   <header class="flow-header">
     <a routerLink=".." class="back-link" aria-label="Voltar para o diário emocional"
       ><span class="material-symbols-rounded" aria-hidden="true">arrow_back</span></a
@@ -11,36 +12,15 @@
       <h1>{{ tituloAtual }}</h1>
     </div>
   </header>
+
   <section class="step-card">
     @if (passo() === 1) {
-      <p class="hint">Escolha as emoções que melhor descrevem como você está se sentindo agora.</p>
-      <div class="emotion-row">
-        @for (sentimento of sentimentos; track sentimento.value) {
-          <button
-            type="button"
-            class="emotion-button"
-            [class.active]="sentimentoSelecionado() === sentimento.value"
-            (click)="selecionarSentimento(sentimento.value)"
-            [attr.aria-pressed]="sentimentoSelecionado() === sentimento.value"
-          >
-            <span class="material-symbols-rounded" aria-hidden="true">{{ sentimento.icon }}</span
-            ><strong>{{ sentimento.label }}</strong>
-          </button>
-        }
-      </div>
-      <p class="other-label">Outras opções</p>
-      <div class="sentiments-row">
-        @for (sentimento of sentimentosEspecificos; track sentimento) {
-          <button
-            type="button"
-            class="sentiment-chip"
-            [class.active]="sentimentoDetalhadoSelecionado() === sentimento"
-            (click)="selecionarDetalhe(sentimento)"
-          >
-            {{ sentimento }}
-          </button>
-        }
-      </div>
+      <app-seletor-emocoes
+        [principal]="sentimentoSelecionado()"
+        [detalhes]="detalhesSelecionados()"
+        (principalChange)="selecionarSentimento($event)"
+        (detalhesChange)="selecionarDetalhes($event)"
+      />
     } @else if (passo() === 2) {
       <p class="hint">Escreva sobre seus sentimentos hoje. Não existe certo ou errado aqui.</p>
       <textarea

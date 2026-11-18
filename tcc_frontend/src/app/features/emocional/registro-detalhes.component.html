@@ -5,15 +5,24 @@
         <p class="eyebrow">SEU REGISTRO</p>
         <h2 id="registro-detalhes-title">{{ item.dataRegistro | date: 'dd/MM/yyyy' }}</h2>
       </div>
-      <button type="button" autofocus aria-label="Fechar detalhes do registro" (click)="fecharDialog()">
+      <button
+        type="button"
+        autofocus
+        aria-label="Fechar detalhes do registro"
+        (click)="fecharDialog()"
+      >
         <span class="material-symbols-rounded" aria-hidden="true">close</span>
       </button>
     </header>
+
     <section>
       <h3>Como você se sentiu</h3>
       <p>{{ sentimento() }}</p>
-      @if (item.sentimentoDetalhado) { <p>{{ item.sentimentoDetalhado }}</p> }
+      @if (item.sentimentoDetalhado) {
+        <p>{{ item.sentimentoDetalhado }}</p>
+      }
     </section>
+
     <section>
       <h3>Seu relato</h3>
       <p>{{ item.pensamento || 'Você não escreveu um relato neste dia.' }}</p>
@@ -40,7 +49,10 @@
       </section>
     }
     @if (item.complementoFinal) {
-      <section><h3>Seu complemento final</h3><p>{{ item.complementoFinal }}</p></section>
+      <section>
+        <h3>Seu complemento final</h3>
+        <p>{{ item.complementoFinal }}</p>
+      </section>
     }
   }
 </dialog>

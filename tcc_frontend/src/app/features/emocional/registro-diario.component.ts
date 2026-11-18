@@ -13,13 +13,13 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { EmocionalApiService } from './emocional-api.service';
+import { SeletorEmocoesComponent } from './seletor-emocoes.component';
 
-type Sentimento = { label: string; value: string; icon: string; description: string };
 type Pergunta = { titulo: string; texto: string };
 type EstadoAudio = 'idle' | 'requesting' | 'recording' | 'transcribing' | 'complete' | 'error';
 @Component({
   selector: 'app-registro-diario',
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, SeletorEmocoesComponent],
   templateUrl: './registro-diario.component.html',
   styleUrl: './registro-diario.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,7 +30,8 @@ export class RegistroDiarioComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly emocionalApi = inject(EmocionalApiService);
   protected readonly sentimentoSelecionado = signal<string | null>(null);
-  protected readonly sentimentoDetalhadoSelecionado = signal<string | null>(null);
+  protected readonly detalhesSelecionados = signal<string[]>([]);
+  protected readonly sentimentoDetalhadoSelecionado = computed(() => this.detalhesSelecionados().join(', ') || null);
   protected readonly pensamento = signal('');
   protected readonly exploracoes = signal(['', '', '']);
   protected readonly reflexao = signal('');
@@ -83,50 +84,6 @@ export class RegistroDiarioComponent {
     });
   }
 
-  protected readonly sentimentos: Sentimento[] = [
-    {
-      label: 'Radiante',
-      value: 'radiante',
-      icon: 'sentiment_very_satisfied',
-      description: 'Me sinto leve e feliz.',
-    },
-    {
-      label: 'Bem',
-      value: 'bem',
-      icon: 'sentiment_satisfied',
-      description: 'Tudo está equilibrado.',
-    },
-    {
-      label: 'Neutra',
-      value: 'neutra',
-      icon: 'sentiment_neutral',
-      description: 'Um dia tranquilo e sereno.',
-    },
-    {
-      label: 'Cansada',
-      value: 'cansada',
-      icon: 'sentiment_dissatisfied',
-      description: 'Preciso de um momento para mim.',
-    },
-    {
-      label: 'Difícil',
-      value: 'dificil',
-      icon: 'sentiment_very_dissatisfied',
-      description: 'Sinto que hoje foi mais pesado.',
-    },
-  ];
-
-  protected readonly sentimentosEspecificos = [
-    'Acolhido',
-    'Sobrecarregado',
-    'Confiante',
-    'Inquieto',
-    'Com foco',
-    'Sensível',
-    'Aliviado',
-    'Inseguro',
-  ];
-
   protected readonly perguntas = signal<Pergunta[]>([]);
 
   protected readonly passoRotulos = [
@@ -158,8 +115,8 @@ export class RegistroDiarioComponent {
     this.sentimentoSelecionado.set(valor);
   }
 
-  protected selecionarDetalhe(valor: string): void {
-    this.sentimentoDetalhadoSelecionado.set(valor);
+  protected selecionarDetalhes(valores: string[]): void {
+    this.detalhesSelecionados.set(valores);
   }
 
   protected atualizarPensamento(event: Event): void {

@@ -1,0 +1,46 @@
+<div class="selector" [style.--emotion-color]="atual().cor">
+  <div class="carousel" role="region" aria-label="Emoções principais" aria-roledescription="carrossel">
+    <div #trilho class="rail" (scroll)="aoDeslizar()" (keydown.arrowLeft)="selecionar(indice() - 1); $event.preventDefault()" (keydown.arrowRight)="selecionar(indice() + 1); $event.preventDefault()">
+      @for (emocao of emocoes; track emocao.value; let i = $index) {
+        <button type="button" class="emotion" [class.current]="indice() === i" [style.--face-color]="emocao.cor" [attr.aria-pressed]="principal() === emocao.value" (click)="selecionar(i)">
+          <span class="face">
+            <svg class="expression" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              @switch (emocao.value) {
+                @case ('radiante') {
+                  <path d="M25 40 Q31 28 37 40 M63 40 Q69 28 75 40 M27 57 Q50 85 73 57 Z" />
+                }
+                @case ('bem') {
+                  <path d="M25 40 Q31 30 37 40 M63 40 Q69 30 75 40 M29 59 Q50 77 71 59" />
+                }
+                @case ('neutra') {
+                  <path d="M26 36 Q31 45 36 36 M64 36 Q69 45 74 36 M34 63 Q50 66 66 63" />
+                }
+                @case ('cansada') {
+                  <path d="M25 37 Q31 47 37 37 M63 37 Q69 47 75 37 M32 68 Q50 51 68 68" />
+                }
+                @case ('dificil') {
+                  <path d="M25 35 Q31 45 37 35 M63 35 Q69 45 75 35 M31 69 Q50 43 69 69 Z" />
+                }
+              }
+            </svg>
+          </span>
+          <strong>{{ emocao.label }}</strong>
+        </button>
+      }
+    </div>
+    <div class="navigation">
+      <button type="button" aria-label="Emoção anterior" [disabled]="indice() === 0" (click)="selecionar(indice() - 1)"><span class="material-symbols-rounded" aria-hidden="true">chevron_left</span></button>
+      <span class="position" aria-live="polite">{{ atual().label }} · {{ indice() + 1 }} de {{ emocoes.length }}</span>
+      <button type="button" aria-label="Próxima emoção" [disabled]="indice() === emocoes.length - 1" (click)="selecionar(indice() + 1)"><span class="material-symbols-rounded" aria-hidden="true">chevron_right</span></button>
+    </div>
+  </div>
+  <div class="details-heading"><p>Deslize acima para explorar. Você pode escolher mais de uma opção.</p></div>
+  <div class="chips" role="group" [attr.aria-label]="'Emoções relacionadas a ' + atual().label">
+    @for (detalhe of atual().detalhes; track detalhe) {
+      <button type="button" class="chip" [class.selected]="detalhes().includes(detalhe)" [attr.aria-pressed]="detalhes().includes(detalhe)" [disabled]="!detalhes().includes(detalhe) && !cabe(detalhe)" (click)="alternar(detalhe)">{{ detalhe }}@if (detalhes().includes(detalhe)) {<span class="material-symbols-rounded" aria-hidden="true">check</span>}</button>
+    }
+  </div>
+  @if (limiteAtingido()) {
+    <p class="limit-hint" role="status">O limite de 200 caracteres foi atingido. Desmarque uma opção para escolher outra.</p>
+  }
+</div>

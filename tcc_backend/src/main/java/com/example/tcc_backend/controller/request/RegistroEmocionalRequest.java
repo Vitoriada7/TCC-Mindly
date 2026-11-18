@@ -14,7 +14,7 @@ public class RegistroEmocionalRequest {
     @Size(max = 40)
     private String sentimento;
 
-    @Size(max = 60)
+    @Size(max = 200)
     private String sentimentoDetalhado;
 
     @Size(max = 10000)
