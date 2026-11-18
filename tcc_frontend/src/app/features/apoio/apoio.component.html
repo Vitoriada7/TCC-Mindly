@@ -3,15 +3,21 @@
     <div>
       <p class="eyebrow">REDE DE APOIO</p>
       <h1>Você pode buscar apoio quando precisar.</h1>
-      <p>Encontre serviços de saúde mental e pessoas de confiança para cuidar de você com segurança.</p>
+      <p>
+        Encontre serviços de saúde mental e pessoas de confiança para cuidar de você com segurança.
+      </p>
     </div>
   </div>
 
   <section class="grid-layout">
     <article class="card contact-card">
       <header class="card-heading">
-        <div><p class="eyebrow">SERVIÇOS</p><h2>Apoio próximo de você</h2></div>
+        <div>
+          <p class="eyebrow">SERVIÇOS</p>
+          <h2>Apoio próximo de você</h2>
+        </div>
       </header>
+
       <div class="support-list">
         <p class="empty-message">Encontre um lugar para conversar e receber apoio na sua região.</p>
         <a
@@ -24,7 +30,9 @@
           <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
           Buscar apoio perto de mim
         </a>
-        <p id="support-search-description" class="empty-message">Abre uma busca no Google Maps em uma nova aba.</p>
+        <p id="support-search-description" class="empty-message">
+          Abre uma busca no Google Maps em uma nova aba.
+        </p>
       </div>
     </article>
   </section>
@@ -40,7 +48,10 @@
 
   <section class="info-card">
     <div class="card-heading">
-      <div><p class="eyebrow">PESSOAS DE CONFIANÇA</p><h2>Contatos de emergência</h2></div>
+      <div>
+        <p class="eyebrow">PESSOAS DE CONFIANÇA</p>
+        <h2>Contatos de emergência</h2>
+      </div>
       @if (!formularioVisivel()) {
         <button class="secondary-button" type="button" (click)="abrirFormulario()">
           <span class="material-symbols-rounded" aria-hidden="true">person_add</span>
@@ -57,11 +68,20 @@
         </label>
         <label>
           Telefone
-          <input type="tel" formControlName="telefone" autocomplete="tel" placeholder="(51) 99999-9999" />
+          <input
+            type="tel"
+            formControlName="telefone"
+            autocomplete="tel"
+            placeholder="(51) 99999-9999"
+          />
         </label>
         <label>
           Relação <span>(opcional)</span>
-          <input type="text" formControlName="relacionamento" placeholder="Familiar, amigo, psicóloga..." />
+          <input
+            type="text"
+            formControlName="relacionamento"
+            placeholder="Familiar, amigo, psicóloga..."
+          />
         </label>
         <label class="checkbox-field">
           <input type="checkbox" formControlName="principal" />
@@ -71,7 +91,9 @@
           <p class="form-error" role="alert">{{ erroContato() }}</p>
         }
         <div class="form-actions">
-          <button class="secondary-button" type="button" (click)="cancelarFormulario()">Cancelar</button>
+          <button class="secondary-button" type="button" (click)="cancelarFormulario()">
+            Cancelar
+          </button>
           <button class="link-button" type="submit" [disabled]="salvandoContato()">
             {{ salvandoContato() ? 'Salvando...' : 'Salvar contato' }}
           </button>
@@ -89,7 +111,9 @@
         <article class="contact-card-item">
           <div class="contact-person">
             <strong>{{ contato.relacionamento || 'Contato pessoal' }}</strong>
-            @if (contato.principal) { <span class="primary-badge">Principal</span> }
+            @if (contato.principal) {
+              <span class="primary-badge">Principal</span>
+            }
             <p>{{ contato.nome }}</p>
           </div>
           <span class="contact-phone">{{ contato.telefone }}</span>
