@@ -5,3 +5,5 @@
 tcc_backend/config/*.pem
 tcc_backend/config/*.pub
 tcc_backend/config/migration-backups/
+hs_err_pid*.log
+replay_pid*.log

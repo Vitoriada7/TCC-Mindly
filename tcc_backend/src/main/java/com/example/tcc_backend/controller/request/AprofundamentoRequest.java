@@ -5,7 +5,7 @@ import java.util.List;
 
 public record AprofundamentoRequest(
         @NotBlank @Size(max = 40) String sentimento,
-        @Size(max = 60) String sentimentoDetalhado,
+        @Size(max = 200) String sentimentoDetalhado,
         @NotBlank @Size(max = 10000) String pensamento,
         @Size(max = 3) List<@NotBlank @Size(max = 300) String> perguntas,
         @Size(max = 3) List<@NotNull @Size(max = 4000) String> respostas) {}

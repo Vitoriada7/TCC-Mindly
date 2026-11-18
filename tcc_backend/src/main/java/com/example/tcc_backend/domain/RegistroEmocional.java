@@ -37,7 +37,7 @@ public class RegistroEmocional {
     @Column(nullable = false, length = 40)
     private String sentimento;
 
-    @Column(length = 60)
+    @Column(length = 200)
     private String sentimentoDetalhado;
 
     @Column(columnDefinition = "TEXT")

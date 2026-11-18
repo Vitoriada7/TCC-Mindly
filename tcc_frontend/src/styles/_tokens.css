@@ -1,4 +1,3 @@
-/* Valores compartilhados da identidade visual. Mantem a paleta atual das telas. */
 :root {
   color-scheme: light;
   --on-primary: #fff;
@@ -82,8 +81,6 @@
   --orange-surface: #403023;
   --error-text: #ffabc1;
   --error-surface: #422633;
-
-  /* Substituições para as cores locais das telas no tema escuro. */
   --ink: var(--text-heading);
   --muted: var(--text-muted);
   --violet: #c3afff;

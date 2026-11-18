@@ -12,7 +12,7 @@ import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.s
   selector: 'app-tarefas',
   imports: [CarregamentoComponent, ReactiveFormsModule, RouterLink],
   templateUrl: './tarefas.component.html',
-  styleUrls: ['./tarefas.component.css', './tarefas-modal.css'],
+  styleUrls: ['./tarefas.component.css', '../../../styles/components/task-modal.css', './tarefas-modal.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TarefasComponent {
