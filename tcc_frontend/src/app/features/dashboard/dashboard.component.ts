@@ -17,7 +17,7 @@ import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.s
   selector: 'app-dashboard',
   imports: [CarregamentoComponent, ReactiveFormsModule, RouterLink],
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css', './dashboard-modal.css', './dashboard-chart.css'],
+  styleUrls: ['./dashboard.component.css', '../../../styles/components/task-modal.css', './dashboard-modal.css', './dashboard-chart.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent {
