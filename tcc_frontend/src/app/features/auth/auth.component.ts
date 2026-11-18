@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -38,6 +39,8 @@ export class AuthComponent {
   });
 
   protected enviar(): void {
+    if (this.enviando()) return;
+
     const formularioAtual = this.modoCadastro() ? this.formCadastro : this.formLogin;
     this.mensagemErro.set(null);
 
@@ -71,7 +74,24 @@ export class AuthComponent {
     return campo.invalid && campo.touched;
   }
 
-  private obterMensagemErro(erro: { error?: { message?: string } }): string {
-    return erro.error?.message || 'Não foi possível concluir a solicitação. Tente novamente.';
+  private obterMensagemErro(erro: unknown): string {
+    if (erro instanceof HttpErrorResponse) {
+      if (erro.status === 0) {
+        return 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente em instantes.';
+      }
+
+      const resposta: unknown = erro.error;
+      if (
+        resposta !== null &&
+        typeof resposta === 'object' &&
+        'message' in resposta &&
+        typeof resposta.message === 'string' &&
+        resposta.message.trim()
+      ) {
+        return resposta.message;
+      }
+    }
+
+    return 'Não foi possível concluir a solicitação. Tente novamente.';
   }
 }
