@@ -19,6 +19,12 @@ import java.util.function.LongSupplier;
 @Service
 public class GeminiService {
     private static final Logger log = LoggerFactory.getLogger(GeminiService.class);
+    private static final Set<String> MOTIVOS_CONCLUSAO_CONHECIDOS = Set.of(
+            "MAX_TOKENS", "SAFETY", "RECITATION", "OTHER", "BLOCKLIST",
+            "PROHIBITED_CONTENT", "SPII", "MALFORMED_FUNCTION_CALL");
+    private static final Set<String> STATUS_ERRO_CONHECIDOS = Set.of(
+            "INVALID_ARGUMENT", "UNAUTHENTICATED", "PERMISSION_DENIED", "NOT_FOUND",
+            "RESOURCE_EXHAUSTED", "INTERNAL", "UNAVAILABLE", "DEADLINE_EXCEEDED", "FAILED_PRECONDITION");
     @Value("${gemini.request-timeout-seconds:90}")
     private long timeoutSegundos = 90;
     @Value("${gemini.max-attempts:3}")
@@ -125,28 +131,11 @@ public class GeminiService {
             etapa = "requisicao_http";
             var resposta = enviarComRetentativas(mapper.writeValueAsString(corpo));
             var response = resposta.response();
-            if (response.statusCode() != 200) {
-                log.warn("Gemini: modelo={}; caminho={}; HTTP {} retornado pelo Google; status={}; motivo={}",
-                        resposta.modelo(), endpoint(resposta.modelo()).getPath(), response.statusCode(), statusSeguro(response.body()),
-                        motivoSeguro(response.body()));
-                throw indisponivel();
-            }
+            validarRespostaHttp(resposta);
             etapa = "resposta_json";
-            var candidato = mapper.readTree(response.body()).path("candidates").path(0);
-            String motivo = candidato.path("finishReason").asText();
-            if (!"STOP".equals(motivo)) {
-                String motivoSeguro = Set.of("MAX_TOKENS", "SAFETY", "RECITATION", "OTHER",
-                        "BLOCKLIST", "PROHIBITED_CONTENT", "SPII", "MALFORMED_FUNCTION_CALL")
-                        .contains(motivo) ? motivo : "AUSENTE_OU_DESCONHECIDO";
-                log.warn("Gemini: resposta sem conclusao normal; finishReason={}", motivoSeguro);
-                throw indisponivel();
-            }
-            StringBuilder texto = new StringBuilder();
-            for (var parte : candidato.path("content").path("parts")) {
-                if (!parte.path("thought").asBoolean(false)) texto.append(parte.path("text").asText(""));
-            }
+            String texto = extrairTextoCandidato(mapper.readTree(response.body()));
             etapa = "conteudo_json";
-            var resultado = mapper.readTree(texto.toString());
+            var resultado = mapper.readTree(texto);
             if (resultado == null || !resultado.isObject()) {
                 log.warn("Gemini: conteudo nao retornou um objeto JSON");
                 throw indisponivel();
@@ -162,10 +151,39 @@ public class GeminiService {
             Thread.currentThread().interrupt();
             throw indisponivel();
         } catch (Exception e) {
-            // Mensagens de excecao e corpos HTTP podem conter dados privados.
+            // mensagens de excecao e corpos http podem conter dados privados
             log.warn("Gemini: falha na etapa {}; tipo={}", etapa, e.getClass().getSimpleName());
             throw indisponivel();
         }
+    }
+
+    private void validarRespostaHttp(RespostaGemini resposta) {
+        var response = resposta.response();
+        if (response.statusCode() == 200) return;
+
+        log.warn("Gemini: modelo={}; caminho={}; HTTP {} retornado pelo Google; status={}; motivo={}",
+                resposta.modelo(), endpoint(resposta.modelo()).getPath(), response.statusCode(),
+                statusSeguro(response.body()), motivoSeguro(response.body()));
+        throw indisponivel();
+    }
+
+    private String extrairTextoCandidato(JsonNode resposta) {
+        var candidato = resposta.path("candidates").path(0);
+        String motivo = candidato.path("finishReason").asText();
+        if (!"STOP".equals(motivo)) {
+            String motivoSeguro = MOTIVOS_CONCLUSAO_CONHECIDOS.contains(motivo)
+                    ? motivo : "AUSENTE_OU_DESCONHECIDO";
+            log.warn("Gemini: resposta sem conclusao normal; finishReason={}", motivoSeguro);
+            throw indisponivel();
+        }
+
+        StringBuilder texto = new StringBuilder();
+        for (var parte : candidato.path("content").path("parts")) {
+            if (!parte.path("thought").asBoolean(false)) {
+                texto.append(parte.path("text").asText(""));
+            }
+        }
+        return texto.toString();
     }
 
     private RespostaGemini enviarComRetentativas(String corpo) throws java.io.IOException, InterruptedException {
@@ -257,9 +275,7 @@ public class GeminiService {
     String statusSeguro(String corpo) {
         try {
             String status = mapper.readTree(corpo).path("error").path("status").asText();
-            return Set.of("INVALID_ARGUMENT", "UNAUTHENTICATED", "PERMISSION_DENIED", "NOT_FOUND",
-                    "RESOURCE_EXHAUSTED", "INTERNAL", "UNAVAILABLE", "DEADLINE_EXCEEDED",
-                    "FAILED_PRECONDITION").contains(status) ? status : "DESCONHECIDO";
+            return STATUS_ERRO_CONHECIDOS.contains(status) ? status : "DESCONHECIDO";
         } catch (Exception e) {
             return "DESCONHECIDO";
         }

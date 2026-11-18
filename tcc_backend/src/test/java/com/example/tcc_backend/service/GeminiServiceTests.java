@@ -74,6 +74,40 @@ class GeminiServiceTests {
     }
 
     @Test
+    void concatenaPartesDeTextoIgnorandoPensamentos() throws Exception {
+        HttpClient client = mock(HttpClient.class);
+        var gemini = comFallback(client, new ArrayList<>());
+        String corpo = new ObjectMapper().writeValueAsString(Map.of("candidates", List.of(Map.of(
+                "finishReason", "STOP", "content", Map.of("parts", List.of(
+                        Map.of("thought", true, "text", "conteudo interno"),
+                        Map.of("text", "{\"texto\":"),
+                        Map.of("text", "\"ok\"}")))))));
+        doReturn(resposta(200, corpo, Map.of())).when(client)
+                .send(any(HttpRequest.class), org.mockito.ArgumentMatchers.<HttpResponse.BodyHandler<String>>any());
+
+        assertThat(gemini.gerar("teste", "ficticio", GeminiService.schemaTexto()).path("texto").asText())
+                .isEqualTo("ok");
+        modelos(requests(client, 1), "gemini-3.5-flash-lite");
+    }
+
+    @Test
+    void rejeitaConteudoQueNaoSejaObjetoJsonSemAcionarFallback() throws Exception {
+        for (String conteudo : List.of("[]", "null", "texto invalido", "")) {
+            HttpClient client = mock(HttpClient.class);
+            var gemini = comFallback(client, new ArrayList<>());
+            String corpo = new ObjectMapper().writeValueAsString(Map.of("candidates", List.of(Map.of(
+                    "finishReason", "STOP", "content", Map.of("parts", List.of(Map.of("text", conteudo)))))));
+            doReturn(resposta(200, corpo, Map.of())).when(client)
+                    .send(any(HttpRequest.class), org.mockito.ArgumentMatchers.<HttpResponse.BodyHandler<String>>any());
+
+            assertThatThrownBy(() -> gemini.gerar("teste", "ficticio", GeminiService.schemaTexto()))
+                    .isInstanceOf(ResponseStatusException.class)
+                    .satisfies(erro -> assertThat(((ResponseStatusException) erro).getStatusCode().value()).isEqualTo(503));
+            modelos(requests(client, 1), "gemini-3.5-flash-lite");
+        }
+    }
+
+    @Test
     void repete503ComEsperaCrescenteEAceitaRespostaPosterior() throws Exception {
         HttpClient client = mock(HttpClient.class);
         List<Duration> esperas = new ArrayList<>();
