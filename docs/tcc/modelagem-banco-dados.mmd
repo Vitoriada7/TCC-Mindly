@@ -1,0 +1,93 @@
+erDiagram
+    usuario ||--o{ usuario_avatar : libera
+    usuario ||--o{ categorias : possui
+    usuario ||--o{ tarefas : possui
+    categorias ||--o{ tarefas : classifica
+    usuario ||--o{ habitos : possui
+    habitos ||--o{ registros_habitos : recebe
+    usuario ||--o{ registros_emocionais : registra
+    usuario ||--o{ contatos_emergencia : cadastra
+    conexoes_google ||--o{ tarefas_google : mapeia
+    usuario {
+        bigint id PK
+        varchar(100) nome
+        varchar(30) apelido
+        varchar(150) email UK
+        varchar(255) senha
+        date data_nascimento
+        timestamp(6) data_criacao
+        boolean ativo
+        boolean tema_escuro
+        varchar(255) avatar
+    }
+    usuario_avatar {
+        bigint usuario_id PK,FK
+        varchar(255) avatar PK
+    }
+    categorias {
+        bigint id PK
+        varchar(100) nome
+        bigint usuario_id FK
+    }
+    tarefas {
+        bigint id PK
+        varchar(150) titulo
+        text descricao
+        varchar(20) status
+        varchar(10) prioridade
+        timestamp(6) data_criacao
+        timestamp(6) data_atualizacao
+        timestamp(6) data_limite
+        timestamp(6) data_conclusao
+        bigint usuario_id FK
+        bigint categoria_id FK
+    }
+    habitos {
+        bigint id PK
+        varchar(100) nome
+        varchar(50) icone
+        varchar(30) cor
+        bigint usuario_id FK
+        timestamp(6) data_criacao
+        boolean ativo
+    }
+    registros_habitos {
+        bigint id PK
+        bigint habito_id FK
+        date data
+        boolean concluido
+    }
+    registros_emocionais {
+        bigint id PK
+        varchar(40) sentimento
+        varchar(60) sentimento_detalhado
+        text pensamento
+        text exploracoes
+        text reflexao
+        text complemento_final
+        timestamp(6) data_registro
+        date data
+        bigint usuario_id FK
+    }
+    contatos_emergencia {
+        bigint id PK
+        varchar(100) nome
+        varchar(20) telefone
+        varchar(50) relacionamento
+        boolean principal
+        bigint usuario_id FK
+    }
+    conexoes_google {
+        bigint usuario_id PK
+        varchar(2000) refresh_token_cifrado
+        varchar(255) estado_hash
+        timestamp(6)_tz estado_expira
+        varchar(500) lista_id
+        timestamp(6)_tz ultima_sincronizacao
+        bigint versao
+    }
+    tarefas_google {
+        bigint usuario_id PK,FK
+        bigint tarefa_id PK
+        varchar(500) google_id
+    }
