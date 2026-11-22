@@ -4,28 +4,6 @@
   color: var(--text-heading);
   min-height: 100dvh;
 }
-.quote-card {
-  padding: 27px 29px;
-  overflow: hidden;
-  border-radius: var(--radius-2xl);
-  color: #fff;
-  background: var(--tone-violet, #7058c7);
-}
-.quote-card > span {
-  color: var(--violet, #cfc3ff);
-  font: 60px/20px Georgia;
-}
-.quote-card p {
-  margin: 19px 0 13px;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.45;
-  letter-spacing: -0.3px;
-}
-.quote-card small {
-  color: var(--violet, #eee9ff);
-  font-size: 12px;
-}
 .dashboard {
   max-width: 1200px;
   margin: 0 auto;
