@@ -10,6 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 public class RegistroEmocionalRequest {
+
     @NotBlank
     @Size(max = 40)
     private String sentimento;

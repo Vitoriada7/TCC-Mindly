@@ -1,5 +1,7 @@
 package com.example.tcc_backend.service;
 
+import com.example.tcc_backend.repository.specification.TarefaSpecifications;
+import com.example.tcc_backend.validator.TarefaValidator;
 import com.example.tcc_backend.controller.request.TarefaRequest;
 import com.example.tcc_backend.controller.response.TarefaResponse;
 import com.example.tcc_backend.domain.Categoria;
@@ -24,7 +26,9 @@ import java.util.List;
 public class TarefaService {
 
     private final TarefaRepository tarefaRepository;
+
     private final CategoriaRepository categoriaRepository;
+
     private final UsuarioAutenticadoService usuarioAutenticadoService;
 
     public TarefaService(TarefaRepository tarefaRepository, CategoriaRepository categoriaRepository,
@@ -37,8 +41,7 @@ public class TarefaService {
     @Transactional
     public TarefaResponse criar(TarefaRequest request) {
         Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
-        Categoria categoria = categoriaRepository.findByIdAndUsuarioId(request.getCategoriaId(), usuario.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria não encontrada"));
+        Categoria categoria = buscarCategoriaDoUsuario(request.getCategoriaId(), usuario.getId());
 
         LocalDateTime agora = LocalDateTime.now();
         Tarefa tarefa = TarefaMapper.toEntity(request);
@@ -54,10 +57,8 @@ public class TarefaService {
     @Transactional
     public TarefaResponse atualizar(Long id, TarefaRequest request) {
         Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
-        Tarefa tarefa = tarefaRepository.findByIdAndUsuarioId(id, usuario.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tarefa não encontrada"));
-        Categoria categoria = categoriaRepository.findByIdAndUsuarioId(request.getCategoriaId(), usuario.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria não encontrada"));
+        Tarefa tarefa = buscarTarefaDoUsuario(id, usuario.getId());
+        Categoria categoria = buscarCategoriaDoUsuario(request.getCategoriaId(), usuario.getId());
 
         TarefaMapper.atualizarEntidade(tarefa, request);
         tarefa.setCategoria(categoria);
@@ -69,12 +70,9 @@ public class TarefaService {
     @Transactional
     public TarefaResponse concluir(Long id) {
         Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
-        Tarefa tarefa = tarefaRepository.findByIdAndUsuarioId(id, usuario.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tarefa não encontrada"));
+        Tarefa tarefa = buscarTarefaDoUsuario(id, usuario.getId());
 
-        if (tarefa.getStatus() == StatusTarefa.CONCLUIDA) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "A tarefa já está concluída");
-        }
+        TarefaValidator.validarConclusao(tarefa);
 
         LocalDateTime agora = LocalDateTime.now();
         tarefa.setStatus(StatusTarefa.CONCLUIDA);
@@ -87,8 +85,7 @@ public class TarefaService {
     @Transactional
     public void excluir(Long id) {
         Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
-        Tarefa tarefa = tarefaRepository.findByIdAndUsuarioId(id, usuario.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tarefa não encontrada"));
+        Tarefa tarefa = buscarTarefaDoUsuario(id, usuario.getId());
 
         tarefaRepository.delete(tarefa);
     }
@@ -109,35 +106,21 @@ public class TarefaService {
         }
 
         Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
-        Specification<Tarefa> especificacao = (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get("usuario").get("id"), usuario.getId());
-
-        if (status != null) {
-            especificacao = especificacao.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("status"), status));
-        }
-
-        if (prioridade != null) {
-            especificacao = especificacao.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("prioridade"), prioridade));
-        }
-
-        if (categoriaId != null) {
-            especificacao = especificacao.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("categoria").get("id"), categoriaId));
-        }
-
-        if (Boolean.TRUE.equals(vencida)) {
-            LocalDateTime agora = LocalDateTime.now();
-            especificacao = especificacao.and((root, query, criteriaBuilder) -> criteriaBuilder.and(
-                    criteriaBuilder.notEqual(root.get("status"), StatusTarefa.CONCLUIDA),
-                    criteriaBuilder.isNotNull(root.get("dataLimite")),
-                    criteriaBuilder.lessThan(root.get("dataLimite"), agora)));
-        }
-
+        Specification<Tarefa> especificacao = TarefaSpecifications.comFiltros(usuario.getId(), status, prioridade, categoriaId, vencida);
         return tarefaRepository.findAll(especificacao, Sort.by(Sort.Direction.DESC, "dataCriacao"))
                 .stream()
                 .map(TarefaMapper::toResponse)
                 .toList();
     }
+
+    private Tarefa buscarTarefaDoUsuario(Long id, Long usuarioId) {
+        return tarefaRepository.findByIdAndUsuarioId(id, usuarioId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tarefa não encontrada"));
+    }
+
+    private Categoria buscarCategoriaDoUsuario(Long id, Long usuarioId) {
+        return categoriaRepository.findByIdAndUsuarioId(id, usuarioId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria não encontrada"));
+    }
+
 }

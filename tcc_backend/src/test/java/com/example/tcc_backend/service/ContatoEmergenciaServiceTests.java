@@ -1,5 +1,6 @@
 package com.example.tcc_backend.service;
 
+import com.example.tcc_backend.controller.response.ContatoEmergenciaResponse;
 import com.example.tcc_backend.controller.request.ContatoEmergenciaRequest;
 import com.example.tcc_backend.domain.ContatoEmergencia;
 import com.example.tcc_backend.domain.Usuario;
@@ -46,7 +47,7 @@ class ContatoEmergenciaServiceTests {
             return contato;
         });
 
-        var response = contatoService.criar(request);
+        ContatoEmergenciaResponse response = contatoService.criar(request);
 
         assertThat(response.getNome()).isEqualTo("Mãe");
         assertThat(response.getTelefone()).isEqualTo("51999999999");
@@ -74,4 +75,27 @@ class ContatoEmergenciaServiceTests {
         request.setPrincipal(true);
         return request;
     }
+
+    @Test
+    void bloqueiaDecimoPrimeiroContatoSemSalvar() {
+        when(usuarioAutenticadoService.obterUsuarioAutenticado()).thenReturn(Usuario.builder().id(7L).build());
+        when(contatoRepository.countByUsuarioId(7L)).thenReturn(10L);
+
+        assertThatThrownBy(() -> contatoService.criar(criarRequest()))
+                .isInstanceOf(ResponseStatusException.class).hasMessageContaining("limite de 10 contatos");
+        verify(contatoRepository, never()).save(any());
+    }
+
+    @Test
+    void bloqueiaTelefoneInvalidoAntesDeDesmarcarPrincipal() {
+        when(usuarioAutenticadoService.obterUsuarioAutenticado()).thenReturn(Usuario.builder().id(7L).build());
+        ContatoEmergenciaRequest request = criarRequest();
+        request.setTelefone("123");
+
+        assertThatThrownBy(() -> contatoService.criar(request))
+                .isInstanceOf(ResponseStatusException.class).hasMessageContaining("Telefone inválido");
+        verify(contatoRepository, never()).findAllByUsuarioIdAndPrincipalTrue(any());
+        verify(contatoRepository, never()).save(any());
+    }
+
 }

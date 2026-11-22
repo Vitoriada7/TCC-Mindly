@@ -17,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/registros-emocionais")
 public class RegistroEmocionalController {
+
     private final RegistroEmocionalService registroEmocionalService;
 
     public RegistroEmocionalController(RegistroEmocionalService registroEmocionalService) {
@@ -32,4 +33,5 @@ public class RegistroEmocionalController {
     public ResponseEntity<List<RegistroEmocionalResponse>> listar() {
         return ResponseEntity.ok(registroEmocionalService.listar());
     }
+
 }

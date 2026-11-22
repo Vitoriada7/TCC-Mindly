@@ -34,4 +34,5 @@ public class UsuarioAutenticadoService {
             throw new ResponseStatusException(UNAUTHORIZED, "Token inválido");
         }
     }
+
 }

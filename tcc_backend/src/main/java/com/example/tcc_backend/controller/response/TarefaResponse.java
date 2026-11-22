@@ -14,14 +14,24 @@ import java.time.LocalDateTime;
 public class TarefaResponse {
 
     private Long id;
+
     private String titulo;
+
     private String descricao;
+
     private StatusTarefa status;
+
     private Prioridade prioridade;
+
     private LocalDateTime dataCriacao;
+
     private LocalDateTime dataAtualizacao;
+
     private LocalDateTime dataLimite;
+
     private LocalDateTime dataConclusao;
+
     private Long categoriaId;
+
     private Boolean vencida;
 }

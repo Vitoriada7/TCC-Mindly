@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public final class HabitoMapper {
+
     private HabitoMapper() { }
 
     public static Habito toEntity(HabitoRequest request) {
@@ -31,4 +32,5 @@ public final class HabitoMapper {
         response.setDiasConcluidos(diasConcluidos);
         return response;
     }
+
 }

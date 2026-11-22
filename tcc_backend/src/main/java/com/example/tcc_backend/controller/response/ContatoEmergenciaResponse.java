@@ -8,9 +8,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ContatoEmergenciaResponse {
+
     private Long id;
+
     private String nome;
+
     private String telefone;
+
     private String relacionamento;
+
     private boolean principal;
 }

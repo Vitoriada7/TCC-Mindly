@@ -1,5 +1,7 @@
 package com.example.tcc_backend.service;
 
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import com.example.tcc_backend.controller.request.TemaRequest;
 import com.example.tcc_backend.domain.Usuario;
 import com.example.tcc_backend.repository.UsuarioRepository;
@@ -16,15 +18,25 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TemaServiceTests {
-    @Mock UsuarioRepository usuarioRepository;
-    @Mock PasswordEncoder passwordEncoder;
-    @Mock UsuarioAutenticadoService usuarioAutenticadoService;
-    @Mock GamificacaoService gamificacaoService;
-    @InjectMocks UsuarioService service;
+
+    @Mock
+    UsuarioRepository usuarioRepository;
+
+    @Mock
+    PasswordEncoder passwordEncoder;
+
+    @Mock
+    UsuarioAutenticadoService usuarioAutenticadoService;
+
+    @Mock
+    GamificacaoService gamificacaoService;
+
+    @InjectMocks
+    UsuarioService service;
 
     @Test
     void deveSalvarEDevolverTemaApenasDoUsuarioAutenticado() {
-        var usuario = Usuario.builder().id(7L).apelido("Ana").build();
+        Usuario usuario = Usuario.builder().id(7L).apelido("Ana").build();
         when(usuarioAutenticadoService.obterUsuarioAutenticado()).thenReturn(usuario);
         when(usuarioRepository.save(usuario)).thenReturn(usuario);
 
@@ -45,10 +57,11 @@ class TemaServiceTests {
 
     @Test
     void deveExigirPreferenciaNoRequest() {
-        try (var factory = Validation.buildDefaultValidatorFactory()) {
-            var validator = factory.getValidator();
+        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
+            Validator validator = factory.getValidator();
             assertThat(validator.validate(new TemaRequest(null))).hasSize(1);
             assertThat(validator.validate(new TemaRequest(false))).isEmpty();
         }
     }
+
 }

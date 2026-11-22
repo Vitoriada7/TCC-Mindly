@@ -15,9 +15,9 @@ import java.util.List;
 
 @Service
 public class RegistroEmocionalService {
-    private static final String SEPARADOR_EXPLORACOES = "\n\u001e\n";
 
     private final RegistroEmocionalRepository registroEmocionalRepository;
+
     private final UsuarioAutenticadoService usuarioAutenticadoService;
 
     public RegistroEmocionalService(RegistroEmocionalRepository registroEmocionalRepository,
@@ -35,13 +35,7 @@ public class RegistroEmocionalService {
                 .findByUsuarioIdAndData(usuario.getId(), hoje)
                 .orElseGet(() -> RegistroEmocional.builder().usuario(usuario).data(hoje).dataRegistro(agora).build());
 
-        registro.setSentimento(request.getSentimento().trim());
-        registro.setSentimentoDetalhado(normalizar(request.getSentimentoDetalhado()));
-        registro.setPensamento(normalizar(request.getPensamento()));
-        registro.setReflexao(normalizar(request.getReflexao()));
-        registro.setComplementoFinal(normalizar(request.getComplementoFinal()));
-        registro.setExploracoes(request.getExploracoes() == null ? null
-                : String.join(SEPARADOR_EXPLORACOES, request.getExploracoes()));
+        RegistroEmocionalMapper.atualizarEntidade(registro, request);
         return RegistroEmocionalMapper.toResponse(registroEmocionalRepository.save(registro));
     }
 
@@ -53,7 +47,4 @@ public class RegistroEmocionalService {
                 .toList();
     }
 
-    private String normalizar(String valor) {
-        return valor == null || valor.isBlank() ? null : valor.trim();
-    }
 }

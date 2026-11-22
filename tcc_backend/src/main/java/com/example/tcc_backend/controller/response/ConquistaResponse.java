@@ -7,12 +7,24 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ConquistaResponse {
+
     private final String codigo;
+
     private final String titulo;
+
     private final String descricao;
+
     private final String trilha;
+
     private StatusConquista status;
-    private long progresso;
-    private final long meta;
-    public void concluir() { status = StatusConquista.CONCLUIDA; progresso = meta; }
+
+    private int progresso;
+
+    private final int meta;
+
+    public void concluir() {
+        status = StatusConquista.CONCLUIDA;
+        progresso = meta;
+    }
+
 }

@@ -6,7 +6,10 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ResumoHabitosResponse {
-    private final long sequenciaAtual;
+
+    private final int sequenciaAtual;
+
     private final long habitosConcluidosHoje;
+
     private final long totalHabitosAtivos;
 }

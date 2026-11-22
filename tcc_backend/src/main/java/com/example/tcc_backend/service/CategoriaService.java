@@ -1,5 +1,6 @@
 package com.example.tcc_backend.service;
 
+import com.example.tcc_backend.validator.CategoriaValidator;
 import com.example.tcc_backend.controller.request.CategoriaRequest;
 import com.example.tcc_backend.controller.response.CategoriaResponse;
 import com.example.tcc_backend.domain.Categoria;
@@ -18,7 +19,9 @@ import java.util.List;
 public class CategoriaService {
 
     private final CategoriaRepository categoriaRepository;
+
     private final TarefaRepository tarefaRepository;
+
     private final UsuarioAutenticadoService usuarioAutenticadoService;
 
     public CategoriaService(CategoriaRepository categoriaRepository, TarefaRepository tarefaRepository,
@@ -32,7 +35,7 @@ public class CategoriaService {
     public CategoriaResponse criar(CategoriaRequest request) {
         Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
         Categoria categoria = Categoria.builder()
-                .nome(normalizarNome(request.getNome()))
+                .nome(CategoriaValidator.normalizarNome(request.getNome()))
                 .usuario(usuario)
                 .build();
 
@@ -51,7 +54,7 @@ public class CategoriaService {
     @Transactional
     public CategoriaResponse atualizar(Long id, CategoriaRequest request) {
         Categoria categoria = buscarCategoriaDoUsuario(id);
-        categoria.setNome(normalizarNome(request.getNome()));
+        categoria.setNome(CategoriaValidator.normalizarNome(request.getNome()));
         return CategoriaMapper.toResponse(categoriaRepository.save(categoria));
     }
 
@@ -59,10 +62,7 @@ public class CategoriaService {
     public void excluir(Long id) {
         Categoria categoria = buscarCategoriaDoUsuario(id);
 
-        if (tarefaRepository.existsByCategoriaId(categoria.getId())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "Não é possível excluir uma categoria que possui tarefas vinculadas");
-        }
+        CategoriaValidator.validarExclusao(tarefaRepository.existsByCategoriaId(categoria.getId()));
 
         categoriaRepository.delete(categoria);
     }
@@ -73,14 +73,4 @@ public class CategoriaService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria não encontrada"));
     }
 
-    private String normalizarNome(String nome) {
-        String nomeNormalizado = nome == null ? "" : nome.trim();
-
-        if (nomeNormalizado.length() < 2 || nomeNormalizado.length() > 50) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "O nome da categoria deve possuir entre 2 e 50 caracteres");
-        }
-
-        return nomeNormalizado;
-    }
 }

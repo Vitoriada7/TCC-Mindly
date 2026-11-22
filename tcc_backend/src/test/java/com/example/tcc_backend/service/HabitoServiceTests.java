@@ -16,14 +16,23 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class HabitoServiceTests {
-    @Mock HabitoRepository habitoRepository;
-    @Mock RegistroHabitoRepository registroHabitoRepository;
-    @Mock UsuarioAutenticadoService usuarioAutenticadoService;
-    @InjectMocks HabitoService service;
+
+    @Mock
+    HabitoRepository habitoRepository;
+
+    @Mock
+    RegistroHabitoRepository registroHabitoRepository;
+
+    @Mock
+    UsuarioAutenticadoService usuarioAutenticadoService;
+
+    @InjectMocks
+    HabitoService service;
 
     @Test
     void deveBloquearMarcacaoEDesmarcacaoForaDeHoje() {
@@ -50,4 +59,24 @@ class HabitoServiceTests {
         service.desmarcarConcluido(1L, hoje);
         verify(registroHabitoRepository).findByHabitoIdAndData(1L, hoje);
     }
+
+    @Test
+    void rejeitaPeriodoInvertidoAntesDeConsultarDadosDoUsuario() {
+        assertThatThrownBy(() -> service.listar(LocalDate.of(2026, 11, 20), LocalDate.of(2026, 11, 19)))
+                .isInstanceOf(ResponseStatusException.class).hasMessageContaining("data final");
+        verifyNoInteractions(usuarioAutenticadoService, habitoRepository, registroHabitoRepository);
+    }
+
+    @Test
+    void completaPeriodoParcialAteODomingoDaMesmaSemana() {
+        when(usuarioAutenticadoService.obterUsuarioAutenticado()).thenReturn(Usuario.builder().id(7L).build());
+        when(habitoRepository.findAllByUsuarioIdAndAtivoTrueOrderByDataCriacaoDesc(7L))
+                .thenReturn(java.util.List.of(Habito.builder().id(1L).build()));
+
+        assertThat(service.listar(LocalDate.of(2026, 11, 18), null)).hasSize(1);
+
+        verify(registroHabitoRepository).findAllByHabitoIdInAndDataBetweenAndConcluidoTrue(
+                java.util.List.of(1L), LocalDate.of(2026, 11, 18), LocalDate.of(2026, 11, 22));
+    }
+
 }

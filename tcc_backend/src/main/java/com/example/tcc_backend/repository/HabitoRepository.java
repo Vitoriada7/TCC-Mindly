@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface HabitoRepository extends JpaRepository<Habito, Long> {
     List<Habito> findAllByUsuarioIdAndAtivoTrueOrderByDataCriacaoDesc(Long usuarioId);
+
     Optional<Habito> findByIdAndUsuarioIdAndAtivoTrue(Long id, Long usuarioId);
     long countByUsuarioIdAndAtivoTrue(Long usuarioId);
 }
