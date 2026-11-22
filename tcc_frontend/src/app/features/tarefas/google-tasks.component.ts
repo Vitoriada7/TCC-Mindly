@@ -40,7 +40,15 @@ export class GoogleTasksComponent {
     const negado = url.searchParams.get('error');
     if (code || state || negado) {
       this.modalAberto.set(true);
-      for (const parametro of ['code', 'state', 'error', 'error_description', 'scope', 'authuser', 'prompt']) {
+      for (const parametro of [
+        'code',
+        'state',
+        'error',
+        'error_description',
+        'scope',
+        'authuser',
+        'prompt'
+      ]) {
         url.searchParams.delete(parametro);
       }
       window.history.replaceState(window.history.state, '', url.pathname + url.search + url.hash);
@@ -48,8 +56,14 @@ export class GoogleTasksComponent {
     if (code && state) {
       this.processando.set(true);
       this.api.conectar(code, state).pipe(finalize(() => this.processando.set(false))).subscribe({
-        next: () => { this.mensagem.set('Conta conectada. Clique em Sincronizar tarefas para enviá-las ao Google.'); this.carregar(); },
-        error: (erro: unknown) => { this.falha(erro); this.carregar(); },
+        next: () => {
+          this.mensagem.set('Conta conectada. Clique em Sincronizar tarefas para enviá-las ao Google.');
+          this.carregar();
+        },
+        error: (erro: unknown) => {
+          this.falha(erro);
+          this.carregar();
+        },
       });
     } else {
       if (negado) this.erro.set('Conexão cancelada. Você pode continuar usando o Mindly normalmente.');
@@ -60,38 +74,61 @@ export class GoogleTasksComponent {
     this.modalAberto.set(true);
     this.carregar();
   }
+
   protected fecharModal(): void {
     this.modalAberto.set(false);
   }
+
   protected fecharPeloFundo(event: MouseEvent): void {
     if (event.target === this.dialog()?.nativeElement) this.fecharModal();
   }
+
   protected carregar(): void {
-    this.api.estado().subscribe({ next: (estado) => this.estado.set(estado), error: (erro: unknown) => this.falha(erro) });
+    this.api.estado().subscribe({
+      next: (estado) => this.estado.set(estado),
+      error: (erro: unknown) => this.falha(erro)
+    });
   }
+
   protected conectar(): void {
     if (this.processando()) return;
-    this.erro.set(''); this.mensagem.set(''); this.processando.set(true);
+    this.erro.set('');
+    this.mensagem.set('');
+    this.processando.set(true);
     this.api.autorizar().pipe(finalize(() => this.processando.set(false))).subscribe({
-      next: ({ url }) => window.location.assign(url), error: (erro: unknown) => this.falha(erro),
+      next: ({ url }) => window.location.assign(url),
+      error: (erro: unknown) => this.falha(erro),
     });
   }
+
   protected sincronizar(): void {
     if (this.processando()) return;
-    this.erro.set(''); this.mensagem.set(''); this.processando.set(true);
+    this.erro.set('');
+    this.mensagem.set('');
+    this.processando.set(true);
     this.api.sincronizar().pipe(finalize(() => this.processando.set(false))).subscribe({
-      next: ({ tarefas }) => { this.mensagem.set(`${tarefas} tarefa(s) sincronizada(s) com o Google.`); this.carregar(); },
+      next: ({ tarefas }) => {
+        this.mensagem.set(`${tarefas} tarefa(s) sincronizada(s) com o Google.`);
+        this.carregar();
+      },
       error: (erro: unknown) => this.falha(erro),
     });
   }
+
   protected desconectar(): void {
     if (this.processando()) return;
-    this.erro.set(''); this.mensagem.set(''); this.processando.set(true);
+    this.erro.set('');
+    this.mensagem.set('');
+    this.processando.set(true);
     this.api.desconectar().pipe(finalize(() => this.processando.set(false))).subscribe({
-      next: () => { this.mensagem.set('Conta desconectada. As tarefas já enviadas continuam no Google.'); this.carregar(); },
+      next: () => {
+        this.mensagem.set('Conta desconectada. As tarefas já enviadas continuam no Google.');
+        this.carregar();
+      },
       error: (erro: unknown) => this.falha(erro),
     });
   }
+
   private falha(erro: unknown): void {
     this.erro.set(erro instanceof HttpErrorResponse && erro.status === 400
       ? 'Não foi possível conectar. Inicie novamente pelo botão Conectar Google e autorize o acesso às tarefas.'

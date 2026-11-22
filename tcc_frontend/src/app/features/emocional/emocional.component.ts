@@ -21,11 +21,36 @@ export class EmocionalComponent {
   private readonly emocionalApi = inject(EmocionalApiService);
   private readonly gamificacaoApi = inject(GamificacaoApiService);
   protected readonly humores: Humor[] = [
-    { label: 'Radiante', value: 'radiante', icon: 'sentiment_very_satisfied', description: 'Me sinto leve e feliz.' },
-    { label: 'Bem', value: 'bem', icon: 'sentiment_satisfied', description: 'Tudo está equilibrado.' },
-    { label: 'Neutra', value: 'neutra', icon: 'sentiment_neutral', description: 'Um dia tranquilo e sereno.' },
-    { label: 'Cansada', value: 'cansada', icon: 'sentiment_dissatisfied', description: 'Preciso de um momento para mim.' },
-    { label: 'Difícil', value: 'dificil', icon: 'sentiment_very_dissatisfied', description: 'Sinto que hoje foi mais pesado.' },
+    {
+      label: 'Radiante',
+      value: 'radiante',
+      icon: 'sentiment_very_satisfied',
+      description: 'Me sinto leve e feliz.'
+    },
+    {
+      label: 'Bem',
+      value: 'bem',
+      icon: 'sentiment_satisfied',
+      description: 'Tudo está equilibrado.'
+    },
+    {
+      label: 'Neutra',
+      value: 'neutra',
+      icon: 'sentiment_neutral',
+      description: 'Um dia tranquilo e sereno.'
+    },
+    {
+      label: 'Cansada',
+      value: 'cansada',
+      icon: 'sentiment_dissatisfied',
+      description: 'Preciso de um momento para mim.'
+    },
+    {
+      label: 'Difícil',
+      value: 'dificil',
+      icon: 'sentiment_very_dissatisfied',
+      description: 'Sinto que hoje foi mais pesado.'
+    },
   ];
 
   protected readonly humorSelecionado = signal<string | null>(null);

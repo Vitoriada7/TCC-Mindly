@@ -12,7 +12,11 @@ import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.s
   selector: 'app-tarefas',
   imports: [CarregamentoComponent, ReactiveFormsModule, RouterLink],
   templateUrl: './tarefas.component.html',
-  styleUrls: ['./tarefas.component.css', '../../../styles/components/task-modal.css', './tarefas-modal.css'],
+  styleUrls: [
+    './tarefas.component.css',
+    '../../../styles/components/task-modal.css',
+    './tarefas-modal.css'
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TarefasComponent {
@@ -83,36 +87,93 @@ export class TarefasComponent {
     dataLimite: [''],
     categoriaId: [0, [Validators.required, Validators.min(1)]],
   });
-  protected readonly formularioCategoria = this.formBuilder.group({ nome: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]] });
+  protected readonly formularioCategoria = this.formBuilder.group({
+    nome: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50)
+      ]
+    ]
+  });
 
-  constructor() { this.carregarCategoriasETarefas(); }
+  constructor() {
+    this.carregarCategoriasETarefas();
+  }
 
-  protected selecionarStatus(status: StatusTarefa | 'VENCIDA' | undefined): void { this.statusSelecionado.set(status); this.carregarTarefas(); }
-  protected selecionarPrioridade(prioridade: Prioridade | undefined): void { this.prioridadeSelecionada.set(prioridade); this.carregarTarefas(); }
-  protected selecionarCategoria(categoria: number | undefined): void { this.categoriaSelecionada.set(categoria); this.carregarTarefas(); }
+  protected selecionarStatus(status: StatusTarefa | 'VENCIDA' | undefined): void {
+    this.statusSelecionado.set(status);
+    this.carregarTarefas();
+  }
+
+  protected selecionarPrioridade(prioridade: Prioridade | undefined): void {
+    this.prioridadeSelecionada.set(prioridade);
+    this.carregarTarefas();
+  }
+
+  protected selecionarCategoria(categoria: number | undefined): void {
+    this.categoriaSelecionada.set(categoria);
+    this.carregarTarefas();
+  }
 
   protected abrirCriacao(): void {
-    this.tarefaEmEdicao.set(null); this.erroFormulario.set(null);
-    this.formularioTarefa.reset({ titulo: '', descricao: '', prioridade: 'MEDIA', dataLimite: '', categoriaId: this.categorias()[0]?.id ?? 0 });
+    this.tarefaEmEdicao.set(null);
+    this.erroFormulario.set(null);
+    this.formularioTarefa.reset({
+      titulo: '',
+      descricao: '',
+      prioridade: 'MEDIA',
+      dataLimite: '',
+      categoriaId: this.categorias()[0]?.id ?? 0
+    });
     this.modalTarefaAberto.set(true);
   }
 
   protected abrirEdicao(tarefa: Tarefa): void {
-    this.tarefaEmEdicao.set(tarefa); this.erroFormulario.set(null);
-    this.formularioTarefa.reset({ titulo: tarefa.titulo, descricao: tarefa.descricao ?? '', prioridade: tarefa.prioridade, dataLimite: tarefa.dataLimite?.slice(0, 16) ?? '', categoriaId: tarefa.categoriaId });
+    this.tarefaEmEdicao.set(tarefa);
+    this.erroFormulario.set(null);
+    this.formularioTarefa.reset({
+      titulo: tarefa.titulo,
+      descricao: tarefa.descricao ?? '',
+      prioridade: tarefa.prioridade,
+      dataLimite: tarefa.dataLimite?.slice(0, 16) ?? '',
+      categoriaId: tarefa.categoriaId
+    });
     this.modalTarefaAberto.set(true);
   }
 
-  protected fecharModalTarefa(): void { if (!this.processando()) this.modalTarefaAberto.set(false); }
-  protected abrirCategorias(): void { this.erroFormulario.set(null); this.categoriaEditadaId.set(null); this.formularioCategoria.reset({ nome: '' }); this.modalCategoriasAberto.set(true); }
-  protected fecharCategorias(): void { if (!this.processando()) this.modalCategoriasAberto.set(false); }
+  protected fecharModalTarefa(): void {
+    if (!this.processando()) this.modalTarefaAberto.set(false);
+  }
+
+  protected abrirCategorias(): void {
+    this.erroFormulario.set(null);
+    this.categoriaEditadaId.set(null);
+    this.formularioCategoria.reset({ nome: '' });
+    this.modalCategoriasAberto.set(true);
+  }
+
+  protected fecharCategorias(): void {
+    if (!this.processando()) this.modalCategoriasAberto.set(false);
+  }
 
   protected salvarTarefa(): void {
-    if (this.formularioTarefa.invalid) { this.formularioTarefa.markAllAsTouched(); return; }
+    if (this.formularioTarefa.invalid) {
+      this.formularioTarefa.markAllAsTouched();
+      return;
+    }
     const dados = this.formularioTarefa.getRawValue();
-    const request = { titulo: dados.titulo.trim(), descricao: dados.descricao.trim() || null, prioridade: dados.prioridade, dataLimite: dados.dataLimite || null, categoriaId: dados.categoriaId };
+    const request = {
+      titulo: dados.titulo.trim(),
+      descricao: dados.descricao.trim() || null,
+      prioridade: dados.prioridade,
+      dataLimite: dados.dataLimite || null,
+      categoriaId: dados.categoriaId
+    };
     const tarefa = this.tarefaEmEdicao();
-    this.processando.set(true); this.erroFormulario.set(null);
+    this.processando.set(true);
+    this.erroFormulario.set(null);
     const requisicao = tarefa ? this.tarefaApi.atualizar(tarefa.id, request) : this.tarefaApi.criar(request);
     requisicao.pipe(finalize(() => this.processando.set(false))).subscribe({
       next: (tarefaSalva) => {
@@ -132,8 +193,15 @@ export class TarefasComponent {
   protected concluir(tarefa: Tarefa): void {
     if (tarefa.status === 'CONCLUIDA' || this.concluindoIds().has(tarefa.id)) return;
     this.concluindoIds.update((ids) => new Set(ids).add(tarefa.id));
-    this.tarefaApi.concluir(tarefa.id).pipe(finalize(() => this.concluindoIds.update((ids) => { const proximo = new Set(ids); proximo.delete(tarefa.id); return proximo; }))).subscribe({
-      next: () => { this.carregarTarefas(); this.carregarGamificacao(); },
+    this.tarefaApi.concluir(tarefa.id).pipe(finalize(() => this.concluindoIds.update((ids) => {
+      const proximo = new Set(ids);
+      proximo.delete(tarefa.id);
+      return proximo;
+    }))).subscribe({
+      next: () => {
+        this.carregarTarefas();
+        this.carregarGamificacao();
+      },
       error: () => this.erro.set('Não foi possível concluir esta tarefa. Tente novamente.'),
     });
   }
@@ -141,10 +209,16 @@ export class TarefasComponent {
   protected excluirTarefa(tarefa: Tarefa): void {
     if (!confirm(`Excluir a tarefa "${tarefa.titulo}"?`)) return;
     this.processando.set(true);
-    this.tarefaApi.excluir(tarefa.id).pipe(finalize(() => this.processando.set(false))).subscribe({ next: () => this.carregarTarefas(), error: () => this.erro.set('Não foi possível excluir esta tarefa.') });
+    this.tarefaApi.excluir(tarefa.id).pipe(finalize(() => this.processando.set(false))).subscribe({
+      next: () => this.carregarTarefas(),
+      error: () => this.erro.set('Não foi possível excluir esta tarefa.')
+    });
   }
 
-  protected editarCategoria(categoria: Categoria): void { this.categoriaEditadaId.set(categoria.id); this.formularioCategoria.setValue({ nome: categoria.nome }); }
+  protected editarCategoria(categoria: Categoria): void {
+    this.categoriaEditadaId.set(categoria.id);
+    this.formularioCategoria.setValue({ nome: categoria.nome });
+  }
 
   protected selecionarDia(data: Date | null): void {
     this.diaSelecionado.set(data ? new Date(data) : null);
@@ -163,13 +237,23 @@ export class TarefasComponent {
   protected diaAtivo(data: Date): boolean {
     return data.toDateString() === this.diaSelecionado()?.toDateString();
   }
+
   protected salvarCategoria(): void {
-    if (this.formularioCategoria.invalid) { this.formularioCategoria.markAllAsTouched(); return; }
-    const id = this.categoriaEditadaId(); const nome = this.formularioCategoria.getRawValue().nome.trim();
-    this.processando.set(true); this.erroFormulario.set(null);
+    if (this.formularioCategoria.invalid) {
+      this.formularioCategoria.markAllAsTouched();
+      return;
+    }
+    const id = this.categoriaEditadaId();
+    const nome = this.formularioCategoria.getRawValue().nome.trim();
+    this.processando.set(true);
+    this.erroFormulario.set(null);
     const requisicao = id ? this.tarefaApi.atualizarCategoria(id, { nome }) : this.tarefaApi.criarCategoria({ nome });
     requisicao.pipe(finalize(() => this.processando.set(false))).subscribe({
-      next: (categoria) => { this.categorias.update((itens) => id ? itens.map((item) => item.id === categoria.id ? categoria : item) : [...itens, categoria].sort((a, b) => a.nome.localeCompare(b.nome))); this.categoriaEditadaId.set(null); this.formularioCategoria.reset({ nome: '' }); },
+      next: (categoria) => {
+        this.categorias.update((itens) => id ? itens.map((item) => item.id === categoria.id ? categoria : item) : [...itens, categoria].sort((a, b) => a.nome.localeCompare(b.nome)));
+        this.categoriaEditadaId.set(null);
+        this.formularioCategoria.reset({ nome: '' });
+      },
       error: () => this.erroFormulario.set('Não foi possível salvar a categoria.'),
     });
   }
@@ -183,25 +267,47 @@ export class TarefasComponent {
     });
   }
 
-  protected prioridadeRotulo(prioridade: Prioridade): string { return { ALTA: 'Alta', MEDIA: 'Média', BAIXA: 'Baixa' }[prioridade]; }
-  protected categoriaDa(tarefa: Tarefa): string | undefined { return this.categorias().find((categoria) => categoria.id === tarefa.categoriaId)?.nome; }
-  protected dataDa(tarefa: Tarefa): string { return tarefa.dataLimite ? new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(tarefa.dataLimite)) : 'Sem prazo'; }
+  protected prioridadeRotulo(prioridade: Prioridade): string {
+    return { ALTA: 'Alta', MEDIA: 'Média', BAIXA: 'Baixa' }[prioridade];
+  }
+
+  protected categoriaDa(tarefa: Tarefa): string | undefined {
+    return this.categorias().find((categoria) => categoria.id === tarefa.categoriaId)?.nome;
+  }
+
+  protected dataDa(tarefa: Tarefa): string {
+    return tarefa.dataLimite ? new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(tarefa.dataLimite)) : 'Sem prazo';
+  }
 
   private carregarCategoriasETarefas(): void {
-    forkJoin({ categorias: this.tarefaApi.listarCategorias(), tarefas: this.tarefaApi.listar(), gamificacao: this.gamificacaoApi.resumo() }).pipe(finalize(() => this.carregando.set(false))).subscribe({
-      next: ({ categorias, tarefas, gamificacao }) => { this.categorias.set(categorias); this.tarefas.set(tarefas); this.resumoGamificacao.set(gamificacao); }, error: () => this.erro.set('Não foi possível carregar suas tarefas.'),
+    forkJoin({
+      categorias: this.tarefaApi.listarCategorias(),
+      tarefas: this.tarefaApi.listar(),
+      gamificacao: this.gamificacaoApi.resumo()
+    }).pipe(finalize(() => this.carregando.set(false))).subscribe({
+      next: ({ categorias, tarefas, gamificacao }) => {
+        this.categorias.set(categorias);
+        this.tarefas.set(tarefas);
+        this.resumoGamificacao.set(gamificacao);
+      },
+      error: () => this.erro.set('Não foi possível carregar suas tarefas.'),
     });
   }
+
   private carregarGamificacao(): void {
-    this.gamificacaoApi.resumo().subscribe({ next: (resumo) => this.resumoGamificacao.set(resumo), error: () => undefined });
+    this.gamificacaoApi.resumo().subscribe({
+      next: (resumo) => this.resumoGamificacao.set(resumo),
+      error: () => undefined
+    });
   }
+
   private carregarTarefas(): void {
 
     this.carregando.set(true);
     this.erro.set(null);
-  
+
     const status = this.statusSelecionado();
-  
+
     this.tarefaApi
       .listar(
         status === 'VENCIDA' ? undefined : status,

@@ -6,16 +6,31 @@ import { AvatarComponent } from '../../avatar/avatar.component';
 
 type ItemNavegacao = { label: string; icone: string; rota: string };
 
-@Component({ selector: 'app-mobile-nav', imports: [RouterLink, RouterLinkActive, AvatarComponent], templateUrl: './mobile-nav.component.html', styleUrl: './mobile-nav.component.css', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({
+  selector: 'app-mobile-nav',
+  imports: [RouterLink, RouterLinkActive, AvatarComponent],
+  templateUrl: './mobile-nav.component.html',
+  styleUrl: './mobile-nav.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
 export class MobileNavComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly usuarioService = inject(UsuarioService);
   protected readonly itens: ItemNavegacao[] = [
-    { label: 'Início', icone: 'home', rota: '/' }, { label: 'Diário', icone: 'edit_note', rota: '/emocional' }, { label: 'Tarefas', icone: 'check_circle', rota: '/tarefas' }, { label: 'Hábitos', icone: 'calendar_month', rota: '/habitos' }, { label: 'Mais', icone: 'more_horiz', rota: '' },
+    { label: 'Início', icone: 'home', rota: '/' },
+    { label: 'Diário', icone: 'edit_note', rota: '/emocional' },
+    { label: 'Tarefas', icone: 'check_circle', rota: '/tarefas' },
+    { label: 'Hábitos', icone: 'calendar_month', rota: '/habitos' },
+    { label: 'Mais', icone: 'more_horiz', rota: '' },
   ];
   protected readonly atalhos: ItemNavegacao[] = [
-    { label: 'Conquistas', icone: 'emoji_events', rota: '/conquistas' }, { label: 'Centros de apoio', icone: 'support_agent', rota: '/apoio' },
+    { label: 'Conquistas', icone: 'emoji_events', rota: '/conquistas' },
+    {
+      label: 'Centros de apoio',
+      icone: 'support_agent',
+      rota: '/apoio'
+    },
     { label: 'Recursos', icone: 'spa', rota: '/recursos' },
   ];
   protected readonly showMore = signal(false);
@@ -24,7 +39,17 @@ export class MobileNavComponent {
   protected readonly nomeUsuario = computed(() => this.usuario()?.nome || 'Sua conta');
   protected readonly emailUsuario = computed(() => this.usuario()?.email || 'Mindly');
 
-  protected toggleMore(): void { this.showMore.update((valor) => !valor); }
-  protected closeMore(): void { this.showMore.set(false); }
-  protected sair(): void { this.authService.logout(); this.closeMore(); this.router.navigate(['/login']); }
+  protected toggleMore(): void {
+    this.showMore.update((valor) => !valor);
+  }
+
+  protected closeMore(): void {
+    this.showMore.set(false);
+  }
+
+  protected sair(): void {
+    this.authService.logout();
+    this.closeMore();
+    this.router.navigate(['/login']);
+  }
 }

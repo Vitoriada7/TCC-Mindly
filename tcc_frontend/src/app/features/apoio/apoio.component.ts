@@ -34,8 +34,18 @@ export class ApoioComponent implements OnInit {
   protected readonly contatoEmEdicao = signal<number | null>(null);
 
   protected readonly formularioContato = new FormGroup({
-    nome: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
-    telefone: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(8), Validators.maxLength(20)] }),
+    nome: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(100)]
+    }),
+    telefone: new FormControl('', {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.maxLength(20)
+      ]
+    }),
     relacionamento: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(50)] }),
     principal: new FormControl(false, { nonNullable: true }),
   });
