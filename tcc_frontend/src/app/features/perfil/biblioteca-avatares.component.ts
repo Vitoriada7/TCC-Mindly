@@ -26,18 +26,27 @@ export class BibliotecaAvataresComponent {
   protected readonly sucesso = signal(false);
   protected readonly biblioteca = computed(() => AVATARES.map((avatar) => {
     const conquista = this.conquistas().find((item) => item.codigo === avatar.conquista);
-    return { ...avatar, conquistaInfo: conquista, liberado: conquista?.status === 'CONCLUIDA' || (this.usuario()?.avataresLiberados?.includes(avatar.id) ?? false) };
+    return {
+      ...avatar,
+      conquistaInfo: conquista,
+      liberado: conquista?.status === 'CONCLUIDA' || (this.usuario()?.avataresLiberados?.includes(avatar.id) ?? false)
+    };
   }));
   protected readonly totalLiberados = computed(() => this.biblioteca().filter((avatar) => avatar.liberado).length);
   protected readonly avataresLiberados = computed(() => this.biblioteca().filter((avatar) => avatar.liberado));
 
-  constructor() { this.carregar(); }
+  constructor() {
+    this.carregar();
+  }
 
   protected carregar(): void {
     this.carregando.set(true);
     this.erro.set(null);
     this.gamificacaoApi.resumo().pipe(
-      switchMap((resumo) => { this.conquistas.set(resumo.conquistas); return this.usuarioService.obterPerfil(); }),
+      switchMap((resumo) => {
+        this.conquistas.set(resumo.conquistas);
+        return this.usuarioService.obterPerfil();
+      }),
       finalize(() => this.carregando.set(false)),
     ).subscribe({ error: () => this.erro.set('Não foi possível carregar seus avatares. Tente novamente.') });
   }

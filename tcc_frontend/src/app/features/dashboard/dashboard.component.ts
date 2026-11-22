@@ -17,7 +17,12 @@ import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.s
   selector: 'app-dashboard',
   imports: [CarregamentoComponent, ReactiveFormsModule, RouterLink],
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css', '../../../styles/components/task-modal.css', './dashboard-modal.css', './dashboard-chart.css'],
+  styleUrls: [
+    './dashboard.component.css',
+    '../../../styles/components/task-modal.css',
+    './dashboard-modal.css',
+    './dashboard-chart.css'
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent {
@@ -103,9 +108,13 @@ export class DashboardComponent {
       const registro = ultimosPorDia.get(data.toDateString());
       const nivel = this.humores.findIndex((humor) => humor.valor === registro?.sentimento);
       const rotulo = nivel >= 0 ? this.humores[nivel].rotulo : registro?.sentimento ?? 'Sem registro';
-      return { chave: data.toDateString(), dia: data.getDate(), nivel,
+      return {
+        chave: data.toDateString(),
+        dia: data.getDate(),
+        nivel,
         exibirDia: this.periodo() === 'semana' || indice % 5 === 0 || indice === total - 1,
-        legenda: `${data.toLocaleDateString('pt-BR')}: ${rotulo}` };
+        legenda: `${data.toLocaleDateString('pt-BR')}: ${rotulo}`
+      };
     });
   });
   protected readonly diasComRegistro = computed(() => this.diasEmocionais().filter((dia) => dia.nivel >= 0).length);
@@ -150,10 +159,16 @@ export class DashboardComponent {
     this.carregando.set(true);
     this.erro.set(null);
     this.erroEmocional.set(false);
-    forkJoin({ tarefas: this.tarefaApi.listar(), categorias: this.tarefaApi.listarCategorias(), resumoHabitos: this.habitoApi.resumo(), resumoGamificacao: this.gamificacaoApi.resumo(), registros: this.emocionalApi.listar().pipe(catchError(() => {
-      this.erroEmocional.set(true);
-      return of([] as RegistroEmocional[]);
-    })) })
+    forkJoin({
+      tarefas: this.tarefaApi.listar(),
+      categorias: this.tarefaApi.listarCategorias(),
+      resumoHabitos: this.habitoApi.resumo(),
+      resumoGamificacao: this.gamificacaoApi.resumo(),
+      registros: this.emocionalApi.listar().pipe(catchError(() => {
+        this.erroEmocional.set(true);
+        return of([] as RegistroEmocional[]);
+      }))
+    })
       .pipe(finalize(() => this.carregando.set(false)))
       .subscribe({
         next: ({ tarefas, categorias, resumoHabitos, resumoGamificacao, registros }) => {
@@ -214,7 +229,13 @@ export class DashboardComponent {
     }).pipe(finalize(() => this.criando.set(false))).subscribe({
       next: (tarefa) => {
         this.tarefas.update((tarefas) => [tarefa, ...tarefas]);
-        this.formulario.reset({ titulo: '', descricao: '', prioridade: 'MEDIA', dataLimite: '', categoriaId: dados.categoriaId });
+        this.formulario.reset({
+          titulo: '',
+          descricao: '',
+          prioridade: 'MEDIA',
+          dataLimite: '',
+          categoriaId: dados.categoriaId
+        });
         this.modalAberto.set(false);
       },
       error: () => this.erroFormulario.set('Não foi possível criar a tarefa. Verifique os dados e tente novamente.'),

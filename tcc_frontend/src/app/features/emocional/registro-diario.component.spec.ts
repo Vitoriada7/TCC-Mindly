@@ -7,8 +7,12 @@ import { EmocionalApiService } from './emocional-api.service';
 
 describe('Registro diário com múltiplas emoções', () => {
   it('envia todas as escolhas no campo existente ao continuar o fluxo', async () => {
-    HTMLDialogElement.prototype.showModal = function () { this.open = true; };
-    HTMLDialogElement.prototype.close = function () { this.open = false; };
+    HTMLDialogElement.prototype.showModal = function() {
+      this.open = true;
+    };
+    HTMLDialogElement.prototype.close = function() {
+      this.open = false;
+    };
     const gerarPerguntas = vi.fn().mockReturnValue(of({ perguntas: ['Como foi seu dia?'] }));
     await TestBed.configureTestingModule({
       imports: [RegistroDiarioComponent],
@@ -31,7 +35,8 @@ describe('Registro diário com múltiplas emoções', () => {
     element.querySelector<HTMLButtonElement>('.actions-row .primary')!.click();
     await fixture.whenStable();
     expect(gerarPerguntas).toHaveBeenCalledWith(expect.objectContaining({
-      sentimento: 'radiante', sentimentoDetalhado: 'Felicidade, Entusiasmo',
+      sentimento: 'radiante',
+      sentimentoDetalhado: 'Felicidade, Entusiasmo',
     }));
   });
 });

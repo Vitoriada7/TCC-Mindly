@@ -30,7 +30,9 @@ export class ConquistasComponent {
     this.dialog().nativeElement.showModal();
   }
 
-  protected fechar(): void { this.dialog().nativeElement.close(); }
+  protected fechar(): void {
+    this.dialog().nativeElement.close();
+  }
 
   protected fecharPeloFundo(event: MouseEvent): void {
     const dialog = this.dialog().nativeElement;
@@ -45,11 +47,18 @@ export class ConquistasComponent {
     this.salvandoAvatar.set(true);
     this.erroAvatar.set(null);
     this.usuarioService.atualizarAvatar(avatar.id).pipe(finalize(() => this.salvandoAvatar.set(false))).subscribe({
-      next: () => { if (this.selecionada()?.codigo === conquista.codigo) this.avatarSalvo.set(true); },
-      error: () => { if (this.selecionada()?.codigo === conquista.codigo) this.erroAvatar.set('Não foi possível trocar seu avatar. Tente novamente.'); },
+      next: () => {
+        if (this.selecionada()?.codigo === conquista.codigo) this.avatarSalvo.set(true);
+      },
+      error: () => {
+        if (this.selecionada()?.codigo === conquista.codigo) this.erroAvatar.set('Não foi possível trocar seu avatar. Tente novamente.');
+      },
     });
   }
-  protected recompensa(codigo: string) { return AVATARES.find((avatar) => avatar.conquista === codigo); }
+
+  protected recompensa(codigo: string) {
+    return AVATARES.find((avatar) => avatar.conquista === codigo);
+  }
   private readonly gamificacaoApi = inject(GamificacaoApiService);
   private readonly route = inject(ActivatedRoute);
   protected readonly conquistas = signal<Conquista[]>([]);

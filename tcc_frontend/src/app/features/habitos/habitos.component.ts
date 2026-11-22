@@ -50,7 +50,11 @@ export class HabitosComponent {
       if (params.get('novo') !== 'true') return;
       this.habitoEmEdicao.set(null);
       this.erroFormulario.set(null);
-      this.formulario.reset({ nome: params.get('nome') ?? '', icone: params.get('icone') ?? 'self_improvement', cor: params.get('cor') ?? 'green' });
+      this.formulario.reset({
+        nome: params.get('nome') ?? '',
+        icone: params.get('icone') ?? 'self_improvement',
+        cor: params.get('cor') ?? 'green'
+      });
       this.modalAberto.set(true);
     });
   }
@@ -69,10 +73,15 @@ export class HabitosComponent {
     this.modalAberto.set(true);
   }
 
-  protected fecharModal(): void { if (!this.processando()) this.modalAberto.set(false); }
+  protected fecharModal(): void {
+    if (!this.processando()) this.modalAberto.set(false);
+  }
 
   protected salvar(): void {
-    if (this.formulario.invalid) { this.formulario.markAllAsTouched(); return; }
+    if (this.formulario.invalid) {
+      this.formulario.markAllAsTouched();
+      return;
+    }
     const dados = this.formulario.getRawValue();
     const request = { nome: dados.nome.trim(), icone: dados.icone.trim(), cor: dados.cor.trim() };
     const emEdicao = this.habitoEmEdicao();
@@ -81,7 +90,10 @@ export class HabitosComponent {
     (emEdicao ? this.habitoApi.atualizar(emEdicao.id, request) : this.habitoApi.criar(request))
       .pipe(finalize(() => this.processando.set(false)))
       .subscribe({
-        next: () => { this.modalAberto.set(false); this.carregar(); },
+        next: () => {
+          this.modalAberto.set(false);
+          this.carregar();
+        },
         error: () => this.erroFormulario.set('Não foi possível salvar o hábito. Verifique os dados e tente novamente.'),
       });
   }
@@ -92,7 +104,10 @@ export class HabitosComponent {
     const concluido = this.estaConcluido(habito, data);
     (concluido ? this.habitoApi.desmarcar(habito.id, data) : this.habitoApi.marcar(habito.id, data))
       .pipe(finalize(() => this.processando.set(false)))
-      .subscribe({ next: () => this.carregar(), error: () => this.erro.set('Não foi possível atualizar a marcação do hábito.') });
+      .subscribe({
+        next: () => this.carregar(),
+        error: () => this.erro.set('Não foi possível atualizar a marcação do hábito.')
+      });
   }
 
   protected excluir(habito: Habito): void {
@@ -108,16 +123,29 @@ export class HabitosComponent {
     return data === this.formatarData(new Date());
   }
 
-  protected estaConcluido(habito: Habito, data: string): boolean { return habito.diasConcluidos.includes(data); }
-  protected quantidadeSemana(habito: Habito): number { return habito.diasConcluidos.length; }
+  protected estaConcluido(habito: Habito, data: string): boolean {
+    return habito.diasConcluidos.includes(data);
+  }
+
+  protected quantidadeSemana(habito: Habito): number {
+    return habito.diasConcluidos.length;
+  }
 
   protected carregar(): void {
     this.carregando.set(true);
     this.erro.set(null);
-    forkJoin({ habitos: this.habitoApi.listar(this.dias[0].data, this.dias[6].data), resumo: this.habitoApi.resumo(), gamificacao: this.gamificacaoApi.resumo() })
+    forkJoin({
+      habitos: this.habitoApi.listar(this.dias[0].data, this.dias[6].data),
+      resumo: this.habitoApi.resumo(),
+      gamificacao: this.gamificacaoApi.resumo()
+    })
       .pipe(finalize(() => this.carregando.set(false)))
       .subscribe({
-        next: ({ habitos, resumo, gamificacao }) => { this.habitos.set(habitos); this.sequenciaAtual.set(resumo.sequenciaAtual); this.resumoGamificacao.set(gamificacao); },
+        next: ({ habitos, resumo, gamificacao }) => {
+          this.habitos.set(habitos);
+          this.sequenciaAtual.set(resumo.sequenciaAtual);
+          this.resumoGamificacao.set(gamificacao);
+        },
         error: () => this.erro.set('Não foi possível carregar seus hábitos. Tente novamente.'),
       });
   }

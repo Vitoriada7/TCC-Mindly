@@ -12,9 +12,23 @@ export interface EstadoGoogleTasks {
 export class GoogleTasksApiService {
   private readonly http = inject(HttpClient);
   private readonly url = `${apiConfig.urlBase}/integracoes/google-tasks`;
-  estado() { return this.http.get<EstadoGoogleTasks>(this.url); }
-  autorizar() { return this.http.post<{ url: string }>(`${this.url}/autorizar`, {}); }
-  conectar(code: string, state: string) { return this.http.post<void>(`${this.url}/conectar`, { code, state }); }
-  sincronizar() { return this.http.post<{ tarefas: number }>(`${this.url}/sincronizar`, {}); }
-  desconectar() { return this.http.delete<void>(this.url); }
+  estado() {
+    return this.http.get<EstadoGoogleTasks>(this.url);
+  }
+
+  autorizar() {
+    return this.http.post<{ url: string }>(`${this.url}/autorizar`, {});
+  }
+
+  conectar(code: string, state: string) {
+    return this.http.post<void>(`${this.url}/conectar`, { code, state });
+  }
+
+  sincronizar() {
+    return this.http.post<{ tarefas: number }>(`${this.url}/sincronizar`, {});
+  }
+
+  desconectar() {
+    return this.http.delete<void>(this.url);
+  }
 }

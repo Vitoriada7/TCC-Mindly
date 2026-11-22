@@ -8,8 +8,10 @@ import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.s
 describe('Detalhes do registro emocional', () => {
   it('abre o relato ao clicar no dia registrado e permite abrir novamente após fechar', async () => {
     // jsdom não implementa a abertura nativa de dialogs.
-    HTMLDialogElement.prototype.showModal = function () { this.open = true; };
-    HTMLDialogElement.prototype.close = function () {
+    HTMLDialogElement.prototype.showModal = function() {
+      this.open = true;
+    };
+    HTMLDialogElement.prototype.close = function() {
       this.open = false;
       this.dispatchEvent(new Event('close'));
     };
@@ -19,10 +21,19 @@ describe('Detalhes do registro emocional', () => {
       imports: [EmocionalComponent],
       providers: [
         provideRouter([]),
-        { provide: EmocionalApiService, useValue: { listar: () => of([{
-          id: 1, sentimento: 'bem', sentimentoDetalhado: null,
-          pensamento: 'Meu relato salvo', reflexao: null, dataRegistro,
-        }]) } },
+        {
+          provide: EmocionalApiService,
+          useValue: {
+            listar: () => of([{
+              id: 1,
+              sentimento: 'bem',
+              sentimentoDetalhado: null,
+              pensamento: 'Meu relato salvo',
+              reflexao: null,
+              dataRegistro,
+            }])
+          }
+        },
         { provide: GamificacaoApiService, useValue: { resumo: () => of(null) } },
       ],
     }).compileComponents();
