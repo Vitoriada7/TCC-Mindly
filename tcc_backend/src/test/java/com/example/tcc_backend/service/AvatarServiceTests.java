@@ -16,15 +16,25 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AvatarServiceTests {
-    @Mock UsuarioRepository usuarioRepository;
-    @Mock PasswordEncoder passwordEncoder;
-    @Mock UsuarioAutenticadoService usuarioAutenticadoService;
-    @Mock GamificacaoService gamificacaoService;
-    @InjectMocks UsuarioService service;
+
+    @Mock
+    UsuarioRepository usuarioRepository;
+
+    @Mock
+    PasswordEncoder passwordEncoder;
+
+    @Mock
+    UsuarioAutenticadoService usuarioAutenticadoService;
+
+    @Mock
+    GamificacaoService gamificacaoService;
+
+    @InjectMocks
+    UsuarioService service;
 
     @Test
     void deveRecusarAvatarBloqueadoSemSalvar() {
-        var usuario = Usuario.builder().id(7L).build();
+        Usuario usuario = Usuario.builder().id(7L).build();
         when(usuarioAutenticadoService.obterUsuarioAutenticado()).thenReturn(usuario);
         assertThatThrownBy(() -> service.atualizarAvatar(new AvatarRequest(Avatar.ARVORE)))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -34,7 +44,7 @@ class AvatarServiceTests {
 
     @Test
     void deveSelecionarRecompensaDoUsuarioERestaurarIniciais() {
-        var usuario = Usuario.builder().id(7L).build();
+        Usuario usuario = Usuario.builder().id(7L).build();
         usuario.getAvataresLiberados().add(Avatar.ARVORE);
         when(usuarioAutenticadoService.obterUsuarioAutenticado()).thenReturn(usuario);
         when(usuarioRepository.save(usuario)).thenReturn(usuario);
@@ -45,7 +55,7 @@ class AvatarServiceTests {
 
     @Test
     void deveSincronizarConquistaAntesDeSelecionarAvatar() {
-        var usuario = Usuario.builder().id(7L).build();
+        Usuario usuario = Usuario.builder().id(7L).build();
         when(usuarioAutenticadoService.obterUsuarioAutenticado()).thenReturn(usuario);
         when(usuarioRepository.save(usuario)).thenReturn(usuario);
         when(gamificacaoService.obterResumo()).thenAnswer(invocacao -> {
@@ -58,7 +68,7 @@ class AvatarServiceTests {
 
     @Test
     void deveRetornarBibliotecaSincronizadaNoPerfil() {
-        var usuario = Usuario.builder().id(7L).build();
+        Usuario usuario = Usuario.builder().id(7L).build();
         when(usuarioAutenticadoService.obterUsuarioAutenticado()).thenReturn(usuario);
         when(gamificacaoService.obterResumo()).thenAnswer(invocacao -> {
             usuario.getAvataresLiberados().add(Avatar.CORACAO);
@@ -66,4 +76,5 @@ class AvatarServiceTests {
         });
         assertThat(service.obterPerfil().getAvataresLiberados()).containsExactly(Avatar.CORACAO);
     }
+
 }

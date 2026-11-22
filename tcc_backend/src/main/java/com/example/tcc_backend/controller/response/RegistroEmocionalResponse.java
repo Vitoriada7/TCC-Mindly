@@ -8,12 +8,20 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 public class RegistroEmocionalResponse {
+
     private final Long id;
+
     private final String sentimento;
+
     private final String sentimentoDetalhado;
+
     private final String pensamento;
+
     private final String reflexao;
+
     private final String complementoFinal;
+
     private final LocalDateTime dataRegistro;
+
     private final java.util.List<String> exploracoes;
 }

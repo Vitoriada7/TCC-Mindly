@@ -1,5 +1,6 @@
 package com.example.tcc_backend.service;
 
+import com.example.tcc_backend.validator.HabitoValidator;
 import com.example.tcc_backend.controller.request.HabitoRequest;
 import com.example.tcc_backend.controller.response.HabitoResponse;
 import com.example.tcc_backend.controller.response.ResumoHabitosResponse;
@@ -14,21 +15,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class HabitoService {
 
     private final HabitoRepository habitoRepository;
+
     private final RegistroHabitoRepository registroHabitoRepository;
+
     private final UsuarioAutenticadoService usuarioAutenticadoService;
 
     public HabitoService(HabitoRepository habitoRepository, RegistroHabitoRepository registroHabitoRepository,
@@ -50,9 +52,10 @@ public class HabitoService {
 
     @Transactional(readOnly = true)
     public List<HabitoResponse> listar(LocalDate inicio, LocalDate fim) {
-        Periodo periodo = resolverPeriodo(inicio, fim);
+        HabitoValidator.Periodo periodo = HabitoValidator.resolverPeriodo(inicio, fim);
         Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
         List<Habito> habitos = habitoRepository.findAllByUsuarioIdAndAtivoTrueOrderByDataCriacaoDesc(usuario.getId());
+
         if (habitos.isEmpty()) {
             return List.of();
         }
@@ -89,7 +92,7 @@ public class HabitoService {
     public void marcarConcluido(Long id, LocalDate data) {
         Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
         Habito habito = obterDoUsuario(id, usuario.getId());
-        validarDataRegistro(data);
+        HabitoValidator.validarDataRegistro(data);
         RegistroHabito registro = registroHabitoRepository.findByHabitoIdAndData(habito.getId(), data)
                 .orElseGet(() -> RegistroHabito.builder().habito(habito).data(data).build());
         registro.setConcluido(true);
@@ -100,7 +103,7 @@ public class HabitoService {
     public void desmarcarConcluido(Long id, LocalDate data) {
         Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
         Habito habito = obterDoUsuario(id, usuario.getId());
-        validarDataRegistro(data);
+        HabitoValidator.validarDataRegistro(data);
         registroHabitoRepository.findByHabitoIdAndData(habito.getId(), data)
                 .ifPresent(registroHabitoRepository::delete);
     }
@@ -111,42 +114,31 @@ public class HabitoService {
         LocalDate hoje = LocalDate.now(ZoneId.of("America/Sao_Paulo"));
         long concluidosHoje = registroHabitoRepository.countByHabitoUsuarioIdAndDataAndConcluidoTrue(usuario.getId(), hoje);
         long totalAtivos = habitoRepository.countByUsuarioIdAndAtivoTrue(usuario.getId());
-        Set<LocalDate> diasComConclusao = registroHabitoRepository
+        List<LocalDate> diasComConclusao = registroHabitoRepository
                 .findAllByHabitoUsuarioIdAndDataLessThanEqualAndConcluidoTrueOrderByDataDesc(usuario.getId(), hoje)
                 .stream()
                 .map(RegistroHabito::getData)
-                .collect(Collectors.toSet());
+                .distinct()
+                .sorted(Comparator.reverseOrder())
+                .toList();
 
-        long sequencia = 0;
-        for (LocalDate dia = hoje; diasComConclusao.contains(dia); dia = dia.minusDays(1)) {
+        int sequencia = 0;
+        LocalDate referencia = hoje;
+
+        for (LocalDate dia : diasComConclusao) {
+            if (!dia.equals(referencia))
+                break;
+
             sequencia++;
+            referencia = referencia.minusDays(1);
         }
+
         return new ResumoHabitosResponse(sequencia, concluidosHoje, totalAtivos);
     }
 
-    private void validarDataRegistro(LocalDate data) {
-        if (data == null || !data.equals(LocalDate.now(ZoneId.of("America/Sao_Paulo")))) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Somente o dia atual pode ser marcado ou desmarcado");
-        }
-    }
     private Habito obterDoUsuario(Long id, Long usuarioId) {
         return habitoRepository.findByIdAndUsuarioIdAndAtivoTrue(id, usuarioId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Hábito não encontrado"));
     }
 
-    private Periodo resolverPeriodo(LocalDate inicio, LocalDate fim) {
-        if (inicio != null && fim != null && fim.isBefore(inicio)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A data final não pode ser anterior à data inicial");
-        }
-        if (inicio != null && fim != null) {
-            return new Periodo(inicio, fim);
-        }
-        LocalDate referencia = inicio != null ? inicio : fim != null ? fim : LocalDate.now(ZoneId.of("America/Sao_Paulo"));
-        LocalDate inicioSemana = referencia.with(DayOfWeek.MONDAY);
-        LocalDate fimSemana = inicioSemana.plusDays(6);
-        return new Periodo(inicio != null ? inicio : inicioSemana, fim != null ? fim : fimSemana);
-    }
-
-    private record Periodo(LocalDate inicio, LocalDate fim) { }
 }

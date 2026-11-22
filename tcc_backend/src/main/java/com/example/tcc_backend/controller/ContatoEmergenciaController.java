@@ -48,4 +48,5 @@ public class ContatoEmergenciaController {
         contatoService.excluir(id);
         return ResponseEntity.noContent().build();
     }
+
 }

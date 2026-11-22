@@ -1,14 +1,17 @@
 package com.example.tcc_backend.security;
 
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CorsConfigTests {
+
     @Test
     void permiteSomenteOrigensConfiguradas() {
-        var source = new CorsConfig().corsConfigurationSource("https://mindly.vercel.app, http://localhost:4200");
-        var configuration = source.getCorsConfiguration(new MockHttpServletRequest("OPTIONS", "/tarefas"));
+        CorsConfigurationSource source = new CorsConfig().corsConfigurationSource("https://mindly.vercel.app, http://localhost:4200");
+        CorsConfiguration configuration = source.getCorsConfiguration(new MockHttpServletRequest("OPTIONS", "/tarefas"));
         assertNotNull(configuration);
         assertEquals("https://mindly.vercel.app", configuration.checkOrigin("https://mindly.vercel.app"));
         assertNull(configuration.checkOrigin("https://outro-site.com"));
@@ -23,4 +26,5 @@ class CorsConfigTests {
         assertThrows(IllegalArgumentException.class, () -> new CorsConfig().corsConfigurationSource("*"));
         assertThrows(IllegalArgumentException.class, () -> new CorsConfig().corsConfigurationSource("https://*.vercel.app"));
     }
+
 }

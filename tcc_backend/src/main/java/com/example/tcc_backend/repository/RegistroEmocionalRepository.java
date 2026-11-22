@@ -9,5 +9,6 @@ import java.util.Optional;
 
 public interface RegistroEmocionalRepository extends JpaRepository<RegistroEmocional, Long> {
     Optional<RegistroEmocional> findByUsuarioIdAndData(Long usuarioId, LocalDate data);
+
     List<RegistroEmocional> findAllByUsuarioIdOrderByDataRegistroDesc(Long usuarioId);
 }

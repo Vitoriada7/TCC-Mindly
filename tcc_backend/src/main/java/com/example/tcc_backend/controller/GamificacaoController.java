@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/gamificacao")
 public class GamificacaoController {
+
     private final GamificacaoService gamificacaoService;
 
     public GamificacaoController(GamificacaoService gamificacaoService) {
@@ -20,4 +21,5 @@ public class GamificacaoController {
     public ResponseEntity<ResumoGamificacaoResponse> resumo() {
         return ResponseEntity.ok(gamificacaoService.obterResumo());
     }
+
 }

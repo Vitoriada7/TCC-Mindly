@@ -3,6 +3,10 @@ package com.example.tcc_backend.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import com.example.tcc_backend.domain.enums.Avatar;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -43,14 +47,20 @@ public class Usuario {
     private Boolean temaEscuro = false;
 
     @Enumerated(EnumType.STRING)
-    private com.example.tcc_backend.domain.enums.Avatar avatar;
+    private Avatar avatar;
 
     @ElementCollection
     @CollectionTable(name = "usuario_avatar", joinColumns = @JoinColumn(name = "usuario_id"))
     @Column(name = "avatar", nullable = false)
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private java.util.Set<com.example.tcc_backend.domain.enums.Avatar> avataresLiberados = new java.util.HashSet<>();
+    private List<Avatar> avataresLiberados = new ArrayList<>();
+
+    public void liberarAvatar(Avatar avatar) {
+        if (!avataresLiberados.contains(avatar)) {
+            avataresLiberados.add(avatar);
+        }
+    }
 
     @PrePersist
     public void prePersist() {

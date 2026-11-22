@@ -1,5 +1,6 @@
 package com.example.tcc_backend.service;
 
+import com.example.tcc_backend.validator.UsuarioValidator;
 import com.example.tcc_backend.controller.request.CadastroRequest;
 import com.example.tcc_backend.controller.request.UsuarioUpdateRequest;
 import com.example.tcc_backend.controller.request.TemaRequest;
@@ -18,6 +19,7 @@ public class UsuarioService {
     private final PasswordEncoder passwordEncoder;
 
     private final UsuarioAutenticadoService usuarioAutenticadoService;
+
     private final GamificacaoService gamificacaoService;
 
     public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder,
@@ -29,9 +31,7 @@ public class UsuarioService {
     }
 
     public UsuarioResponse cadastrar(CadastroRequest request) {
-        if (usuarioRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("E-mail ja cadastrado");
-        }
+        UsuarioValidator.validarEmailDisponivel(usuarioRepository.existsByEmail(request.getEmail()));
 
         Usuario usuario = UsuarioMapper.toEntity(request);
         usuario.setSenha(passwordEncoder.encode(request.getSenha()));
@@ -50,9 +50,7 @@ public class UsuarioService {
     public UsuarioResponse atualizarAvatar(com.example.tcc_backend.controller.request.AvatarRequest request) {
         gamificacaoService.obterResumo();
         Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
-        if (request.avatar() != null && !usuario.getAvataresLiberados().contains(request.avatar())) {
-            throw new IllegalArgumentException("Conclua a conquista para liberar este avatar.");
-        }
+        UsuarioValidator.validarAvatarLiberado(usuario, request.avatar());
         usuario.setAvatar(request.avatar());
         return UsuarioMapper.toResponse(usuarioRepository.save(usuario));
     }

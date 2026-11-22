@@ -1,5 +1,6 @@
 package com.example.tcc_backend.service;
 
+import com.example.tcc_backend.validator.ContatoEmergenciaValidator;
 import com.example.tcc_backend.controller.request.ContatoEmergenciaRequest;
 import com.example.tcc_backend.controller.response.ContatoEmergenciaResponse;
 import com.example.tcc_backend.domain.ContatoEmergencia;
@@ -16,9 +17,8 @@ import java.util.List;
 @Service
 public class ContatoEmergenciaService {
 
-    private static final long LIMITE_CONTATOS = 10;
-
     private final ContatoEmergenciaRepository contatoRepository;
+
     private final UsuarioAutenticadoService usuarioAutenticadoService;
 
     public ContatoEmergenciaService(ContatoEmergenciaRepository contatoRepository,
@@ -39,11 +39,9 @@ public class ContatoEmergenciaService {
     @Transactional
     public ContatoEmergenciaResponse criar(ContatoEmergenciaRequest request) {
         Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
-        if (contatoRepository.countByUsuarioId(usuario.getId()) >= LIMITE_CONTATOS) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "O limite de 10 contatos foi atingido");
-        }
+        ContatoEmergenciaValidator.validarLimite(contatoRepository.countByUsuarioId(usuario.getId()));
 
-        validarTelefone(request.getTelefone());
+        ContatoEmergenciaValidator.validarTelefone(request.getTelefone());
         ContatoEmergencia contato = ContatoEmergenciaMapper.toEntity(request);
         contato.setUsuario(usuario);
         desmarcarPrincipalAtualSeNecessario(usuario.getId(), contato.getPrincipal());
@@ -54,7 +52,7 @@ public class ContatoEmergenciaService {
     public ContatoEmergenciaResponse atualizar(Long id, ContatoEmergenciaRequest request) {
         Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
         ContatoEmergencia contato = buscarDoUsuario(id, usuario.getId());
-        validarTelefone(request.getTelefone());
+        ContatoEmergenciaValidator.validarTelefone(request.getTelefone());
         desmarcarPrincipalAtualSeNecessario(usuario.getId(), request.isPrincipal());
         ContatoEmergenciaMapper.atualizarEntidade(contato, request);
         return ContatoEmergenciaMapper.toResponse(contatoRepository.save(contato));
@@ -75,15 +73,10 @@ public class ContatoEmergenciaService {
         if (!novoPrincipal) {
             return;
         }
+
         List<ContatoEmergencia> principais = contatoRepository.findAllByUsuarioIdAndPrincipalTrue(usuarioId);
         principais.forEach(contato -> contato.setPrincipal(false));
         contatoRepository.saveAll(principais);
     }
 
-    private void validarTelefone(String telefone) {
-        String digitos = telefone == null ? "" : telefone.replaceAll("\\D", "");
-        if (digitos.length() < 8 || digitos.length() > 15) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Telefone inválido");
-        }
-    }
 }

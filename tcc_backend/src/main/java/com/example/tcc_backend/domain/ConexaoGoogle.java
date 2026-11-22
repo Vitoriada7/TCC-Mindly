@@ -12,17 +12,25 @@ import java.util.Map;
 @Getter
 @Setter
 public class ConexaoGoogle {
+
     @Id
     private Long usuarioId;
+
     @Version
     private Long versao;
+
     @Column(length = 2000)
     private String refreshTokenCifrado;
+
     private String estadoHash;
+
     private Instant estadoExpira;
+
     @Column(length = 500)
     private String listaId;
+
     private Instant ultimaSincronizacao;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "tarefas_google", joinColumns = @JoinColumn(name = "usuario_id"))
     @MapKeyColumn(name = "tarefa_id")

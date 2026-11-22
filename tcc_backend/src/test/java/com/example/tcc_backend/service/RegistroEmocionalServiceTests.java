@@ -1,5 +1,6 @@
 package com.example.tcc_backend.service;
 
+import com.example.tcc_backend.controller.response.RegistroEmocionalResponse;
 import com.example.tcc_backend.controller.request.RegistroEmocionalRequest;
 import com.example.tcc_backend.domain.RegistroEmocional;
 import com.example.tcc_backend.domain.Usuario;
@@ -44,7 +45,7 @@ class RegistroEmocionalServiceTests {
             return registro;
         });
 
-        var response = registroEmocionalService.registrar(criarRequest());
+        RegistroEmocionalResponse response = registroEmocionalService.registrar(criarRequest());
 
         assertThat(response.getId()).isEqualTo(1L);
         assertThat(response.getSentimento()).isEqualTo("bem");
@@ -65,7 +66,7 @@ class RegistroEmocionalServiceTests {
         when(registroEmocionalRepository.findByUsuarioIdAndData(7L, LocalDate.now())).thenReturn(Optional.of(existente));
         when(registroEmocionalRepository.save(existente)).thenReturn(existente);
 
-        var response = registroEmocionalService.registrar(criarRequest());
+        RegistroEmocionalResponse response = registroEmocionalService.registrar(criarRequest());
 
         assertThat(response.getId()).isEqualTo(3L);
         assertThat(existente.getSentimento()).isEqualTo("bem");
@@ -81,4 +82,5 @@ class RegistroEmocionalServiceTests {
         request.setComplementoFinal(" Quero descansar mais ");
         return request;
     }
+
 }

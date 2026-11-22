@@ -8,7 +8,9 @@ import java.util.Optional;
 
 public interface ContatoEmergenciaRepository extends JpaRepository<ContatoEmergencia, Long> {
     List<ContatoEmergencia> findAllByUsuarioIdOrderByPrincipalDescNomeAsc(Long usuarioId);
+
     Optional<ContatoEmergencia> findByIdAndUsuarioId(Long id, Long usuarioId);
     long countByUsuarioId(Long usuarioId);
+
     List<ContatoEmergencia> findAllByUsuarioIdAndPrincipalTrue(Long usuarioId);
 }

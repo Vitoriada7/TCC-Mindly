@@ -60,4 +60,5 @@ public class TarefaController {
             @RequestParam(required = false) Boolean vencida) {
         return ResponseEntity.ok(tarefaService.listar(status, prioridade, categoriaId, vencida));
     }
+
 }

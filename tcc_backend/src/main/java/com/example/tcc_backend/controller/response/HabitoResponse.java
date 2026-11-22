@@ -11,9 +11,14 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class HabitoResponse {
+
     private Long id;
+
     private String nome;
+
     private String icone;
+
     private String cor;
+
     private List<LocalDate> diasConcluidos;
 }

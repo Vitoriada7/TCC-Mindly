@@ -1,9 +1,14 @@
 package com.example.tcc_backend.service;
 
+import com.example.tcc_backend.service.gamificacao.CalculoSequencias;
+import com.example.tcc_backend.mapper.ConquistaMapper;
+import com.example.tcc_backend.domain.enums.Conquista;
 import com.example.tcc_backend.controller.response.ConquistaResponse;
 import com.example.tcc_backend.controller.response.ResumoGamificacaoResponse;
 import com.example.tcc_backend.domain.RegistroEmocional;
 import com.example.tcc_backend.domain.Tarefa;
+import com.example.tcc_backend.domain.Usuario;
+import com.example.tcc_backend.domain.enums.Avatar;
 import com.example.tcc_backend.domain.enums.StatusConquista;
 import com.example.tcc_backend.domain.enums.StatusTarefa;
 import com.example.tcc_backend.repository.HabitoRepository;
@@ -19,17 +24,21 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class GamificacaoService {
-    private static final long META_TAREFAS_SEMANAL = 5;
+
+    private static final int META_TAREFAS_SEMANAL = Conquista.SEMANA_ORGANIZADA.getMeta();
 
     private final UsuarioAutenticadoService usuarioAutenticadoService;
+
     private final HabitoRepository habitoRepository;
+
     private final RegistroHabitoRepository registroHabitoRepository;
+
     private final TarefaRepository tarefaRepository;
+
     private final RegistroEmocionalRepository registroEmocionalRepository;
 
     public GamificacaoService(UsuarioAutenticadoService usuarioAutenticadoService,
@@ -46,124 +55,134 @@ public class GamificacaoService {
 
     @Transactional
     public ResumoGamificacaoResponse obterResumo() {
-        var usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
+        Usuario usuario = usuarioAutenticadoService.obterUsuarioAutenticado();
         Long usuarioId = usuario.getId();
         LocalDate hoje = LocalDate.now();
 
-        Set<LocalDate> diasHabitos = registroHabitoRepository
+        List<LocalDate> diasHabitos = registroHabitoRepository
                 .findAllByHabitoUsuarioIdAndDataLessThanEqualAndConcluidoTrueOrderByDataDesc(usuarioId, hoje).stream()
                 .map(registro -> registro.getData())
-                .collect(Collectors.toSet());
+                .distinct().toList();
+
         long habitosHoje = registroHabitoRepository.countByHabitoUsuarioIdAndDataAndConcluidoTrue(usuarioId, hoje);
         long metaHabitos = habitoRepository.countByUsuarioIdAndAtivoTrue(usuarioId);
 
         List<Tarefa> tarefas = tarefaRepository.findAllByUsuarioIdOrderByDataCriacaoDesc(usuarioId);
         LocalDate inicioSemana = hoje.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        List<Tarefa> concluidas = tarefas.stream().filter(tarefa -> tarefa.getStatus() == StatusTarefa.CONCLUIDA
-                && tarefa.getDataConclusao() != null).toList();
-        long tarefasSemana = concluidas.stream()
-                .filter(tarefa -> !tarefa.getDataConclusao().toLocalDate().isBefore(inicioSemana)).count();
-        long tarefasNoPrazoSemana = concluidas.stream()
+        List<Tarefa> concluidas = tarefas.stream()
+                .filter(tarefa -> tarefa.getStatus() == StatusTarefa.CONCLUIDA
+                        && tarefa.getDataConclusao() != null)
+                .toList();
+
+        int tarefasSemana = concluidas.stream()
                 .filter(tarefa -> !tarefa.getDataConclusao().toLocalDate().isBefore(inicioSemana))
-                .filter(this::foiConcluidaNoPrazo).count();
-        long sequenciaTarefas = calcularSequenciaSemanal(concluidas, inicioSemana, tarefasSemana);
+                .mapToInt(tarefa -> 1)
+                .sum();
+
+        int tarefasNoPrazoSemana = concluidas.stream()
+                .filter(tarefa -> !tarefa.getDataConclusao().toLocalDate().isBefore(inicioSemana))
+                .filter(this::foiConcluidaNoPrazo)
+                .mapToInt(tarefa -> 1)
+                .sum();
+
+        int sequenciaTarefas = calcularSequenciaSemanal(concluidas, inicioSemana, tarefasSemana);
 
         List<RegistroEmocional> registrosEmocionais = registroEmocionalRepository
                 .findAllByUsuarioIdOrderByDataRegistroDesc(usuarioId);
-        Set<LocalDate> diasEmocionais = registrosEmocionais.stream()
-                .map(registro -> registro.getDataRegistro().toLocalDate()).collect(Collectors.toSet());
+        List<LocalDate> diasEmocionais = registrosEmocionais.stream()
+                .map(registro -> registro.getDataRegistro().toLocalDate())
+                .distinct()
+                .toList();
         RegistroEmocional registroHoje = registrosEmocionais.stream()
-                .filter(registro -> registro.getDataRegistro().toLocalDate().equals(hoje)).findFirst().orElse(null);
+                .filter(registro -> registro.getDataRegistro().toLocalDate().equals(hoje))
+                .findFirst()
+                .orElse(null);
 
-        long sequenciaHabitos = calcularSequenciaAtual(diasHabitos, hoje);
-        long sequenciaEmocional = calcularSequenciaAtual(diasEmocionais, hoje);
-        var resumoHabitos = new ResumoGamificacaoResponse.HabitosGamificacaoResponse(
-                sequenciaHabitos, calcularMelhorSequencia(diasHabitos), habitosHoje, metaHabitos);
-        var resumoTarefas = new ResumoGamificacaoResponse.TarefasGamificacaoResponse(
+        int sequenciaHabitos = CalculoSequencias.calcularSequenciaAtual(diasHabitos, hoje);
+        int sequenciaEmocional = CalculoSequencias.calcularSequenciaAtual(diasEmocionais, hoje);
+
+        ResumoGamificacaoResponse.HabitosGamificacaoResponse resumoHabitos = new ResumoGamificacaoResponse.HabitosGamificacaoResponse(
+                sequenciaHabitos, CalculoSequencias.calcularMelhorSequencia(diasHabitos), habitosHoje, metaHabitos);
+
+        ResumoGamificacaoResponse.TarefasGamificacaoResponse resumoTarefas = new ResumoGamificacaoResponse.TarefasGamificacaoResponse(
                 sequenciaTarefas, tarefasSemana, META_TAREFAS_SEMANAL, tarefasNoPrazoSemana);
-        var resumoEmocional = new ResumoGamificacaoResponse.EmocionalGamificacaoResponse(
-                sequenciaEmocional, calcularMelhorSequencia(diasEmocionais), registroHoje != null,
+
+        ResumoGamificacaoResponse.EmocionalGamificacaoResponse resumoEmocional = new ResumoGamificacaoResponse.EmocionalGamificacaoResponse(
+                sequenciaEmocional, CalculoSequencias.calcularMelhorSequencia(diasEmocionais), registroHoje != null,
                 registroHoje == null ? null : registroHoje.getSentimento(), registrosEmocionais.size());
 
-        var conquistas = criarConquistas(diasHabitos.size(), calcularMelhorSequencia(diasHabitos), concluidas,
-                melhorSemana(concluidas), registrosEmocionais, calcularMelhorSequencia(diasEmocionais));
-        for (var conquista : conquistas) {
-            var avatar = com.example.tcc_backend.domain.enums.Avatar.daConquista(conquista.getCodigo());
-            if (conquista.getStatus() == StatusConquista.CONCLUIDA) usuario.getAvataresLiberados().add(avatar);
-            if (usuario.getAvataresLiberados().contains(avatar)) conquista.concluir();
+        List<ConquistaResponse> conquistas = criarConquistas(diasHabitos.size(), CalculoSequencias.calcularMelhorSequencia(diasHabitos), concluidas,
+                melhorSemana(concluidas), registrosEmocionais, CalculoSequencias.calcularMelhorSequencia(diasEmocionais));
+
+        for (ConquistaResponse conquista : conquistas) {
+            Avatar avatar = Avatar.daConquista(conquista.getCodigo());
+
+            if (conquista.getStatus() == StatusConquista.CONCLUIDA)
+                usuario.liberarAvatar(avatar);
+
+            if (usuario.getAvataresLiberados().contains(avatar))
+                conquista.concluir();
         }
+
         return new ResumoGamificacaoResponse(resumoHabitos, resumoTarefas, resumoEmocional, conquistas);
     }
 
-    private List<ConquistaResponse> criarConquistas(long diasHabitos, long sequenciaHabitos,
-                                                     List<Tarefa> concluidas, long tarefasSemana,
-                                                     List<RegistroEmocional> registros, long sequenciaEmocional) {
-        long tarefasNoPrazo = concluidas.stream().filter(this::foiConcluidaNoPrazo).count();
+    private List<ConquistaResponse> criarConquistas(int diasHabitos, int sequenciaHabitos,
+                                                   List<Tarefa> concluidas, int tarefasSemana,
+                                                   List<RegistroEmocional> registros, int sequenciaEmocional) {
+        int tarefasNoPrazo = concluidas.stream()
+                .filter(this::foiConcluidaNoPrazo)
+                .mapToInt(tarefa -> 1)
+                .sum();
         List<ConquistaResponse> conquistas = new ArrayList<>();
-        conquistas.add(conquista("PRIMEIRO_HABITO", "Primeiro passo", "Conclua seu primeiro hábito.", "HABITOS", diasHabitos, 1));
-        conquistas.add(conquista("ROTINA_SUAVE", "Rotina suave", "Mantenha 7 dias de hábitos em sequência.", "HABITOS", sequenciaHabitos, 7));
-        conquistas.add(conquista("PRIMEIRA_TAREFA", "Tirando do papel", "Conclua sua primeira tarefa.", "TAREFAS", concluidas.size(), 1));
-        conquistas.add(conquista("SEMANA_ORGANIZADA", "Semana organizada", "Conclua 5 tarefas na mesma semana.", "TAREFAS", tarefasSemana, META_TAREFAS_SEMANAL));
-        conquistas.add(conquista("NO_TEMPO_CERTO", "No tempo certo", "Conclua 10 tarefas dentro do prazo.", "TAREFAS", tarefasNoPrazo, 10));
-        conquistas.add(conquista("PRIMEIRO_REGISTRO", "Primeiro olhar", "Faça seu primeiro registro emocional.", "EMOCIONAL", registros.size(), 1));
-        conquistas.add(conquista("SEMANA_CONSCIENTE", "Semana consciente", "Registre suas emoções por 7 dias seguidos.", "EMOCIONAL", sequenciaEmocional, 7));
-        conquistas.add(conquista("HABITOS_30_DIAS", "Cultivando sua rotina", "Conclua hábitos em 30 dias diferentes.", "HABITOS", diasHabitos, 30));
-        conquistas.add(conquista("HABITOS_30_SEGUIDOS", "Uma nova fase", "Mantenha 30 dias de hábitos em sequência.", "HABITOS", sequenciaHabitos, 30));
-        conquistas.add(conquista("TAREFAS_25", "Colecionando avanços", "Conclua 25 tarefas.", "TAREFAS", concluidas.size(), 25));
-        conquistas.add(conquista("TAREFAS_50", "No seu ritmo", "Conclua 50 tarefas.", "TAREFAS", concluidas.size(), 50));
-        conquistas.add(conquista("REGISTROS_30", "Páginas de você", "Faça 30 registros emocionais.", "EMOCIONAL", registros.size(), 30));
-        conquistas.add(conquista("EMOCOES_30_SEGUIDOS", "Tempo para si", "Registre suas emoções por 30 dias seguidos.", "EMOCIONAL", sequenciaEmocional, 30));
+        conquistas.add(ConquistaMapper.toResponse(Conquista.PRIMEIRO_HABITO, diasHabitos));
+        conquistas.add(ConquistaMapper.toResponse(Conquista.ROTINA_SUAVE, sequenciaHabitos));
+        conquistas.add(ConquistaMapper.toResponse(Conquista.PRIMEIRA_TAREFA, concluidas.size()));
+        conquistas.add(ConquistaMapper.toResponse(Conquista.SEMANA_ORGANIZADA, tarefasSemana));
+        conquistas.add(ConquistaMapper.toResponse(Conquista.NO_TEMPO_CERTO, tarefasNoPrazo));
+        conquistas.add(ConquistaMapper.toResponse(Conquista.PRIMEIRO_REGISTRO, registros.size()));
+        conquistas.add(ConquistaMapper.toResponse(Conquista.SEMANA_CONSCIENTE, sequenciaEmocional));
+        conquistas.add(ConquistaMapper.toResponse(Conquista.HABITOS_30_DIAS, diasHabitos));
+        conquistas.add(ConquistaMapper.toResponse(Conquista.HABITOS_30_SEGUIDOS, sequenciaHabitos));
+        conquistas.add(ConquistaMapper.toResponse(Conquista.TAREFAS_25, concluidas.size()));
+        conquistas.add(ConquistaMapper.toResponse(Conquista.TAREFAS_50, concluidas.size()));
+        conquistas.add(ConquistaMapper.toResponse(Conquista.REGISTROS_30, registros.size()));
+        conquistas.add(ConquistaMapper.toResponse(Conquista.EMOCOES_30_SEGUIDOS, sequenciaEmocional));
         return conquistas;
     }
 
-    private ConquistaResponse conquista(String codigo, String titulo, String descricao, String trilha,
-                                         long progresso, long meta) {
-        StatusConquista status = progresso >= meta ? StatusConquista.CONCLUIDA
-                : progresso > 0 ? StatusConquista.EM_PROGRESSO : StatusConquista.BLOQUEADA;
-        return new ConquistaResponse(codigo, titulo, descricao, trilha, status, Math.min(progresso, meta), meta);
-    }
-
-    private long melhorSemana(List<Tarefa> tarefas) {
-        return tarefas.stream().collect(Collectors.groupingBy(
-                tarefa -> tarefa.getDataConclusao().toLocalDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
-                Collectors.counting())).values().stream().mapToLong(Long::longValue).max().orElse(0);
+    private int melhorSemana(List<Tarefa> tarefas) {
+        return tarefas.stream()
+                .collect(Collectors.groupingBy(
+                        tarefa -> tarefa.getDataConclusao().toLocalDate()
+                                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
+                        Collectors.summingInt(tarefa -> 1)))
+                .values()
+                .stream()
+                .mapToInt(Integer::intValue)
+                .max()
+                .orElse(0);
     }
 
     private boolean foiConcluidaNoPrazo(Tarefa tarefa) {
         return tarefa.getDataLimite() != null && !tarefa.getDataConclusao().isAfter(tarefa.getDataLimite());
     }
 
-    private long calcularSequenciaAtual(Set<LocalDate> dias, LocalDate hoje) {
-        LocalDate referencia = dias.contains(hoje) ? hoje : hoje.minusDays(1);
-        long sequencia = 0;
-        while (dias.contains(referencia)) {
-            sequencia++;
-            referencia = referencia.minusDays(1);
-        }
-        return sequencia;
-    }
-
-    private long calcularMelhorSequencia(Set<LocalDate> dias) {
-        long melhor = 0;
-        for (LocalDate dia : dias) {
-            if (dias.contains(dia.minusDays(1))) continue;
-            long tamanho = 1;
-            while (dias.contains(dia.plusDays(tamanho))) tamanho++;
-            melhor = Math.max(melhor, tamanho);
-        }
-        return melhor;
-    }
-
-    private long calcularSequenciaSemanal(List<Tarefa> concluidas, LocalDate inicioSemana, long tarefasSemana) {
-        Map<LocalDate, Long> porSemana = concluidas.stream().collect(Collectors.groupingBy(
-                tarefa -> tarefa.getDataConclusao().toLocalDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
-                Collectors.counting()));
+    private int calcularSequenciaSemanal(List<Tarefa> concluidas, LocalDate inicioSemana, int tarefasSemana) {
+        Map<LocalDate, Integer> porSemana = concluidas.stream()
+                .collect(Collectors.groupingBy(
+                        tarefa -> tarefa.getDataConclusao().toLocalDate()
+                                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
+                        Collectors.summingInt(tarefa -> 1)));
         LocalDate semana = tarefasSemana >= META_TAREFAS_SEMANAL ? inicioSemana : inicioSemana.minusWeeks(1);
-        long sequencia = 0;
-        while (porSemana.getOrDefault(semana, 0L) >= META_TAREFAS_SEMANAL) {
+        int sequencia = 0;
+
+        while (porSemana.getOrDefault(semana, 0) >= META_TAREFAS_SEMANAL) {
             sequencia++;
             semana = semana.minusWeeks(1);
         }
+
         return sequencia;
     }
+
 }

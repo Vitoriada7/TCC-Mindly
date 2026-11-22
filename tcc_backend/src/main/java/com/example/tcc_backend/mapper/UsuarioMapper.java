@@ -24,7 +24,7 @@ public class UsuarioMapper {
         response.setId(usuario.getId());
         response.setTemaEscuro(Boolean.TRUE.equals(usuario.getTemaEscuro()));
         response.setAvatar(usuario.getAvatar());
-        response.setAvataresLiberados(java.util.Set.copyOf(usuario.getAvataresLiberados()));
+        response.setAvataresLiberados(usuario.getAvataresLiberados().stream().distinct().toList());
         response.setNome(usuario.getNome());
         response.setApelido(usuario.getApelido());
         response.setEmail(usuario.getEmail());

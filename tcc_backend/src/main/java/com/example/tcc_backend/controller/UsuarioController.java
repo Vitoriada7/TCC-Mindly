@@ -41,4 +41,5 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponse> atualizarTema(@Valid @RequestBody TemaRequest request) {
         return ResponseEntity.ok(usuarioService.atualizarTema(request));
     }
+
 }

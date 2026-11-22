@@ -45,4 +45,5 @@ public final class ContatoEmergenciaMapper {
         }
         return texto.trim();
     }
+
 }

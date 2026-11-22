@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import com.example.tcc_backend.domain.enums.Avatar;
+
+import java.util.List;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -13,10 +16,12 @@ import java.time.LocalDateTime;
 public class UsuarioResponse {
 
     private Long id;
-    private boolean temaEscuro;
-    private com.example.tcc_backend.domain.enums.Avatar avatar;
-    private java.util.Set<com.example.tcc_backend.domain.enums.Avatar> avataresLiberados;
 
+    private boolean temaEscuro;
+
+    private Avatar avatar;
+
+    private List<Avatar> avataresLiberados;
 
     private String nome;
 
