@@ -39,7 +39,7 @@
   <div class="modal-content">
     <header>
       <div>
-        <p class="eyebrow">INTEGRAÇÃO OPCIONAL</p>
+        <p class="eyebrow page-eyebrow">INTEGRAÇÃO OPCIONAL</p>
         <h2 id="google-tasks-title">Suas tarefas no Google</h2>
       </div>
       <button
@@ -79,14 +79,14 @@
         <button type="button" [disabled]="processando()" (click)="sincronizar()">
           {{ processando() ? 'Aguarde...' : 'Sincronizar tarefas' }}
         </button>
-        <button type="button" class="secondary" [disabled]="processando()" (click)="conectar()">
+        <button type="button" class="secondary btn btn-secondary" [disabled]="processando()" (click)="conectar()">
           Reconectar
         </button>
-        <button type="button" class="secondary" [disabled]="processando()" (click)="desconectar()">
+        <button type="button" class="secondary btn btn-secondary" [disabled]="processando()" (click)="desconectar()">
           Desconectar
         </button>
       } @else if (estado()?.disponivel) {
-        <button type="button" class="secondary" (click)="fecharModal()">Agora não</button>
+        <button type="button" class="secondary btn btn-secondary" (click)="fecharModal()">Agora não</button>
         <button type="button" [disabled]="processando()" (click)="conectar()">
           {{ processando() ? 'Aguarde...' : 'Continuar com o Google' }}
         </button>
@@ -94,7 +94,7 @@
         <p class="detail">
           {{ estado() ? 'Integração Google ainda não configurada.' : 'Verificando conexão...' }}
         </p>
-        <button type="button" class="secondary" [disabled]="processando()" (click)="carregar()">
+        <button type="button" class="secondary btn btn-secondary" [disabled]="processando()" (click)="carregar()">
           Verificar novamente
         </button>
       }

@@ -3,9 +3,9 @@
     ><span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>Voltar ao perfil</a
   >
   <header class="intro">
-    <p class="eyebrow">SUAS RECOMPENSAS</p>
-    <h1>Biblioteca de avatares</h1>
-    <p>Escolha um companheiro para o seu perfil. Cada conquista abre uma nova possibilidade.</p>
+    <p class="eyebrow page-eyebrow">SUAS RECOMPENSAS</p>
+    <h1 class="page-title">Biblioteca de avatares</h1>
+    <p class="page-description">Escolha um companheiro para o seu perfil. Cada conquista abre uma nova possibilidade.</p>
   </header>
   @if (carregando()) {
     <p role="status">Carregando seus avatares...</p>
@@ -70,7 +70,7 @@
     </div>
   }
   @if (erro(); as mensagem) {
-    <div class="feedback" role="alert">
+    <div class="feedback alert-error" role="alert">
       {{ mensagem }} <button type="button" (click)="carregar()">Tentar novamente</button>
     </div>
   }

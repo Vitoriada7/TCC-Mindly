@@ -16,19 +16,19 @@
     </div>
   }
 
-  <header class="page-header">
+  <header class="page-header page-hero">
     <a class="achievement-link" routerLink="/conquistas" aria-label="Ver minhas conquistas">
       <span class="material-symbols-rounded" aria-hidden="true">emoji_events</span>
     </a>
-    <p class="eyebrow">SEU MOMENTO</p>
-    <h1>Como foi seu dia?</h1>
-    <p>Não existe resposta certa. Este espaço é só seu.</p>
+    <p class="eyebrow page-eyebrow">SEU MOMENTO</p>
+    <h1 class="page-title">Como foi seu dia?</h1>
+    <p class="page-description">Não existe resposta certa. Este espaço é só seu.</p>
   </header>
 
   <section class="check-in-card" aria-labelledby="check-in-title">
     <div class="section-heading">
       <div>
-        <p class="eyebrow">CHECK-IN EMOCIONAL</p>
+        <p class="eyebrow page-eyebrow">CHECK-IN EMOCIONAL</p>
         <h2 id="check-in-title">Escolha o que mais combina com agora</h2>
       </div>
       <span class="material-symbols-rounded" aria-hidden="true">favorite</span>
@@ -36,21 +36,21 @@
 
     <div class="mood-grid">
       @for (humor of humores; track humor.value) {
-        <button
-          type="button"
+        <a
           class="mood-button"
           [class.active]="humorSelecionado() === humor.value"
-          (click)="selecionarHumor(humor.value)"
-          [attr.aria-pressed]="humorSelecionado() === humor.value"
+          routerLink="registro"
+          [queryParams]="{ sentimento: humor.value }"
+          [attr.aria-label]="'Iniciar registro: ' + humor.label"
         >
-          <span class="material-symbols-rounded" aria-hidden="true">{{
-            humor.icon
-          }}</span><strong>{{ humor.label }}</strong>
-        </button>
+          <app-rosto-emocao [emocao]="humor" />
+          <strong>{{ humor.label }}</strong>
+        </a>
       }
     </div>
     <p class="result">{{ resumo() }}</p>
-    <a class="primary" routerLink="registro"
+    <a class="primary btn btn-primary" routerLink="registro"
+      [queryParams]="{ sentimento: humorSelecionado() }"
       ><span class="material-symbols-rounded" aria-hidden="true">edit_note</span> Registrar meu
       dia</a
     >
@@ -58,7 +58,7 @@
 
   <section class="calendar-card" aria-labelledby="registros-title">
     <div class="section-heading calendar-heading">
-      <p class="eyebrow">SEUS REGISTROS</p>
+      <p class="eyebrow page-eyebrow">SEUS REGISTROS</p>
       <span class="material-symbols-rounded calendar-icon" aria-hidden="true">calendar_month</span>
     </div>
 

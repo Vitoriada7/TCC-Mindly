@@ -1,0 +1,23 @@
+.page-eyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.page-title {
+  font-size: var(--page-title-size);
+}
+
+.page-description {
+  font-size: var(--page-description-size);
+  line-height: 1.45;
+}
+
+.page-hero {
+  background: linear-gradient(
+    135deg,
+    var(--wash-violet, #f4d5f7) 0%,
+    var(--glow-violet, #c9b0ff) 45%,
+    var(--glow-violet, #8f6bff) 100%
+  );
+}

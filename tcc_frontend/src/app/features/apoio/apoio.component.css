@@ -4,41 +4,44 @@
   background: var(--background);
   color: var(--text);
 }
+
 .page {
   max-width: 980px;
   margin: 0 auto;
   padding: 42px 48px 100px;
 }
+
 .intro {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-bottom: 28px;
 }
+
 .eyebrow {
   margin: 0;
   color: var(--violet, #8c72df);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
+
 .intro h1 {
   margin: 0;
-  font-size: var(--page-title-size);
   letter-spacing: -1px;
 }
+
 .intro p {
   margin: 0;
   color: var(--text-secondary);
   line-height: 1.7;
   max-width: 620px;
 }
+
 .grid-layout {
   display: grid;
   gap: 18px;
   grid-template-columns: 1fr;
 }
+
 .card {
   padding: 23px;
   border-radius: var(--radius-2xl);
@@ -46,44 +49,46 @@
   border: 1px solid var(--edge, #f0eef5);
   box-shadow: 0 4px 18px rgba(54, 45, 94, 0.05);
 }
+
 .card-heading {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
 }
+
 .card-heading h2 {
   margin: 4px 0 0;
   font-size: 18px;
 }
+
 .secondary-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   gap: 7px;
   padding: 9px 12px;
   border: 1px solid var(--edge, #e1daf9);
   border-radius: 11px;
   background: var(--surface);
   color: var(--violet, #6f52d5);
-  font: inherit;
   font-size: 12px;
   font-weight: 700;
-  cursor: pointer;
 }
+
 .link-button:disabled {
   cursor: wait;
   opacity: 0.65;
 }
+
 .secondary-button .material-symbols-rounded {
   font-size: 18px;
 }
+
 .empty-message {
   margin: 0;
   color: var(--text-secondary);
   font-size: 12px;
   line-height: 1.6;
 }
+
 .link-button {
   display: inline-flex;
   align-items: center;
@@ -99,20 +104,24 @@
   background: var(--primary);
   cursor: pointer;
 }
+
 .support-list {
   display: grid;
   gap: 12px;
   margin-top: 16px;
 }
+
 .support-search {
   text-decoration: none;
   text-align: center;
   color: var(--violet, #6245bd);
 }
+
 .support-search:focus-visible {
   outline: 3px solid var(--edge, #6245bd);
   outline-offset: 3px;
 }
+
 .info-card {
   margin-top: 18px;
   padding: 22px;
@@ -120,6 +129,7 @@
   background: var(--surface);
   border: 1px solid var(--edge, #f0eef5);
 }
+
 .cvv-card {
   display: flex;
   align-items: center;
@@ -127,20 +137,24 @@
   gap: 24px;
   background: var(--surface);
 }
+
 .cvv-card h2 {
   margin: 4px 0 6px;
   font-size: 18px;
 }
+
 .cvv-card p:not(.eyebrow) {
   margin: 0;
   color: var(--muted, #6f697c);
   font-size: 13px;
 }
+
 .contact-grid {
   display: grid;
   gap: 14px;
   margin-top: 18px;
 }
+
 .contact-card-item {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto;
@@ -153,10 +167,12 @@
   background: var(--surface);
   box-shadow: 0 4px 12px rgba(54, 45, 94, 0.06);
 }
+
 .contact-person {
   min-width: 0;
   overflow-wrap: anywhere;
 }
+
 .contact-phone {
   padding: 8px 12px;
   border: 1px solid var(--edge, #ddd8eb);
@@ -168,20 +184,24 @@
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }
+
 .contact-card-item strong {
   font-size: 14px;
 }
+
 .contact-card-item p {
   margin: 6px 0 0;
   color: var(--text-secondary);
   font-size: 12px;
 }
+
 .contact-card-item a {
   color: var(--primary-hover);
   font-size: 12px;
   font-weight: 700;
   text-decoration: none;
 }
+
 .primary-badge {
   margin-left: 7px;
   padding: 3px 7px;
@@ -192,11 +212,13 @@
   font-weight: 800;
   text-transform: uppercase;
 }
+
 .contact-actions {
   display: flex;
   align-items: center;
   gap: 8px;
 }
+
 .contact-actions button {
   display: grid;
   place-items: center;
@@ -206,9 +228,11 @@
   color: var(--muted, #837d91);
   cursor: pointer;
 }
+
 .contact-actions button .material-symbols-rounded {
   font-size: 18px;
 }
+
 .contact-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -218,6 +242,7 @@
   border-radius: var(--radius-xl);
   background: var(--surface);
 }
+
 .contact-form label {
   display: grid;
   gap: 7px;
@@ -225,10 +250,12 @@
   font-size: 12px;
   font-weight: 700;
 }
+
 .contact-form label span {
   color: var(--muted, #8d8798);
   font-weight: 500;
 }
+
 .contact-form input[type='text'],
 .contact-form input[type='tel'] {
   min-width: 0;
@@ -240,61 +267,74 @@
   font: inherit;
   outline: none;
 }
+
 .contact-form input:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(128, 101, 233, 0.12);
 }
+
 .checkbox-field {
   display: flex !important;
   align-items: center;
   grid-column: 1 / -1;
 }
+
 .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   grid-column: 1 / -1;
 }
+
 .form-error {
   grid-column: 1 / -1;
   margin: 0;
   color: var(--rose, #c54747);
   font-size: 12px;
 }
+
 .emergency-note {
   margin: 18px 4px 0;
   color: var(--muted, #6f697c);
   font-size: 12px;
   text-align: center;
 }
+
 .emergency-note a {
   color: var(--violet, #6f52d5);
   font-weight: 800;
 }
+
 @media (max-width: 900px) {
   .grid-layout {
     grid-template-columns: 1fr;
   }
 }
+
 @media (max-width: 700px) {
   .page {
     padding: 28px 18px 112px;
   }
+
   .card-heading,
   .cvv-card {
     align-items: stretch;
     flex-direction: column;
   }
+
   .contact-form {
     grid-template-columns: 1fr;
   }
+
   .contact-card-item {
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 12px 8px;
   }
+
   .contact-person {
     grid-column: 1 / -1;
   }
+
   .contact-actions {
     justify-content: flex-end;
   }
@@ -303,22 +343,13 @@
 .intro {
   padding: 28px;
   border-radius: 28px;
-  background: linear-gradient(
-    135deg,
-    var(--wash-violet, #f4d5f7) 0%,
-    var(--glow-violet, #c9b0ff) 45%,
-    var(--glow-violet, #8f6bff) 100%
-  );
   box-shadow: 0 24px 50px rgba(127, 90, 183, 0.14);
 }
+
 .intro .eyebrow {
   color: var(--violet, #6f4bd7);
 }
+
 .intro p {
   color: var(--muted, #5f5a76);
-}
-
-.intro p:not(.eyebrow) {
-  font-size: var(--page-description-size);
-  line-height: 1.45;
 }

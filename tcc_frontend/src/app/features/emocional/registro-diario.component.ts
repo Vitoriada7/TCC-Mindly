@@ -14,6 +14,7 @@ import { finalize } from 'rxjs';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { EmocionalApiService } from './emocional-api.service';
 import { SeletorEmocoesComponent } from './seletor-emocoes.component';
+import { EMOCOES } from './emocoes';
 
 type Pergunta = { titulo: string; texto: string };
 type EstadoAudio = 'idle' | 'requesting' | 'recording' | 'transcribing' | 'complete' | 'error';
@@ -60,6 +61,11 @@ export class RegistroDiarioComponent {
   protected readonly erroIa = signal<string | null>(null);
 
   constructor() {
+    const sentimento = this.route.snapshot.queryParamMap.get('sentimento');
+    if (EMOCOES.some((emocao) => emocao.value === sentimento)) {
+      this.sentimentoSelecionado.set(sentimento);
+    }
+
     effect((onCleanup) => {
       const dialog = this.carregamentoDialog()?.nativeElement;
       if (!dialog || !this.processandoIa()) return;

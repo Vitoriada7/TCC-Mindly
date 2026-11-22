@@ -1,109 +1,11 @@
 import { ChangeDetectionStrategy, Component, ElementRef, afterNextRender, computed, input, output, viewChild } from '@angular/core';
 
-export const EMOCOES = [
-  {
-    value: 'radiante',
-    label: 'Radiante',
-    icon: 'sentiment_very_satisfied',
-    cor: 'var(--orange)',
-    detalhes: [
-      'Felicidade',
-      'Entusiasmo',
-      'Gratidão',
-      'Orgulho',
-      'Empolgação',
-      'Inspiração',
-      'Euforia',
-      'Alegria',
-      'Esperança',
-      'Encantamento',
-      'Amor',
-      'Confiança'
-    ]
-  },
-  {
-    value: 'bem',
-    label: 'Bem',
-    icon: 'sentiment_satisfied',
-    cor: 'var(--green)',
-    detalhes: [
-      'Calma',
-      'Alívio',
-      'Aconchego',
-      'Segurança',
-      'Satisfação',
-      'Afeto',
-      'Equilíbrio',
-      'Serenidade',
-      'Acolhimento',
-      'Disposição',
-      'Otimismo',
-      'Com foco'
-    ]
-  },
-  {
-    value: 'neutra',
-    label: 'Ok',
-    icon: 'sentiment_neutral',
-    cor: 'var(--primary-light)',
-    detalhes: [
-      'Indiferença',
-      'Curiosidade',
-      'Reflexão',
-      'Tédio',
-      'Distração',
-      'Paciência',
-      'Aceitação',
-      'Incerteza',
-      'Nostalgia',
-      'Interesse',
-      'Quietude',
-      'Surpresa'
-    ]
-  },
-  {
-    value: 'cansada',
-    label: 'Cansada',
-    icon: 'sentiment_dissatisfied',
-    cor: 'var(--orange)',
-    detalhes: [
-      'Cansaço',
-      'Desânimo',
-      'Sobrecarga',
-      'Preguiça',
-      'Exaustão',
-      'Inquietação',
-      'Desconforto',
-      'Frustração',
-      'Impaciência',
-      'Solidão',
-      'Sensibilidade'
-    ]
-  },
-  {
-    value: 'dificil',
-    label: 'Difícil',
-    icon: 'sentiment_very_dissatisfied',
-    cor: 'var(--pink)',
-    detalhes: [
-      'Tristeza',
-      'Ansiedade',
-      'Medo',
-      'Raiva',
-      'Culpa',
-      'Mágoa',
-      'Insegurança',
-      'Angústia',
-      'Decepção',
-      'Vergonha',
-      'Confusão',
-      'Preocupação'
-    ]
-  },
-] as const;
+import { EMOCOES } from './emocoes';
+import { RostoEmocaoComponent } from './rosto-emocao.component';
 
 @Component({
   selector: 'app-seletor-emocoes',
+  imports: [RostoEmocaoComponent],
   templateUrl: './seletor-emocoes.component.html',
   styleUrl: './seletor-emocoes.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

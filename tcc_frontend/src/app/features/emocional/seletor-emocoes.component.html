@@ -17,41 +17,10 @@
           type="button"
           class="emotion"
           [class.current]="indice() === i"
-          [style.--face-color]="emocao.cor"
           [attr.aria-pressed]="principal() === emocao.value"
           (click)="selecionar(i)"
         >
-          <span class="face">
-            <svg
-              class="expression"
-              viewBox="0 0 100 100"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-              focusable="false"
-            >
-              @switch (emocao.value) {
-                @case ('radiante') {
-                  <path d="M25 40 Q31 28 37 40 M63 40 Q69 28 75 40 M27 57 Q50 85 73 57 Z" />
-                }
-                @case ('bem') {
-                  <path d="M25 40 Q31 30 37 40 M63 40 Q69 30 75 40 M29 59 Q50 77 71 59" />
-                }
-                @case ('neutra') {
-                  <path d="M26 36 Q31 45 36 36 M64 36 Q69 45 74 36 M34 63 Q50 66 66 63" />
-                }
-                @case ('cansada') {
-                  <path d="M25 37 Q31 47 37 37 M63 37 Q69 47 75 37 M32 68 Q50 51 68 68" />
-                }
-                @case ('dificil') {
-                  <path d="M25 35 Q31 45 37 35 M63 35 Q69 45 75 35 M31 69 Q50 43 69 69 Z" />
-                }
-              }
-            </svg>
-          </span>
+          <app-rosto-emocao [emocao]="emocao" />
           <strong>{{ emocao.label }}</strong>
         </button>
       }

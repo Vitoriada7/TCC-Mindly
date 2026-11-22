@@ -1,9 +1,9 @@
 <div class="page">
-  <div class="intro">
+  <div class="intro page-hero">
     <div>
-      <p class="eyebrow">REDE DE APOIO</p>
-      <h1>Você pode buscar apoio quando precisar.</h1>
-      <p>
+      <p class="eyebrow page-eyebrow">REDE DE APOIO</p>
+      <h1 class="page-title">Você pode buscar apoio quando precisar.</h1>
+      <p class="page-description">
         Encontre serviços de saúde mental e pessoas de confiança para cuidar de você com segurança.
       </p>
     </div>
@@ -13,7 +13,7 @@
     <article class="card contact-card">
       <header class="card-heading">
         <div>
-          <p class="eyebrow">SERVIÇOS</p>
+          <p class="eyebrow page-eyebrow">SERVIÇOS</p>
           <h2>Apoio próximo de você</h2>
         </div>
       </header>
@@ -21,7 +21,7 @@
       <div class="support-list">
         <p class="empty-message">Encontre um lugar para conversar e receber apoio na sua região.</p>
         <a
-          class="secondary-button support-search"
+          class="secondary-button support-search btn btn-secondary"
           href="https://www.google.com/maps/search/?api=1&amp;query=apoio%20psicol%C3%B3gico%20perto%20de%20mim"
           target="_blank"
           rel="noopener noreferrer"
@@ -39,7 +39,7 @@
 
   <section class="info-card cvv-card">
     <div>
-      <p class="eyebrow">APOIO EMOCIONAL</p>
+      <p class="eyebrow page-eyebrow">APOIO EMOCIONAL</p>
       <h2>CVV — Centro de Valorização da Vida</h2>
       <p>Conversa gratuita, sigilosa e disponível 24 horas em todo o Brasil.</p>
     </div>
@@ -49,11 +49,11 @@
   <section class="info-card">
     <div class="card-heading">
       <div>
-        <p class="eyebrow">PESSOAS DE CONFIANÇA</p>
+        <p class="eyebrow page-eyebrow">PESSOAS DE CONFIANÇA</p>
         <h2>Contatos de emergência</h2>
       </div>
       @if (!formularioVisivel()) {
-        <button class="secondary-button" type="button" (click)="abrirFormulario()">
+        <button class="secondary-button btn btn-secondary" type="button" (click)="abrirFormulario()">
           <span class="material-symbols-rounded" aria-hidden="true">person_add</span>
           Adicionar contato
         </button>
@@ -88,10 +88,10 @@
           Contato principal
         </label>
         @if (erroContato()) {
-          <p class="form-error" role="alert">{{ erroContato() }}</p>
+          <p class="form-error form-message-error" role="alert">{{ erroContato() }}</p>
         }
         <div class="form-actions">
-          <button class="secondary-button" type="button" (click)="cancelarFormulario()">
+          <button class="secondary-button btn btn-secondary" type="button" (click)="cancelarFormulario()">
             Cancelar
           </button>
           <button class="link-button" type="submit" [disabled]="salvandoContato()">
@@ -130,7 +130,7 @@
       }
     </div>
     @if (!formularioVisivel() && erroContato()) {
-      <p class="form-error" role="alert">{{ erroContato() }}</p>
+      <p class="form-error form-message-error" role="alert">{{ erroContato() }}</p>
     }
   </section>
 

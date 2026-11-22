@@ -1,0 +1,22 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.btn-primary {
+  color: var(--on-primary);
+  background: var(--primary);
+}
+
+.btn-secondary {
+  color: var(--secondary-text);
+  background: var(--secondary-surface);
+}
+
+.btn:disabled {
+  opacity: 0.65;
+}

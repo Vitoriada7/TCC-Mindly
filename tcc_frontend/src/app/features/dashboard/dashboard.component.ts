@@ -19,7 +19,7 @@ import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.s
   templateUrl: './dashboard.component.html',
   styleUrls: [
     './dashboard.component.css',
-    '../../../styles/components/task-modal.css',
+    '../../../styles/components/modal.css',
     './dashboard-modal.css',
     './dashboard-chart.css'
   ],

@@ -1,5 +1,5 @@
 <section class="page">
-  <div class="intro">
+  <div class="intro page-hero">
     <div class="header-shortcuts">
       <a class="achievement-link" routerLink="/conquistas" aria-label="Ver minhas conquistas">
         <span class="material-symbols-rounded" aria-hidden="true">emoji_events</span>
@@ -7,9 +7,9 @@
     </div>
 
     <div class="intro-copy">
-      <p class="eyebrow">ORGANIZAÇÃO SEM PRESSA</p>
-      <h1>Minhas tarefas</h1>
-      <p>Seu plano de hoje cabe em pequenos passos.</p>
+      <p class="eyebrow page-eyebrow">ORGANIZAÇÃO SEM PRESSA</p>
+      <h1 class="page-title">Minhas tarefas</h1>
+      <p class="page-description">Seu plano de hoje cabe em pequenos passos.</p>
       <div class="calendar-control">
         <button
           type="button"
@@ -52,7 +52,7 @@
   <div class="intro-actions">
     <button class="icon-action" type="button" (click)="abrirCategorias()">
       <span class="material-symbols-rounded">label</span> Categorias</button
-    ><button class="primary" type="button" (click)="abrirCriacao()">
+    ><button class="primary btn btn-primary" type="button" (click)="abrirCriacao()">
       <span class="material-symbols-rounded">add</span> Nova tarefa
     </button>
   </div>
@@ -102,7 +102,7 @@
     }
   </div>
   @if (erro(); as mensagem) {
-    <div class="feedback" role="alert">{{ mensagem }}</div>
+    <div class="feedback alert-error" role="alert">{{ mensagem }}</div>
   }
   @if (carregando()) {
     <div class="tasks">
@@ -173,7 +173,7 @@
     >
       <header>
         <div>
-          <p class="eyebrow">ORGANIZAÇÃO</p>
+          <p class="eyebrow page-eyebrow">ORGANIZAÇÃO</p>
           <h2 id="titulo-modal-tarefa">{{ tarefaEmEdicao() ? 'Editar tarefa' : 'Nova tarefa' }}</h2>
         </div>
         <button class="close" type="button" (click)="fecharModalTarefa()">×</button>
@@ -210,11 +210,11 @@
           <label for="descricao">Descrição <span>opcional</span></label
           ><textarea id="descricao" formControlName="descricao" rows="3"></textarea>
           @if (erroFormulario(); as erroForm) {
-            <p class="form-error" role="alert">{{ erroForm }}</p>
+            <p class="form-error form-message-error" role="alert">{{ erroForm }}</p>
           }
           <footer>
-            <button class="secondary" type="button" (click)="fecharModalTarefa()">Cancelar</button
-            ><button class="primary" type="submit" [disabled]="processando()">
+            <button class="secondary btn btn-secondary" type="button" (click)="fecharModalTarefa()">Cancelar</button
+            ><button class="primary btn btn-primary" type="submit" [disabled]="processando()">
               {{ processando() ? 'Salvando...' : 'Salvar tarefa' }}
             </button>
           </footer>
@@ -224,7 +224,7 @@
           <span class="material-symbols-rounded">label_off</span
           ><strong>Crie uma categoria antes de criar tarefas.</strong>
           <p>As categorias organizam suas tarefas e são pessoais para sua conta.</p>
-          <button class="secondary" type="button" (click)="fecharModalTarefa(); abrirCategorias()">
+          <button class="secondary btn btn-secondary" type="button" (click)="fecharModalTarefa(); abrirCategorias()">
             Gerenciar categorias
           </button>
         </div>
@@ -244,7 +244,7 @@
     >
       <header>
         <div>
-          <p class="eyebrow">ORGANIZAÇÃO</p>
+          <p class="eyebrow page-eyebrow">ORGANIZAÇÃO</p>
           <h2 id="titulo-modal-categorias">Categorias</h2>
         </div>
         <button class="close" type="button" (click)="fecharCategorias()">×</button>
@@ -252,7 +252,7 @@
 
       <form class="category-form" [formGroup]="formularioCategoria" (ngSubmit)="salvarCategoria()">
         <input formControlName="nome" placeholder="Nome da categoria" maxlength="50" /><button
-          class="primary"
+          class="primary btn btn-primary"
           type="submit"
           [disabled]="processando()"
         >
@@ -260,7 +260,7 @@
         </button>
       </form>
       @if (erroFormulario(); as erroCategoria) {
-        <p class="form-error" role="alert">{{ erroCategoria }}</p>
+        <p class="form-error form-message-error" role="alert">{{ erroCategoria }}</p>
       }
       <div class="category-list">
         @for (categoria of categorias(); track categoria.id) {

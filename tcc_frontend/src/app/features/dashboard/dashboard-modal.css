@@ -1,48 +1,30 @@
 .modal-backdrop {
-  position: fixed;
   z-index: 10;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-  background: #30285266;
 }
-.close {
-  width: 30px;
-  height: 30px;
-  border: 0;
-  border-radius: var(--radius-circle);
-  color: var(--muted, #716b7b);
-  background: var(--wash, #f5f3f8);
-  font-size: 21px;
-  cursor: pointer;
-}
+
 .secondary {
   padding: 10px 13px;
-  border: 0;
   border-radius: 9px;
-  color: var(--secondary-text);
-  background: var(--secondary-surface);
-  font: inherit;
   font-size: 12px;
   font-weight: 700;
-  cursor: pointer;
 }
+
 .form-error {
   margin: 8px 0 0;
-  color: var(--rose, #b4235d);
-  font-size: 11px;
 }
+
 .no-categories {
   margin-top: 20px;
   color: var(--ink, #4e4857);
   font-size: 13px;
 }
+
 .no-categories p {
   color: var(--muted, #85808e);
   font-size: 12px;
   line-height: 1.5;
 }
+
 .no-categories .secondary {
   margin-top: 8px;
 }

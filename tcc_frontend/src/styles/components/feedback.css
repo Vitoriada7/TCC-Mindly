@@ -1,0 +1,9 @@
+.alert-error {
+  color: var(--error-text);
+  background: var(--error-surface);
+}
+
+.form-message-error {
+  color: var(--rose, #b4235d);
+  font-size: 11px;
+}

@@ -4,6 +4,7 @@
   min-height: 100dvh;
   background: var(--background);
 }
+
 .workspace {
   width: calc(100% - var(--sidebar-width));
   min-height: 100dvh;
@@ -16,6 +17,7 @@
     margin-left: var(--sidebar-width-compact);
   }
 }
+
 @media (max-width: 700px) {
   .workspace {
     width: 100%;

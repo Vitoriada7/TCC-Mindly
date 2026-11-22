@@ -14,7 +14,7 @@ import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.s
   templateUrl: './tarefas.component.html',
   styleUrls: [
     './tarefas.component.css',
-    '../../../styles/components/task-modal.css',
+    '../../../styles/components/modal.css',
     './tarefas-modal.css'
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

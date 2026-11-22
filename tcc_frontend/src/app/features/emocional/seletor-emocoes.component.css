@@ -1,39 +1,69 @@
 :host { display: block; min-width: 0; }
+
 .selector { display: flex; flex-direction: column; min-height: 100%; gap: 20px; min-width: 0; }
+
 .carousel { min-width: 0; }
+
 .rail { position: relative; display: flex; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 12px 20%; gap: 0; }
+
 .rail::-webkit-scrollbar { display: none; }
+
 .emotion { flex: 0 0 100%; min-width: 0; display: grid; justify-items: center; gap: 18px; padding: 12px 0; border: 0; background: transparent; color: var(--text); font: inherit; scroll-snap-align: center; cursor: pointer; opacity: .45; transform: scale(.76); transition: transform .22s ease, opacity .22s ease; }
+
 .emotion.current { opacity: 1; transform: scale(1); }
-.face { display: grid; place-items: center; width: clamp(112px, 30vw, 154px); aspect-ratio: 1; border-radius: 50%; background: color-mix(in srgb, var(--face-color) 30%, var(--surface)); color: color-mix(in srgb, var(--face-color) 70%, var(--text)); box-shadow: 0 12px 32px color-mix(in srgb, var(--face-color) 18%, transparent); }
-.expression { display: block; width: 100%; height: 100%; }
+
 .emotion strong { font-size: 18px; font-weight: 600; }
+
 .navigation { display: flex; justify-content: center; align-items: center; gap: 20px; }
+
 .navigation button { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--border); border-radius: 50%; background: var(--surface); color: var(--text); cursor: pointer; }
+
 .navigation button:disabled { opacity: .3; cursor: default; }
+
 .position { min-width: 110px; text-align: center; color: var(--text-muted); font-size: 12px; }
+
 .details-heading { text-align: center; }
+
 .details-heading p { margin: 0; color: var(--text-muted); font-size: 12px; line-height: 1.6; }
+
 .chips { display: flex; flex: 1; flex-wrap: wrap; align-content: center; align-items: center; justify-content: center; gap: 8px; }
+
 .chip { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--text); font: inherit; font-size: 13px; cursor: pointer; }
+
 .chip.selected { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+
 .chip:disabled { opacity: .4; cursor: not-allowed; }
+
 .chip span { font-size: 16px; }
+
 .limit-hint { margin: 0; color: var(--text-muted); font-size: 12px; line-height: 1.6; text-align: center; }
+
 button:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
+
 @media (prefers-reduced-motion: reduce) { .emotion { transition: none; } }
 
 @media (max-width: 600px) {
   .selector { gap: 12px; }
+
   .rail { padding-top: 4px; padding-bottom: 4px; }
+
   .emotion { gap: 8px; padding: 6px 0; }
-  .face { width: clamp(80px, 23vw, 100px); }
+
+  app-rosto-emocao { --emotion-face-size: clamp(80px, 23vw, 100px); }
+
   .emotion strong { font-size: 14px; }
+
   .navigation { gap: 12px; }
+
   .navigation button { width: 36px; height: 36px; }
+
   .position { font-size: 11px; }
+
   .details-heading p { font-size: 11px; line-height: 1.4; }
+
   .chips { gap: 6px; }
+
   .chip { min-height: 34px; padding: 6px 10px; border-radius: 10px; font-size: 11px; }
+
   .chip span { font-size: 14px; }
 }

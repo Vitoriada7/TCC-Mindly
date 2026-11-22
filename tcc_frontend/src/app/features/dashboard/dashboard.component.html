@@ -1,8 +1,8 @@
 <div class="dashboard">
   <section class="welcome-row">
     <div>
-      <p class="eyebrow">{{ dataCabecalho }}</p>
-      <h1>
+      <p class="eyebrow page-eyebrow">{{ dataCabecalho }}</p>
+      <h1 class="page-title">
         {{ saudacao() }}
         @if (apelido()) {
           , {{ apelido() }}
@@ -11,13 +11,13 @@
       </h1>
       <p class="welcome-copy">Que bom ter você por aqui. Vamos fazer deste dia um dia leve?</p>
     </div>
-    <a class="primary-button header-register" routerLink="/emocional/registro">
+    <a class="primary-button header-register btn btn-primary" routerLink="/emocional/registro">
       <span class="material-symbols-rounded" aria-hidden="true">edit_note</span> Registrar meu dia
     </a>
   </section>
 
   @if (erro(); as mensagemErro) {
-    <div class="feedback error" role="alert">
+    <div class="feedback error alert-error" role="alert">
       <span>Não foi possível atualizar todos os dados.</span>
       <button type="button" (click)="carregar()">Tentar novamente</button>
     </div>
@@ -27,7 +27,7 @@
     <article class="card mood-card">
       <div class="card-heading">
         <div>
-          <p class="eyebrow">COMO VOCÊ ESTÁ?</p>
+          <p class="eyebrow page-eyebrow">COMO VOCÊ ESTÁ?</p>
           <h2>Seu humor hoje</h2>
         </div>
         <span class="soft-icon lavender material-symbols-rounded" aria-hidden="true">wb_sunny</span>
@@ -68,7 +68,7 @@
         <div class="track">
           <span class="task-track material-symbols-rounded" aria-hidden="true">task_alt</span>
           <div>
-            <p class="eyebrow">TAREFAS</p>
+            <p class="eyebrow page-eyebrow">TAREFAS</p>
             <p>
               <b>{{ resumo.tarefas.concluidasSemana }} de {{ resumo.tarefas.metaSemanal }}</b> meta
               semanal
@@ -79,7 +79,7 @@
         <div class="track">
           <span class="emotion-track material-symbols-rounded" aria-hidden="true">favorite</span>
           <div>
-            <p class="eyebrow">AUTOCUIDADO</p>
+            <p class="eyebrow page-eyebrow">AUTOCUIDADO</p>
             <p>
               <strong
                 >{{ resumo.emocional.sequenciaAtual }}
@@ -92,7 +92,7 @@
         <div class="track">
           <span class="fire material-symbols-rounded" aria-hidden="true">auto_awesome</span>
           <div>
-            <p class="eyebrow">SEU PROGRESSO</p>
+            <p class="eyebrow page-eyebrow">SEU PROGRESSO</p>
             <strong>Comece no seu ritmo</strong>
           </div>
         </div>
@@ -104,7 +104,7 @@
     <article class="card tasks-card" id="tarefas-hoje">
       <header class="section-title">
         <div>
-          <p class="eyebrow">ORGANIZAÇÃO</p>
+          <p class="eyebrow page-eyebrow">ORGANIZAÇÃO</p>
           <h2>Suas prioridades de hoje</h2>
         </div>
         @if (!carregando() && !erro()) {
@@ -171,7 +171,7 @@
     <article class="card progress-card">
       <header class="section-title">
         <div>
-          <p class="eyebrow">BEM-ESTAR</p>
+          <p class="eyebrow page-eyebrow">BEM-ESTAR</p>
           <h2>Seu ritmo emocional</h2>
         </div>
         <a routerLink="/emocional">Ver diário</a>
@@ -219,7 +219,7 @@
       } @else if (erroEmocional()) {
         <div class="empty-chart" role="status">
           <p>Não foi possível carregar os registros emocionais.</p>
-          <button class="secondary" type="button" (click)="carregar()">Tentar novamente</button>
+          <button class="secondary btn btn-secondary" type="button" (click)="carregar()">Tentar novamente</button>
         </div>
       } @else if (diasComRegistro()) {
         <div class="emotion-chart" [class.month-chart]="periodo() === 'mes'">
@@ -269,7 +269,7 @@
     <article class="card habits-card">
       <header class="section-title">
         <div>
-          <p class="eyebrow">CONSTÂNCIA</p>
+          <p class="eyebrow page-eyebrow">CONSTÂNCIA</p>
           <h2>Seus hábitos</h2>
         </div>
         <a routerLink="/habitos">Ver todos</a>
@@ -327,7 +327,7 @@
     >
       <header>
         <div>
-          <p class="eyebrow">ORGANIZAÇÃO</p>
+          <p class="eyebrow page-eyebrow">ORGANIZAÇÃO</p>
           <h2 id="nova-tarefa-titulo">Nova tarefa</h2>
         </div>
         <button class="close" type="button" (click)="fecharFormulario()" aria-label="Fechar">
@@ -367,17 +367,17 @@
           <label for="descricao">Descrição <span>opcional</span></label
           ><textarea id="descricao" formControlName="descricao" rows="3"></textarea>
           @if (erroFormulario(); as erroFormulario) {
-            <p class="form-error" role="alert">{{ erroFormulario }}</p>
+            <p class="form-error form-message-error" role="alert">{{ erroFormulario }}</p>
           }
           <footer>
             <button
-              class="secondary"
+              class="secondary btn btn-secondary"
               type="button"
               (click)="fecharFormulario()"
               [disabled]="criando()"
             >
               Cancelar</button
-            ><button class="primary-button" type="submit" [disabled]="criando()">
+            ><button class="primary-button btn btn-primary" type="submit" [disabled]="criando()">
               {{ criando() ? 'Salvando...' : 'Salvar tarefa' }}
             </button>
           </footer>
@@ -389,7 +389,7 @@
             Uma categoria é necessária para criar tarefas. Esse gerenciamento será disponibilizado
             na tela de tarefas.
           </p>
-          <button class="secondary" type="button" (click)="fecharFormulario()">Fechar</button>
+          <button class="secondary btn btn-secondary" type="button" (click)="fecharFormulario()">Fechar</button>
         </div>
       }
     </section>

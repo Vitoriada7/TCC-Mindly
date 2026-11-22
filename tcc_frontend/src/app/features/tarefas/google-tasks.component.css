@@ -1,6 +1,7 @@
 :host {
   display: block;
 }
+
 .google-trigger {
   position: relative;
   display: grid;
@@ -13,6 +14,7 @@
   background: var(--surface);
   box-shadow: 0 5px 14px rgba(76, 51, 121, 0.08);
 }
+
 .connected-dot {
   position: absolute;
   right: 5px;
@@ -23,6 +25,7 @@
   background: var(--tone-mint, #278245);
   border: 1px solid var(--surface);
 }
+
 dialog {
   width: min(480px, calc(100vw - 32px));
   max-height: calc(100dvh - 48px);
@@ -34,12 +37,15 @@ dialog {
   box-shadow: 0 24px 70px rgba(39, 24, 71, 0.22);
   color: var(--text-heading);
 }
+
 dialog::backdrop {
   background: rgba(35, 24, 58, 0.45);
 }
+
 .modal-content {
   padding: 24px;
 }
+
 header {
   display: flex;
   justify-content: space-between;
@@ -47,30 +53,34 @@ header {
   gap: 16px;
   margin-bottom: 18px;
 }
+
 h2 {
   margin: 0;
   font-size: 20px;
   color: var(--text-heading);
 }
+
 p {
   margin: 12px 0;
   font-size: 14px;
   line-height: 1.6;
   color: var(--muted, #62596e);
 }
+
 .eyebrow {
   margin: 0 0 6px;
-  font-size: 10px;
-  letter-spacing: 0.12em;
   font-weight: 700;
   color: var(--violet, #6750b4);
 }
+
 .detail {
   font-size: 12px;
 }
+
 details {
   margin: 16px 0;
 }
+
 summary {
   min-height: 44px;
   align-content: center;
@@ -78,6 +88,7 @@ summary {
   font-size: 13px;
   cursor: pointer;
 }
+
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -85,6 +96,7 @@ summary {
   gap: 10px;
   margin-top: 22px;
 }
+
 button {
   min-height: 44px;
   padding: 10px 16px;
@@ -96,10 +108,12 @@ button {
   font: inherit;
   font-size: 13px;
 }
+
 .secondary {
   background: var(--surface);
   color: var(--violet, #6750b4);
 }
+
 .close {
   display: grid;
   place-items: center;
@@ -109,22 +123,27 @@ button {
   background: var(--wash-violet, #f5f1ff);
   color: var(--violet, #6750b4);
 }
+
 button:disabled {
   opacity: 0.6;
   cursor: default;
 }
+
 button:focus-visible,
 summary:focus-visible {
   outline: 2px solid var(--edge, #6750b4);
   outline-offset: 3px;
 }
+
 .error {
   color: var(--rose, #a32845);
 }
+
 @media (max-width: 480px) {
   .modal-content {
     padding: 20px;
   }
+
   .actions > button {
     flex: 1 1 auto;
   }

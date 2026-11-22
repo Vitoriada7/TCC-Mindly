@@ -8,8 +8,8 @@
       ><span class="material-symbols-rounded" aria-hidden="true">arrow_back</span></a
     >
     <div>
-      <p class="eyebrow">REGISTRO DIÁRIO</p>
-      <h1>{{ tituloAtual }}</h1>
+      <p class="eyebrow page-eyebrow">REGISTRO DIÁRIO</p>
+      <h1 class="page-title">{{ tituloAtual }}</h1>
     </div>
   </header>
 
@@ -144,16 +144,16 @@
     }
   </section>
   @if (erroSalvamento(); as erro) {
-    <p class="form-error" role="alert">{{ erro }}</p>
+    <p class="form-error form-message-error" role="alert">{{ erro }}</p>
   }
   @if (erroIa(); as erro) {
-    <p class="form-error" role="alert">{{ erro }}</p>
-    <button class="secondary" type="button" (click)="continuarSemIa()">Continuar sem IA</button>
+    <p class="form-error form-message-error" role="alert">{{ erro }}</p>
+    <button class="secondary btn btn-secondary" type="button" (click)="continuarSemIa()">Continuar sem IA</button>
   }
   <footer class="actions-row">
     @if (passo() > 1) {
       <button
-        class="secondary"
+        class="secondary btn btn-secondary"
         type="button"
         (click)="voltar()"
         [disabled]="
@@ -168,7 +168,7 @@
       </button>
     }
     <button
-      class="primary"
+      class="primary btn btn-primary"
       type="button"
       (click)="avancar()"
       [disabled]="

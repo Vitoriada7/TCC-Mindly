@@ -17,8 +17,8 @@
               >edit</span
             ></a
           >
-          <p class="eyebrow">SEU ESPAÇO</p>
-          <h1>{{ usuario.apelido }}</h1>
+          <p class="eyebrow page-eyebrow">SEU ESPAÇO</p>
+          <h1 class="page-title">{{ usuario.apelido }}</h1>
           <p class="subtitle">Seu espaço no Mindly, no seu ritmo.</p>
         </header>
         <dl class="profile-stats" aria-label="Seu progresso">
@@ -39,7 +39,7 @@
         </dl>
         <div class="profile-actions">
           <button
-            class="primary"
+            class="primary btn btn-primary"
             type="button"
             [attr.aria-expanded]="editando()"
             aria-controls="editar-perfil"
@@ -48,7 +48,7 @@
           >
             <span class="material-symbols-rounded" aria-hidden="true">edit</span>Editar apelido
           </button>
-          <a class="secondary" routerLink="/perfil/avatares"
+          <a class="secondary btn btn-secondary" routerLink="/perfil/avatares"
             ><span class="material-symbols-rounded" aria-hidden="true">face</span>Trocar avatar</a
           >
         </div>
@@ -62,11 +62,11 @@
             @if (formulario.controls.apelido.invalid && formulario.controls.apelido.touched) {
               <small class="field-error">Informe seu apelido.</small>
             }
-            <button class="primary" type="submit" [disabled]="salvando()">
+            <button class="primary btn btn-primary" type="submit" [disabled]="salvando()">
               {{ salvando() ? 'Salvando...' : 'Salvar alterações' }}
             </button>
             <button
-              class="secondary"
+              class="secondary btn btn-secondary"
               type="button"
               [disabled]="salvando()"
               (click)="cancelarEdicao()"
@@ -133,12 +133,12 @@
         </section>
       </article>
     } @else {
-      <div class="feedback" role="alert">
+      <div class="feedback alert-error" role="alert">
         {{ erro() }} <button type="button" (click)="carregar()">Tentar novamente</button>
       </div>
     }
     @if (erro() && usuario()) {
-      <div class="feedback" role="alert">{{ erro() }}</div>
+      <div class="feedback alert-error" role="alert">{{ erro() }}</div>
     }
   }
 </section>

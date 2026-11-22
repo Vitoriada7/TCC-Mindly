@@ -8,11 +8,12 @@ import { GamificacaoApiService } from '../gamificacao/services/gamificacao-api.s
 import { RegistroEmocional } from './emocional.models';
 import { RegistroDetalhesComponent } from './registro-detalhes.component';
 
-type Humor = { label: string; value: string; icon: string; description: string };
+import { EMOCOES } from './emocoes';
+import { RostoEmocaoComponent } from './rosto-emocao.component';
 
 @Component({
   selector: 'app-emocional',
-  imports: [CarregamentoComponent, RouterLink, RegistroDetalhesComponent],
+  imports: [CarregamentoComponent, RouterLink, RegistroDetalhesComponent, RostoEmocaoComponent],
   templateUrl: './emocional.component.html',
   styleUrl: './emocional.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,38 +21,7 @@ type Humor = { label: string; value: string; icon: string; description: string }
 export class EmocionalComponent {
   private readonly emocionalApi = inject(EmocionalApiService);
   private readonly gamificacaoApi = inject(GamificacaoApiService);
-  protected readonly humores: Humor[] = [
-    {
-      label: 'Radiante',
-      value: 'radiante',
-      icon: 'sentiment_very_satisfied',
-      description: 'Me sinto leve e feliz.'
-    },
-    {
-      label: 'Bem',
-      value: 'bem',
-      icon: 'sentiment_satisfied',
-      description: 'Tudo está equilibrado.'
-    },
-    {
-      label: 'Neutra',
-      value: 'neutra',
-      icon: 'sentiment_neutral',
-      description: 'Um dia tranquilo e sereno.'
-    },
-    {
-      label: 'Cansada',
-      value: 'cansada',
-      icon: 'sentiment_dissatisfied',
-      description: 'Preciso de um momento para mim.'
-    },
-    {
-      label: 'Difícil',
-      value: 'dificil',
-      icon: 'sentiment_very_dissatisfied',
-      description: 'Sinto que hoje foi mais pesado.'
-    },
-  ];
+  protected readonly humores = EMOCOES;
 
   protected readonly humorSelecionado = signal<string | null>(null);
   protected readonly carregando = signal(true);
@@ -77,7 +47,7 @@ export class EmocionalComponent {
   protected readonly resumo = computed(() => {
     const valor = this.humorSelecionado();
     if (!valor) {
-      return 'Selecione um estado emocional para marcar como seu hoje.';
+      return 'Escolha uma emoção para começar seu registro de hoje.';
     }
 
     const humor = this.humores.find((item) => item.value === valor);
@@ -144,10 +114,6 @@ export class EmocionalComponent {
         data.getMonth() === mes.getMonth() && data.getDate() === dia;
     });
     this.registroSelecionado.set(registro ?? null);
-  }
-
-  protected selecionarHumor(valor: string): void {
-    this.humorSelecionado.set(valor);
   }
 
   protected mostrarToast(): void {

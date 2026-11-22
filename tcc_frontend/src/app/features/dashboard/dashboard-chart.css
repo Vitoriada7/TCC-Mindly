@@ -2,11 +2,13 @@
   cursor: pointer;
   color: var(--muted, #66616f);
 }
+
 .emotion-chart {
   display: flex;
   gap: 12px;
   padding-top: 10px;
 }
+
 .chart-axis {
   display: flex;
   flex-direction: column;
@@ -15,17 +17,20 @@
   color: var(--muted, #696572);
   font-size: 10px;
 }
+
 .chart-days {
   display: flex;
   flex: 1;
   min-width: 0;
   gap: 0;
 }
+
 .chart-day {
   flex: 1 1 0;
   min-width: 0;
   text-align: center;
 }
+
 .chart-column {
   position: relative;
   height: 130px;
@@ -38,6 +43,7 @@
     transparent 25%
   );
 }
+
 .chart-dot {
   position: absolute;
   left: 50%;
@@ -48,6 +54,7 @@
   background: var(--tone-violet, #7b61df);
   box-shadow: 0 0 0 3px #f0ebff;
 }
+
 .chart-missing {
   position: absolute;
   bottom: 0;
@@ -55,24 +62,29 @@
   transform: translateX(-50%);
   color: var(--muted, #aaa3b6);
 }
+
 .chart-date {
   color: var(--muted, #696572);
   font-size: 10px;
 }
+
 .chart-note {
   margin: 14px 0 0;
   color: var(--muted, #696572);
   font-size: 11px;
   line-height: 1.5;
 }
+
 .month-chart .chart-dot {
   width: 6px;
   height: 6px;
   box-shadow: none;
 }
+
 .month-chart .chart-date {
   font-size: 8px;
 }
+
 .hidden-date {
   visibility: hidden;
 }
@@ -80,6 +92,7 @@
 .progress-card {
   min-width: 0;
 }
+
 .period-navigation {
   display: flex;
   align-items: center;
@@ -87,11 +100,13 @@
   gap: 8px;
   margin: 8px 0;
 }
+
 .period-navigation > span {
   text-align: center;
   color: var(--muted, #65558a);
   font-size: 12px;
 }
+
 .period-navigation button {
   display: grid;
   place-items: center;
@@ -103,26 +118,32 @@
   color: var(--muted, #65558a);
   cursor: pointer;
 }
+
 .period-navigation button:disabled {
   opacity: 0.35;
   cursor: default;
 }
+
 @media (max-width: 700px) {
   .emotion-chart {
     gap: 8px;
   }
+
   .chart-axis {
     flex: 0 0 44px;
     font-size: 9px;
     height: 110px;
   }
+
   .chart-column {
     height: 100px;
   }
+
   .month-chart .chart-dot {
     width: 5px;
     height: 5px;
   }
+
   .chart-note {
     font-size: 10px;
   }

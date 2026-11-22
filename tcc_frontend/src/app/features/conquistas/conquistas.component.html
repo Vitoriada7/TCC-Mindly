@@ -1,8 +1,8 @@
 <div class="page">
-  <header class="intro">
-    <p class="eyebrow">CONQUISTAS</p>
-    <h1>Veja seus pequenos avanços.</h1>
-    <p>
+  <header class="intro page-hero">
+    <p class="eyebrow page-eyebrow">CONQUISTAS</p>
+    <h1 class="page-title">Veja seus pequenos avanços.</h1>
+    <p class="page-description">
       Cada conquista libera um novo avatar. Toque em um companheiro para descobrir como
       conquistá-lo.
     </p>
@@ -12,7 +12,7 @@
     @if (carregando()) {
       <p role="status">Carregando suas conquistas...</p>
     } @else if (erro(); as mensagemErro) {
-      <div class="load-error" role="alert">
+      <div class="load-error alert-error" role="alert">
         <span>{{ mensagemErro }}</span
         ><button type="button" (click)="carregar()">Tentar novamente</button>
       </div>
@@ -76,7 +76,7 @@
   </button>
   @if (selecionada(); as conquista) {
     <div class="details" [class.completed]="conquista.status === 'CONCLUIDA'">
-      <p class="eyebrow">
+      <p class="eyebrow page-eyebrow">
         {{ conquista.status === 'CONCLUIDA' ? 'SUA CONQUISTA' : 'SEU PRÓXIMO PASSO' }}
       </p>
       <h2 id="conquista-modal-titulo">{{ conquista.titulo }}</h2>
@@ -108,7 +108,7 @@
         <p class="hint">Ao concluir, este avatar fica disponível para o seu perfil.</p>
       } @else {
         <button
-          class="primary"
+          class="primary btn btn-primary"
           type="button"
           (click)="usarAvatar()"
           [disabled]="salvandoAvatar() || avatarSalvo()"

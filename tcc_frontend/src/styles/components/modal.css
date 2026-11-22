@@ -1,3 +1,26 @@
+.modal-backdrop,
+.backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: #30285266;
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: var(--radius-circle);
+  color: var(--muted, #716b7b);
+  background: var(--wash, #f5f3f8);
+  font-size: 21px;
+  cursor: pointer;
+}
+
 .modal {
   width: min(100%, 500px);
   padding: 24px;
@@ -5,21 +28,25 @@
   background: var(--surface);
   box-shadow: 0 20px 50px #21174a4d;
 }
+
 .modal form {
   display: grid;
   gap: 7px;
   margin-top: 20px;
 }
+
 .modal label {
   margin-top: 6px;
   color: var(--muted, #554f5f);
   font-size: 11px;
   font-weight: 700;
 }
+
 .modal label span {
   color: var(--muted, #9994a1);
   font-weight: 400;
 }
+
 .modal input,
 .modal select,
 .modal textarea {
@@ -33,15 +60,18 @@
   font-size: 12px;
   outline-color: var(--primary);
 }
+
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
+
 .form-row > div {
   display: grid;
   gap: 7px;
 }
+
 .modal footer {
   margin-top: 14px;
   align-items: center;

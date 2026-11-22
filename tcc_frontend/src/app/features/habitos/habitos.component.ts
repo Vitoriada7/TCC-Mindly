@@ -14,7 +14,7 @@ type DiaSemana = { data: string; rotulo: string; dia: number };
   selector: 'app-habitos',
   imports: [CarregamentoComponent, ReactiveFormsModule, RouterLink],
   templateUrl: './habitos.component.html',
-  styleUrl: './habitos.component.css',
+  styleUrls: ['../../../styles/components/modal.css', './habitos.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HabitosComponent {

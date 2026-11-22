@@ -9,8 +9,8 @@
       <span aria-hidden="true">✦</span> mindly
     </a>
 
-    <p class="eyebrow">SEU CANTINHO DE BEM-ESTAR</p>
-    <h1>{{ modoCadastro() ? 'Crie sua conta' : 'Que bom te ver de novo' }}</h1>
+    <p class="eyebrow page-eyebrow">SEU CANTINHO DE BEM-ESTAR</p>
+    <h1 class="page-title">{{ modoCadastro() ? 'Crie sua conta' : 'Que bom te ver de novo' }}</h1>
     <p class="subtitle">
       {{
         modoCadastro() ? 'Comece uma rotina mais leve hoje.' : 'Entre e continue cuidando de você.'
@@ -78,7 +78,7 @@
           <small class="field-error">A senha deve ter ao menos 6 caracteres.</small>
         }
 
-        <button class="primary" type="submit" [disabled]="enviando()">
+        <button class="primary btn btn-primary" type="submit" [disabled]="enviando()">
           {{ enviando() ? 'Criando conta...' : 'Criar minha conta' }}
           <span aria-hidden="true">→</span>
         </button>
@@ -109,7 +109,7 @@
           <small class="field-error">Informe sua senha.</small>
         }
 
-        <button class="primary" type="submit" [disabled]="enviando()">
+        <button class="primary btn btn-primary" type="submit" [disabled]="enviando()">
           {{ enviando() ? 'Entrando...' : 'Entrar no Mindly' }} <span aria-hidden="true">→</span>
         </button>
       </form>
